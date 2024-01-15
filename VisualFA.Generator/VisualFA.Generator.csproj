@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>VisualFA</RootNamespace>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);FALIB;FALIB_SPANS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);FALIB;FALIB_SPANS</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Shared\FADfaTableRunnerSpan.cs" />
+    <Compile Remove="Shared\FADfaTableRunnerString.cs" />
+    <Compile Remove="Shared\FAMatch.cs" />
+    <Compile Remove="Shared\FARunnerSpan.cs" />
+    <Compile Remove="Shared\FARunnerString.cs" />
+    <Compile Remove="Shared\ReadOnlySpan.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Shared\FADfaTableRunnerSpan.cs" />
+    <Content Include="Shared\FADfaTableRunnerString.cs" />
+    <Content Include="Shared\FAMatch.cs" />
+    <Content Include="Shared\FARunnerSpan.cs" />
+    <Content Include="Shared\FARunnerString.cs" />
+    <Content Include="Shared\ReadOnlySpan.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CodeDom" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VisualFA\VisualFA.csproj" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="&quot;$(SolutionDir)deslang.exe&quot; &quot;$(ProjectDir)Shared\FAMatch.cs&quot; &quot;$(ProjectDir)Shared\FARunnerSpan.cs&quot; &quot;$(ProjectDir)Shared\FADfaTableRunnerSpan.cs&quot; &quot;$(ProjectDir)Shared\ReadOnlySpan.cs&quot; /output &quot;$(ProjectDir)DeslangedSpan.cs&quot; /class DeslangedSpan /namespace VisualFA /ifstale&#xD;&#xA;&quot;$(SolutionDir)deslang.exe&quot; &quot;$(ProjectDir)Shared\FAMatch.cs&quot; &quot;$(ProjectDir)Shared\FARunnerString.cs&quot; &quot;$(ProjectDir)Shared\FADfaTableRunnerString.cs&quot; /output &quot;$(ProjectDir)DeslangedString.cs&quot; /class DeslangedString /namespace VisualFA /ifstale" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="&quot;$(SolutionDir)csbrick.exe&quot; &quot;$(ProjectDir)VisualFA.Generator.csproj&quot; /output &quot;$(SolutionDir)VisualFA.Generator.brick.cs&quot;" />
+  </Target>
+
+</Project>
