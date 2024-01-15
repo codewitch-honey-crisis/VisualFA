@@ -79,8 +79,7 @@ FA dfa = nfa.ToDfa();
 // *or* turn it into an optimized DFA
 FA mdfa = nfa.ToMinimizedDfa();
 
-// FA Implements FARunner
-// which has MatchNext()
+// FARunner has MatchNext()/Reset()
 // and IEnumerable<FAMatch>
 
 // If you reference FA.Compiler:
