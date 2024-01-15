@@ -25,18 +25,31 @@ The other executable is created by the CharClsTableGen project
 ### Performance 
 
 Microsoft Regex "Lexer": [■■■■■■■■■■] 100% Found 220000 matches in 35ms
+
 Microsoft Regex compiled "Lexer": [■■■■■■■■■■] 100% Found 220000 matches in 19ms
+
 FAStringRunner (proto): [■■■■■■■■■■] 100% Found 220000 matches in 7ms
+
 FATextReaderRunner: (proto) [■■■■■■■■■■] 100% Found 220000 matches in 12ms
+
 FAStringDfaTableRunner: [■■■■■■■■■■] 100% Found 220000 matches in 10ms
+
 FATextReaderDfaTableRunner: [■■■■■■■■■■] 100% Found 220000 matches in 14ms
+
 FAStringStateRunner (NFA): [■■■■■■■■■■] 100% Found 220000 matches in 208ms
+
 FAStringStateRunner (Compact NFA): [■■■■■■■■■■] 100% Found 220000 matches in 105ms
+
 FATextReaderStateRunner (Compact NFA): [■■■■■■■■■■] 100% Found 220000 matches in 108ms
+
 FAStringStateRunner (DFA): [■■■■■■■■■■] 100% Found 220000 matches in 12ms
+
 FATextReaderStateRunner (DFA): [■■■■■■■■■■] 100% Found 220000 matches in 17ms
+
 FAStringRunner (Compiled): [■■■■■■■■■■] 100% Found 220000 matches in 7ms
+
 FATextReaderRunner (Compiled): [■■■■■■■■■■] 100% Found 220000 matches in 12ms
+
 
 ### Use
 
