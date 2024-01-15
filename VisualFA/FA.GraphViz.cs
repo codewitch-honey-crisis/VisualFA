@@ -74,7 +74,10 @@ namespace VisualFA
 			opt2.DebugString = options.DebugString;
 			opt2.DebugShowNfa = false;
 			opt2.Dpi = options.Dpi;
+			opt2.AcceptSymbolNames = options.AcceptSymbolNames;
 			opt2.HideAcceptSymbolIds = options.HideAcceptSymbolIds;
+			opt2.BlockEnds = options.BlockEnds;
+			//opt2.Vertical = options.Vertical;
 			if (!vert)
 			{
 				_WriteDotTo(closure, writer, options, 2);

@@ -38,6 +38,15 @@ namespace VisualFA
 		/// </summary>
 		public int Column;
 		/// <summary>
+		/// Indicates whether the text matched the expression
+		/// </summary>
+		/// <remarks>Non matches are returned with negative accept symbols. You can use this property to determine if the text therein was part of a match.</remarks>
+		public bool IsSuccess {
+			get {
+				return SymbolId > -1;
+			}
+		}
+		/// <summary>
 		/// Constructs a new instance
 		/// </summary>
 		/// <param name="symbolId">The symbol id</param>
@@ -834,6 +843,18 @@ namespace VisualFA
 				current = fa;
 			}
 			return result;
+		}
+		/// <summary>
+		/// Creates a literal machine given the string
+		/// </summary>
+		/// <remarks>Use <code>ToUtf32()</code> to compute from characters.</remarks>
+		/// <param name="string">The string create the literal from.</param>
+		/// <param name="accept">The accepting id</param>
+		/// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
+		/// <returns>A new machine representing the literal expression</returns>
+		public static FA Literal(string @string, int accept = 0, bool compact = true)
+		{
+			return Literal(ToUtf32(@string), accept, compact);
 		}
 		/// <summary>
 		/// Creates a charset machine represeting the given the UTF-32 codepoint ranges

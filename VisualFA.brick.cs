@@ -818,6 +818,10 @@ public int Line;/// <summary>
 /// The one based column
 /// </summary>
 public int Column;/// <summary>
+/// Indicates whether the text matched the expression
+/// </summary>
+/// <remarks>Non matches are returned with negative accept symbols. You can use this property to determine if the text therein was part of a match.</remarks>
+public bool IsSuccess{get{return SymbolId>-1;}}/// <summary>
 /// Constructs a new instance
 /// </summary>
 /// <param name="symbolId">The symbol id</param>
@@ -1105,6 +1109,14 @@ public FA Move(int codepoint){if(!IsDeterministic){throw new InvalidOperationExc
 public static FA Literal(IEnumerable<int>codepoints,int accept=0,bool compact=true){var result=new FA();var current=result;foreach(var codepoint in codepoints)
 {current.AcceptSymbol=-1;var fa=new FA();fa.AcceptSymbol=accept;current.AddTransition(new FARange(codepoint,codepoint),fa);current=fa;}return result;}
 /// <summary>
+/// Creates a literal machine given the string
+/// </summary>
+/// <remarks>Use <code>ToUtf32()</code> to compute from characters.</remarks>
+/// <param name="string">The string create the literal from.</param>
+/// <param name="accept">The accepting id</param>
+/// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
+/// <returns>A new machine representing the literal expression</returns>
+public static FA Literal(string@string,int accept=0,bool compact=true){return Literal(ToUtf32(@string),accept,compact);}/// <summary>
 /// Creates a charset machine represeting the given the UTF-32 codepoint ranges
 /// </summary>
 /// <param name="ranges">The <see cref="FARange"/> codepoint ranges to create the set from.</param>
@@ -1510,8 +1522,9 @@ public string[]AcceptSymbolNames{get;set;}=null;/// <summary>
 public bool Vertical{get;set;}=false;}partial class FA{static void _WriteCompoundDotTo(IList<FA>closure,TextWriter writer,FADotGraphOptions options=null)
 {writer.WriteLine("digraph FA {");var vert=true;if(options==null||!options.Vertical){writer.WriteLine("rankdir=LR");vert=false;}writer.WriteLine("node [shape=circle]");
 var opt2=new FADotGraphOptions();opt2.DebugSourceNfa=null;opt2.StatePrefix=options.StatePrefix;opt2.DebugString=options.DebugString;opt2.DebugShowNfa=
-false;opt2.Dpi=options.Dpi;opt2.HideAcceptSymbolIds=options.HideAcceptSymbolIds;if(!vert){_WriteDotTo(closure,writer,options,2);_WriteDotTo(options.DebugSourceNfa.FillClosure(),
-writer,opt2,1);}else{_WriteDotTo(options.DebugSourceNfa.FillClosure(),writer,opt2,2);_WriteDotTo(closure,writer,options,1);}writer.WriteLine("}");}/// <summary>
+false;opt2.Dpi=options.Dpi;opt2.AcceptSymbolNames=options.AcceptSymbolNames;opt2.HideAcceptSymbolIds=options.HideAcceptSymbolIds;opt2.BlockEnds=options.BlockEnds;
+ if(!vert){_WriteDotTo(closure,writer,options,2);_WriteDotTo(options.DebugSourceNfa.FillClosure(),writer,opt2,1);}else{_WriteDotTo(options.DebugSourceNfa.FillClosure(),
+writer,opt2,2);_WriteDotTo(closure,writer,options,1);}writer.WriteLine("}");}/// <summary>
 /// Writes a Graphviz dot specification of the specified closure to the specified <see cref="TextWriter"/>
 /// </summary>
 /// <param name="closure">The closure of all states</param>

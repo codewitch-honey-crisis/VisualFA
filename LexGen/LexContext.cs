@@ -194,19 +194,6 @@ namespace LexGen
 			return CreateFrom(new StreamReader(filename));
 		}
 		/// <summary>
-		/// Creates a <see cref="LexContext" /> over an URL
-		/// </summary>
-		/// <param name="url">The URL</param>
-		/// <returns>A new <see cref="LexContext" /> over the URL</returns>
-		public static LexContext CreateFromUrl(string url)
-		{
-			var wreq = WebRequest.Create(url);
-			var wrsp = wreq.GetResponse();
-			var result = CreateFrom(new StreamReader(wrsp.GetResponseStream()));
-			result._fileOrUrl = url;
-			return result;
-		}
-		/// <summary>
 		/// Closes the current instance and releases any resources being held
 		/// </summary>
 		public void Close()

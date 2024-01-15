@@ -29,6 +29,15 @@ internal partial struct FAMatch
 	/// </summary>
 	public int Column { get { return _column; } }
 	/// <summary>
+	/// Indicates whether the text matched the expression
+	/// </summary>
+	/// <remarks>Non matches are returned with negative accept symbols. You can use this property to determine if the text therein was part of a match.</remarks>
+	public bool IsSuccess {
+		get {
+			return _symbolId > -1;
+		}
+	}
+	/// <summary>
 	/// Constructs a new instance
 	/// </summary>
 	/// <param name="symbolId">The symbol id</param>

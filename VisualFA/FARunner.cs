@@ -726,6 +726,7 @@ namespace VisualFA
 							_One[0] = dfaNext;
 							FA.FillEpsilonClosure(_One, _states);
 						}
+						dfaState = null;
 					}
 					dfaNext = null;
 				}
@@ -848,6 +849,7 @@ namespace VisualFA
 										if (ffa.IsDeterministic)
 										{
 											dfaState = ffa;
+											_states.Clear();
 										}
 										else
 										{

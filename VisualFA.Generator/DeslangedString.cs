@@ -146,6 +146,13 @@ namespace VisualFA {
                                                                 new CodeCommentStatement(" <summary>", true),
                                                                 new CodeCommentStatement(" The one based column", true),
                                                                 new CodeCommentStatement(" </summary>", true)}, new CodeAttributeDeclaration[0], new CodeDirective[0], new CodeDirective[0], null),
+                                                    DeslangedString._MemberProperty(new CodeTypeReference(typeof(bool)), "IsSuccess", (MemberAttributes.Final | MemberAttributes. Public), new CodeParameterDeclarationExpression[0], new CodeStatement[] {
+                                                                new CodeMethodReturnStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), "_symbolId"), CodeBinaryOperatorType.GreaterThan, new CodePrimitiveExpression(-1)))}, new CodeStatement[0], new CodeTypeReference[0], null, new CodeCommentStatement[] {
+                                                                new CodeCommentStatement(" <summary>", true),
+                                                                new CodeCommentStatement(" Indicates whether the text matched the expression", true),
+                                                                new CodeCommentStatement(" </summary>", true),
+                                                                new CodeCommentStatement(" <remarks>Non matches are returned with negative accept symbols. You can use this" +
+                                                                        " property to determine if the text therein was part of a match.</remarks>", true)}, new CodeAttributeDeclaration[0], new CodeDirective[0], new CodeDirective[0], null),
                                                     DeslangedString._MemberMethod(new CodeTypeReference("FAMatch"), "Create", (MemberAttributes.Static | MemberAttributes. Public), new CodeParameterDeclarationExpression[] {
                                                                 new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)), "symbolId"),
                                                                 new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)), "value"),
