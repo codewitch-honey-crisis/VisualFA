@@ -12,7 +12,6 @@ namespace Example {
     using System.IO;
     using System.Text;
     using System.Collections.Generic;
-    using VisualFA;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
     internal sealed partial class ExampleRunner : FAStringRunner {

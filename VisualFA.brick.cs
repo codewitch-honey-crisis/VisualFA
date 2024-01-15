@@ -1739,15 +1739,16 @@ int ch=-1;Advance(s,ref ch,ref len,true);if(_fa.IsDeterministic){dfaState=_fa;df
 }else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,ch,_nexts);}if(dfaNext!=null){Advance(s,ref ch,ref len,false);if(dfaNext.IsDeterministic){dfaState
 =dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{_One[0]=dfaNext;FA.FillEpsilonClosure(_One,_states);}}dfaNext=null;}else
  if(_nexts.Count>0){Advance(s,ref ch,ref len,false);if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;_states.Clear();
-if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);
-}_nexts.Clear();}else{int acc;if(dfaState!=null){acc=dfaState.AcceptSymbol;}else{acc=FA.GetFirstAcceptSymbol(_states);}if(acc>-1){if(_blockEnds!=null&&
-_blockEnds.Length>acc&&_blockEnds[acc]!=null){var be=_blockEnds[acc];if(be.IsDeterministic){dfaState=be;dfaInitial=be;_states.Clear();}else{dfaState=null;
-dfaInitial=null;_initial.Clear();if(be.IsCompact){_initial.Add(be);}else{_One[0]=be;FA.FillEpsilonClosure(_One,_initial);}_states.Clear();_states.AddRange(_initial);
+if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}dfaState=null;}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,
+_states);}_nexts.Clear();}else{int acc;if(dfaState!=null){acc=dfaState.AcceptSymbol;}else{acc=FA.GetFirstAcceptSymbol(_states);}if(acc>-1){if(_blockEnds
+!=null&&_blockEnds.Length>acc&&_blockEnds[acc]!=null){var be=_blockEnds[acc];if(be.IsDeterministic){dfaState=be;dfaInitial=be;_states.Clear();}else{dfaState
+=null;dfaInitial=null;_initial.Clear();if(be.IsCompact){_initial.Add(be);}else{_One[0]=be;FA.FillEpsilonClosure(_One,_initial);}_states.Clear();_states.AddRange(_initial);
 }while(true){if(dfaState!=null){dfaNext=dfaState.Move(ch);}else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,ch,_nexts);}if(dfaNext!=null){Advance(s,
 ref ch,ref len,false);if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{_One[0]=dfaNext;
-FA.FillEpsilonClosure(_One,_states);}}dfaNext=null;}else if(_nexts.Count>0){Advance(s,ref ch,ref len,false);if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic)
-{dfaState=ffa;}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}}}else{_states.Clear();
-FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{if(dfaState!=null){if(dfaState.IsAccepting){return FAMatch.Create(acc,
+FA.FillEpsilonClosure(_One,_states);}dfaState=null;}dfaNext=null;}else if(_nexts.Count>0){Advance(s,ref ch,ref len,false);if(_nexts.Count==1){var ffa=
+_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);
+}else{_states.Add(ffa);}dfaState=null;}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{if(dfaState!=null){if(dfaState.IsAccepting)
+{return FAMatch.Create(acc,
 #if FALIB_SPANS
 s.Slice(unchecked((int)cursor_pos),len).ToString()
 #else

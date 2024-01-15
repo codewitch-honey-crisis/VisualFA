@@ -6,12 +6,32 @@ using System.Reflection;
 
 namespace VisualFA
 {
+
+#if FALIB
+	public
+#endif
+	enum FAGeneratorDependencies
+	{
+		/// <summary>
+		/// No dependent code will be generated
+		/// </summary>
+		None,
+		/// <summary>
+		/// Shared code will be generated
+		/// </summary>
+		GenerateSharedCode,
+		/// <summary>
+		/// The runtime library will be referenced
+		/// </summary>
+		UseRuntime
+	}
 #if FALIB
 	public
 #endif
 	partial class FAGeneratorOptions
 	{
-		public bool GenerateSharedCode { get; set; } = false;
+		public FAGeneratorDependencies Dependencies { get; set; } = FAGeneratorDependencies.None;
+
 		public bool GenerateTables { get; set; } = false;
 		public bool GenerateTextReaderMatcher { get; set; } = false;
 		// not always supported
@@ -594,31 +614,37 @@ namespace VisualFA
 			{
 				ns.Name = options.Namespace;
 			}
-			if (!options.GenerateSharedCode)
+			switch (options.Dependencies)
 			{
-				result.ReferencedAssemblies.Add(typeof(WeakReference<>).Assembly.FullName);
-				result.ReferencedAssemblies.Add(typeof(FA).Assembly.FullName);
-				ns.Imports.AddRange(new CodeNamespaceImport[] { new CodeNamespaceImport("System"), new CodeNamespaceImport("System.IO"), new CodeNamespaceImport("System.Text"), new CodeNamespaceImport("System.Collections.Generic"), new CodeNamespaceImport("VisualFA")});
-			}
-			else
-			{
-				ns.Imports.AddRange(new CodeNamespaceImport[] { new CodeNamespaceImport("System"), new CodeNamespaceImport("System.IO"), new CodeNamespaceImport("System.Text"), new CodeNamespaceImport("System.Collections.Generic") });
+				case FAGeneratorDependencies.None:
+					result.ReferencedAssemblies.Add(typeof(WeakReference<>).Assembly.FullName);
+					ns.Imports.AddRange(new CodeNamespaceImport[] { new CodeNamespaceImport("System"), new CodeNamespaceImport("System.IO"), new CodeNamespaceImport("System.Text"), new CodeNamespaceImport("System.Collections.Generic")});
+					break;
+				case FAGeneratorDependencies.UseRuntime:
+					result.ReferencedAssemblies.Add(typeof(WeakReference<>).Assembly.FullName);
+					result.ReferencedAssemblies.Add(typeof(FA).Assembly.FullName);
+					ns.Imports.AddRange(new CodeNamespaceImport[] { new CodeNamespaceImport("System"), new CodeNamespaceImport("System.IO"), new CodeNamespaceImport("System.Text"), new CodeNamespaceImport("System.Collections.Generic"), new CodeNamespaceImport("VisualFA") });
+					break;
+				case FAGeneratorDependencies.GenerateSharedCode:
+
+					ns.Imports.AddRange(new CodeNamespaceImport[] { new CodeNamespaceImport("System"), new CodeNamespaceImport("System.IO"), new CodeNamespaceImport("System.Text"), new CodeNamespaceImport("System.Collections.Generic") });
 #if FALIB_SPANS
-				ns.Types.AddRange(Deslanged.GetFAMatch(options.UseSpans).Namespaces[0].Types);
-				ns.Types.AddRange(Deslanged.GetFARunner(options.UseSpans).Namespaces[0].Types);
+					ns.Types.AddRange(Deslanged.GetFAMatch(options.UseSpans).Namespaces[0].Types);
+					ns.Types.AddRange(Deslanged.GetFARunner(options.UseSpans).Namespaces[0].Types);
 #else
-				ns.Types.AddRange(Deslanged.GetFAMatch(false).Namespaces[0].Types);
-				ns.Types.AddRange(Deslanged.GetFARunner(false).Namespaces[0].Types);
+					ns.Types.AddRange(Deslanged.GetFAMatch(false).Namespaces[0].Types);
+					ns.Types.AddRange(Deslanged.GetFARunner(false).Namespaces[0].Types);
 #endif
-				if (options.GenerateTables)
-				{
+					if (options.GenerateTables)
+					{
 #if FALIB_SPANS
-					ns.Types.AddRange(Deslanged.GetFADfaTableRunner(options.UseSpans).Namespaces[0].Types);
+						ns.Types.AddRange(Deslanged.GetFADfaTableRunner(options.UseSpans).Namespaces[0].Types);
 #else
-					ns.Types.AddRange(Deslanged.GetFADfaTableRunner(false).Namespaces[0].Types);
+						ns.Types.AddRange(Deslanged.GetFADfaTableRunner(false).Namespaces[0].Types);
 #endif
-				}
-			}
+					}
+					break;
+			}			
 			result.Namespaces.Add(ns);
 			if (options.GenerateTables)
 			{

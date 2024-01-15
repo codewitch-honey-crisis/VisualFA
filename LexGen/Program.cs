@@ -34,6 +34,7 @@ namespace LexGen
 			bool noshared = false;
 			bool ifstale = false;
 			bool tables = false;
+			bool runtime = false;
 			bool staticprogress = false;
 #if FALIB_SPANS
 			bool nospans = false;
@@ -119,6 +120,9 @@ namespace LexGen
 							case "/noshared":
 								noshared = true;
 								break;
+							case "/runtime":
+								runtime= true;
+								break;
 							case "/ifstale":
 								ifstale = true;
 								break;
@@ -138,6 +142,7 @@ namespace LexGen
 								throw new ArgumentException(string.Format("Unknown switch {0}", args[i]));
 						}
 					}
+					
 					if (dpi != 0 && (dfagraph == null && nfagraph == null))
 					{
 						throw new ArgumentException("<dpi> was specified but no GraphViz graph was indicated.", "/dpi");
@@ -310,7 +315,7 @@ namespace LexGen
 						lexer.RenderToFile(dfagraph, dotopts);
 					}
 					var genopts = new FAGeneratorOptions();
-					genopts.GenerateSharedCode = !noshared;
+					genopts.Dependencies = noshared ? ((runtime) ? FAGeneratorDependencies.UseRuntime : FAGeneratorDependencies.None) : FAGeneratorDependencies.GenerateSharedCode;
 					genopts.ClassName = codeclass;
 					genopts.Namespace = codenamespace;
 #if FALIB_SPANS

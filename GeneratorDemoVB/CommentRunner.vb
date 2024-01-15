@@ -70,6 +70,7 @@ Partial Friend Structure FAMatch
     ''' <param name="position">The match position</param>
     ''' <param name="line">The line</param>
     ''' <param name="column">The column</param>
+    <System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>  _
     Public Shared Function Create(ByVal symbolId As Integer, ByVal value As String, ByVal position As Long, ByVal line As Integer, ByVal column As Integer) As FAMatch
         Dim result As FAMatch = CType(Nothing, FAMatch)
         result._symbolId = symbolId
@@ -318,26 +319,26 @@ End Class
 Partial Friend NotInheritable Class CommentRunner
     Inherits FAStringRunner
     Private Function _BlockEnd0(ByVal s As String, ByVal cp As Integer, ByVal len As Integer, ByVal position As Integer, ByVal line As Integer, ByVal column As Integer) As FAMatch
-q0:
+    q0:
         If (cp = 42) Then
-            Me.Advance(s, cp, len, False)
-            GoTo q1
+            Me.Advance(s, cp, len, false)
+            goto q1
         End If
-        GoTo errorout
-q1:
+        goto errorout
+    q1:
         If (cp = 47) Then
-            Me.Advance(s, cp, len, False)
-            GoTo q2
+            Me.Advance(s, cp, len, false)
+            goto q2
         End If
-        GoTo errorout
-q2:
+        goto errorout
+    q2:
         Return FAMatch.Create(0, s.Substring(position, len), position, line, column)
-errorout:
+    errorout:
         If (cp = -1) Then
             Return FAMatch.Create(-1, s.Substring(position, len), position, line, column)
         End If
-        Me.Advance(s, cp, len, False)
-        GoTo q0
+        Me.Advance(s, cp, len, false)
+        goto q0
     End Function
     Private Function NextMatchImpl(ByVal s As String) As FAMatch
         Dim ch As Integer

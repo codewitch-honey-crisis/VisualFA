@@ -753,6 +753,7 @@ namespace VisualFA
 							{
 								_states.Add(ffa);
 							}
+							dfaState = null;
 						}
 					}
 					else
@@ -832,6 +833,7 @@ namespace VisualFA
 											_One[0] = dfaNext;
 											FA.FillEpsilonClosure(_One, _states);
 										}
+										dfaState = null;
 									}
 									dfaNext = null;
 
@@ -860,6 +862,7 @@ namespace VisualFA
 											{
 												_states.Add(ffa);
 											}
+											dfaState = null;
 										}
 									}
 									else

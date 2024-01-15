@@ -17,7 +17,7 @@ var gopts = new FAGeneratorOptions();
 gopts.GenerateTables = false;
 gopts.GenerateTextReaderMatcher = false;
 gopts.ClassName = "CommentRunner";
-gopts.GenerateSharedCode = false;
+gopts.Dependencies = FAGeneratorDependencies.UseRuntime;
 var ccu = lexer.Generate(new FA[] { commentEnd }, gopts);
 
 CSharpCodeProvider cs = new CSharpCodeProvider();

@@ -91,6 +91,8 @@ compiledStringRunner.Set(search);
 
 for (var time = 0; time < _Times; ++time)
 {
+	Console.Write("Pass {0} of {1} ", time + 1, _Times);
+	Console.WriteLine("-----------------------------------------------------------------");
 	int mc = 0;
 	var m = rx.Match(search);
 	while (m.Success)
@@ -366,7 +368,5 @@ for (var time = 0; time < _Times; ++time)
 	}
 	_WriteProgressBar(100,true);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-
-	Console.WriteLine("-----------------------------------------------------------------");
 	
 }

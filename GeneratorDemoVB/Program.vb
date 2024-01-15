@@ -17,7 +17,7 @@ Module Program
         gopts.UseSpans = False ' not supported by VB
         ' must generate our own shared code if we're not using spans
         ' and Visual FA's string runners are
-        gopts.GenerateSharedCode = FAStringRunner.UsingSpans
+        gopts.Dependencies = FAGeneratorDependencies.GenerateSharedCode
         Dim ccu = lexer.Generate(New FA() {commentEnd}, gopts)
         Dim vb As VBCodeProvider = New VBCodeProvider()
         Dim cgopts As CodeGeneratorOptions = New CodeGeneratorOptions()
