@@ -186,7 +186,7 @@ Partial Friend MustInherit Class FARunner
         Return New Enumerator(Me)
     End Function
     Function System_Collections_IEnumerable_GetEnumerator() As System.Collections.IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
-        Return Me.GetEnumerator
+        Return New Enumerator(Me)
     End Function
 End Class
 <System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>  _

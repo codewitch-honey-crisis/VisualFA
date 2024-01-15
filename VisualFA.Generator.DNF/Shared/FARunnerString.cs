@@ -102,11 +102,8 @@ internal abstract partial class FARunner : Object, IEnumerable<FAMatch>
 
 	public abstract FAMatch NextMatch();
 	public abstract void Reset();
-	public IEnumerator<FAMatch> GetEnumerator()
-	{
-		return new Enumerator(this);
-	}
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
+	public IEnumerator<FAMatch> GetEnumerator() { return new Enumerator(this); }
+	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return new Enumerator(this); }
 }
 
 internal abstract partial class FAStringRunner : FARunner

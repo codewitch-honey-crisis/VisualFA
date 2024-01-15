@@ -14,6 +14,299 @@ namespace Example {
     using System.Collections.Generic;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
+    internal partial struct FAMatch {
+        private int _symbolId;
+        private string _value;
+        private long _position;
+        private int _line;
+        private int _column;
+        ///  <summary>
+        ///  The matched symbol - this is the accept id
+        ///  </summary>
+        public int SymbolId {
+            get {
+                return this._symbolId;
+            }
+        }
+        ///  <summary>
+        ///  The matched value
+        ///  </summary>
+        public string Value {
+            get {
+                return this._value;
+            }
+        }
+        ///  <summary>
+        ///  The position of the match within the input
+        ///  </summary>
+        public long Position {
+            get {
+                return this._position;
+            }
+        }
+        ///  <summary>
+        ///  The one based line number
+        ///  </summary>
+        public int Line {
+            get {
+                return this._line;
+            }
+        }
+        ///  <summary>
+        ///  The one based column
+        ///  </summary>
+        public int Column {
+            get {
+                return this._column;
+            }
+        }
+        ///  <summary>
+        ///  Constructs a new instance
+        ///  </summary>
+        ///  <param name="symbolId">The symbol id</param>
+        ///  <param name="value">The matched value</param>
+        ///  <param name="position">The match position</param>
+        ///  <param name="line">The line</param>
+        ///  <param name="column">The column</param>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static FAMatch Create(int symbolId, string value, long position, int line, int column) {
+            FAMatch result = default(FAMatch);
+            result._symbolId = symbolId;
+            result._value = value;
+            result._position = position;
+            result._line = line;
+            result._column = column;
+            return result;
+        }
+    }
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
+    internal abstract partial class FARunner : Object, IEnumerable<FAMatch> {
+        protected internal FARunner() {
+            this.position = -1;
+            this.line = 1;
+            this.column = 0;
+            this._tabWidth = 4;
+        }
+        public class Enumerator : Object, IEnumerator<FAMatch> {
+            private int _state;
+            private FAMatch _current;
+            private WeakReference<FARunner> _parent;
+            public Enumerator(FARunner parent) {
+                this._parent = new WeakReference<FARunner>(parent);
+                this._state = -2;
+            }
+            public FAMatch Current {
+                get {
+                    if ((this._state == -3)) {
+                        throw new ObjectDisposedException("Enumerator");
+                    }
+                    if ((this._state < 0)) {
+                        throw new InvalidOperationException("The enumerator is not positioned on an element");
+                    }
+                    return this._current;
+                }
+            }
+            object System.Collections.IEnumerator.Current {
+                get {
+                    return this.Current;
+                }
+            }
+            void IDisposable.Dispose() {
+                this._state = -3;
+            }
+            public bool MoveNext() {
+                if ((this._state == -3)) {
+                    throw new ObjectDisposedException("Enumerator");
+                }
+                if ((this._state == -1)) {
+                    return false;
+                }
+                this._state = 0;
+                FARunner parent;
+                if ((false == this._parent.TryGetTarget(out parent))) {
+                    throw new InvalidOperationException("The parent was destroyed");
+                }
+                this._current = parent.NextMatch();
+                if ((this._current.SymbolId == -2)) {
+                    this._state = -2;
+                    return false;
+                }
+                return true;
+            }
+            public void Reset() {
+                if ((this._state == -3)) {
+                    throw new ObjectDisposedException("Enumerator");
+                }
+                FARunner parent;
+                if ((false == this._parent.TryGetTarget(out parent))) {
+                    throw new InvalidOperationException("The parent was destroyed");
+                }
+                parent.Reset();
+                this._state = -2;
+            }
+        }
+        ///  <summary>
+        ///  Indicates the width of a tab, in columns
+        ///  </summary>
+        public int TabWidth {
+            get {
+                return this._tabWidth;
+            }
+            set {
+                if ((value < 1)) {
+                    throw new ArgumentOutOfRangeException();
+                }
+                this._tabWidth = value;
+            }
+        }
+        private int _tabWidth;
+        protected int position;
+        protected int line;
+        protected int column;
+        protected static void ThrowUnicode(int pos) {
+            throw new IOException(string.Concat("Unicode error in stream at position ", pos.ToString()));
+        }
+        public abstract FAMatch NextMatch();
+        public abstract void Reset();
+        IEnumerator<FAMatch> IEnumerable<FAMatch>.GetEnumerator() {
+            return new Enumerator(this);
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return new Enumerator(this);
+        }
+    }
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
+    internal abstract partial class FAStringRunner : FARunner {
+        public static bool UsingSpans {
+            get {
+                return true;
+            }
+        }
+        protected string @string;
+        public void Set(string @string) {
+            this.@string = @string;
+            this.position = -1;
+            this.line = 1;
+            this.column = 1;
+        }
+        public override void Reset() {
+            this.position = -1;
+            this.line = 1;
+            this.column = 1;
+        }
+        //  much bigger, but faster code
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        protected virtual void Advance(ReadOnlySpan<Char> span, ref int ch, ref int len, bool first) {
+            if ((false == first)) {
+                len = (len + 1);
+                if ((ch > 65535)) {
+                    len = (len + 1);
+                }
+                this.position = (this.position + 1);
+            }
+            if ((this.position < span.Length)) {
+                char ch1 = span[this.position];
+                if (char.IsHighSurrogate(ch1)) {
+                    this.position = (this.position + 1);
+                    if ((this.position >= span.Length)) {
+                        FAStringRunner.ThrowUnicode(this.position);
+                    }
+                    char ch2 = span[this.position];
+                    ch = char.ConvertToUtf32(ch1, ch2);
+                }
+                else {
+                    ch = System.Convert.ToInt32(ch1);
+                }
+                if ((false == first)) {
+                    if ((ch == 10)) {
+                        this.line = (this.line + 1);
+                        this.column = 0;
+                    }
+                    else {
+                        if ((ch == 13)) {
+                            this.column = 0;
+                        }
+                        else {
+                            if ((ch == 9)) {
+                                this.column = (((this.column - 1) 
+                                            / this.TabWidth) 
+                                            * (this.TabWidth + 1));
+                            }
+                            else {
+                                if ((ch > 31)) {
+                                    this.column = (this.column + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                ch = -1;
+            }
+        }
+    }
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
+    internal abstract partial class FATextReaderRunner : FARunner {
+        protected TextReader reader;
+        protected StringBuilder capture;
+        protected int current;
+        protected FATextReaderRunner() {
+            this.capture = new StringBuilder();
+        }
+        public void Set(TextReader reader) {
+            this.reader = reader;
+            this.current = -2;
+            this.position = -1;
+            this.line = 1;
+            this.column = 0;
+        }
+        public override void Reset() {
+            throw new NotSupportedException();
+        }
+        protected virtual void Advance() {
+            if ((this.current > -1)) {
+                this.capture.Append(char.ConvertFromUtf32(this.current));
+            }
+            this.current = this.reader.Read();
+            if ((this.current == -1)) {
+                return;
+            }
+            this.position = (this.position + 1);
+            char ch1 = System.Convert.ToChar(this.current);
+            if (char.IsHighSurrogate(ch1)) {
+                this.current = this.reader.Read();
+                if ((this.current == -1)) {
+                    FATextReaderRunner.ThrowUnicode(this.position);
+                }
+                char ch2 = System.Convert.ToChar(this.current);
+                this.current = char.ConvertToUtf32(ch1, ch2);
+                this.position = (this.position + 1);
+            }
+            if ((this.current == 10)) {
+                this.line = (this.line + 1);
+                this.column = 0;
+            }
+            else {
+                if ((this.current == 13)) {
+                    this.column = 0;
+                }
+                else {
+                    if ((this.current == 9)) {
+                        this.column = (((this.column - 1) 
+                                    / this.TabWidth) 
+                                    * (this.TabWidth + 1));
+                    }
+                    else {
+                        if ((this.current > 31)) {
+                            this.column = (this.column + 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
     internal sealed partial class ExampleRunner : FAStringRunner {
         private FAMatch _BlockEnd4(ReadOnlySpan<char> s, int cp, int len, int position, int line, int column) {
         q0:

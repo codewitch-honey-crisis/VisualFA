@@ -388,17 +388,36 @@ namespace VisualFA
 			if(to==null) throw new ArgumentNullException(nameof(to));
 			if (compact)
 			{
-				_transitions.AddRange(to._transitions);
+				if (!IsDeterministic && !IsCompact)
+				{
+					_transitions.AddRange(to._transitions);
+				} else
+				{
+					for (int i = 0; i < to._transitions.Count; ++i)
+					{
+						var fat = to._transitions[i];
+						if (!fat.IsEpsilon)
+						{
+							AddTransition(new FARange(fat.Min, fat.Max), fat.To);
+						}
+						else
+						{
+							AddEpsilon(fat.To, compact);
+						}
+					}
+				}
 				if(!IsAccepting & to.IsAccepting)
 				{
 					AcceptSymbol = to.AcceptSymbol;
 				}
-			} else
+			}
+			else
 			{
 				_transitions.Add(new FATransition(to));
 				IsCompact = false;
+				IsDeterministic = false;
 			}
-			IsDeterministic = false;
+			
 		}
 		/// <summary>
 		/// Adds an input transition
@@ -414,7 +433,7 @@ namespace VisualFA
 			{
 				throw new ArgumentException("Attempt to add an epsilon using the wrong method");
 			}
-			if(IsDeterministic)
+			if (IsDeterministic)
 			{
 				for (int i = 0; i < _transitions.Count; ++i)
 				{
@@ -429,6 +448,7 @@ namespace VisualFA
 				}
 			}
 			_transitions.Add(new FATransition(to, range.Min, range.Max));
+			
 		}
 		public void ClearTransitions()
 		{

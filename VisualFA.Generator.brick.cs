@@ -214,8 +214,8 @@ new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),
 {new CodeMethodReturnStatement(new CodeObjectCreateExpression(new CodeTypeReference("Enumerator"),new CodeExpression[]{new CodeThisReferenceExpression()}))},
 new CodeTypeReference[0],new CodeTypeReference("IEnumerable`1",new CodeTypeReference[]{new CodeTypeReference("FAMatch")}),new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberMethod(new CodeTypeReference(typeof(System.Collections.IEnumerator)),
-"GetEnumerator",((MemberAttributes)(0)),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new
- CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"GetEnumerator"),new CodeExpression[0]))},new CodeTypeReference[0],new CodeTypeReference(typeof(System.Collections.IEnumerable)),
+"GetEnumerator",((MemberAttributes)(0)),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeObjectCreateExpression(new
+ CodeTypeReference("Enumerator"),new CodeExpression[]{new CodeThisReferenceExpression()}))},new CodeTypeReference[0],new CodeTypeReference(typeof(System.Collections.IEnumerable)),
 new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._TypeDeclaration("FAStringRunner",true,false,false,false,
 true,(MemberAttributes.Final|MemberAttributes.Private),(((TypeAttributes.AutoLayout|TypeAttributes.AnsiClass)|TypeAttributes.Class)|TypeAttributes.Abstract),
@@ -867,8 +867,8 @@ new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),
 new CodeStatement[]{new CodeMethodReturnStatement(new CodeObjectCreateExpression(new CodeTypeReference("Enumerator"),new CodeExpression[]{new CodeThisReferenceExpression()}))},
 new CodeTypeReference[]{new CodeTypeReference("IEnumerable`1",new CodeTypeReference[]{new CodeTypeReference("FAMatch")})},null,new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberMethod(new CodeTypeReference(typeof(System.Collections.IEnumerator)),
-"GetEnumerator",((MemberAttributes)(0)),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new
- CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"GetEnumerator"),new CodeExpression[0]))},new CodeTypeReference[0],new CodeTypeReference(typeof(System.Collections.IEnumerable)),
+"GetEnumerator",((MemberAttributes)(0)),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeObjectCreateExpression(new
+ CodeTypeReference("Enumerator"),new CodeExpression[]{new CodeThisReferenceExpression()}))},new CodeTypeReference[0],new CodeTypeReference(typeof(System.Collections.IEnumerable)),
 new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._TypeDeclaration("FAStringRunner",true,false,false,false,
 true,(MemberAttributes.Final|MemberAttributes.Private),(((TypeAttributes.AutoLayout|TypeAttributes.AnsiClass)|TypeAttributes.Class)|TypeAttributes.Abstract),

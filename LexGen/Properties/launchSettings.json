@@ -2,7 +2,7 @@
   "profiles": {
     "LexGen": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\..\\..\\Example.rl\" /nfagraph \"..\\..\\..\\Example_nfa_compact.jpg\" /dfagraph \"..\\..\\..\\Example_dfa.jpg\" /output \"..\\..\\..\\ExampleRunner.cs\" /namespace Example /noshared /vertical"
+      "commandLineArgs": "\"..\\..\\..\\Example.rl\" /nfagraph \"..\\..\\..\\Example_nfa_compact.jpg\" /dfagraph \"..\\..\\..\\Example_dfa.jpg\" /output \"..\\..\\..\\ExampleRunner.cs\" /namespace Example /vertical"
     }
   }
 }
