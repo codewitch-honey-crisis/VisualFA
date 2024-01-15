@@ -41,12 +41,6 @@ namespace ArticleImages
 		{
 			var commentBlock = FA.Parse(@"\/\*", 0, false);
 			var commentBlockEnd = FA.Parse(@"\*\/", 0, false);
-
-			foreach(var match in commentBlock.Run("foo /*bar*/ baz",new FA[] { commentBlockEnd}))
-			{
-				Console.WriteLine("{0}:{1} at {2}", match.SymbolId,match.Value,match.Position);
-			}
-			return;
 			var commentLine = FA.Parse(@"\/\/[^\n]*", 1, false);
 			var wspace = FA.Parse("[ \\t\\r\\n]+", 2, false);
 			var ident = FA.Parse("[A-Za-z_][A-Za-z0-9_]*", 3, false);

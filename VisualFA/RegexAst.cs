@@ -82,7 +82,7 @@ namespace VisualFA
 		/// <param name="accept">The accept symbol to use for this expression</param>
 		/// <param name="compact">True to generate a compact NFA, otherwise generated an expanded NFA</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-		public abstract FA ToFA(int accept,bool compact = true);
+		public abstract FA ToFA(int accept = 0,bool compact = true);
 		/// <summary>
 		/// Appends the textual representation to a <see cref="StringBuilder"/>
 		/// </summary>
@@ -1126,7 +1126,7 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-		public override FA ToFA(int accept, bool compact = true)
+		public override FA ToFA(int accept = 0, bool compact = true)
 			=> FA.Literal(Codepoints, accept, compact);
 		/// <summary>
 		/// Appends the textual representation to a <see cref="StringBuilder"/>
@@ -1639,7 +1639,7 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-		public override FA ToFA(int accept, bool compact = true)
+		public override FA ToFA(int accept = 0, bool compact = true)
 		{
 			var ranges = new List<FARange>();
 			for (int ic = Entries.Count, i = 0; i < ic; ++i)
@@ -1869,7 +1869,7 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-		public override FA ToFA(int accept, bool compact = true)
+		public override FA ToFA(int accept = 0, bool compact = true)
 		{
 			if (null == Left)
 				return (null != Right) ? Right.ToFA(accept) : null;
@@ -2021,7 +2021,7 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-		public override FA ToFA(int accept, bool compact = true)
+		public override FA ToFA(int accept = 0, bool compact = true)
 		{
 			var left = (null != Left) ? Left.ToFA(accept,compact) : null;
 			var right = (null != Right) ? Right.ToFA(accept,compact) : null;
@@ -2141,7 +2141,7 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-		public override FA ToFA(int accept, bool compact = true)
+		public override FA ToFA(int accept = 0, bool compact = true)
 			=> null != Expression ? FA.Optional(Expression.ToFA(accept,compact), accept,compact) : null;
 		/// <summary>
 		/// Appends the textual representation to a <see cref="StringBuilder"/>
@@ -2275,7 +2275,7 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>		
-		public override FA ToFA(int accept, bool compact = true)
+		public override FA ToFA(int accept = 0, bool compact = true)
 			=> null != Expression ? FA.Repeat(Expression.ToFA(accept,compact), MinOccurs, MaxOccurs, accept,compact) : null;
 		/// <summary>
 		/// Appends the textual representation to a <see cref="StringBuilder"/>

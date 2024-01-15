@@ -64,22 +64,9 @@ internal sealed partial class CommentRunner : FAStringRunner {
             this.Advance(s, ref ch, ref len, false);
             goto q2;
         }
-        if ((ch == 47)) {
-            this.Advance(s, ref ch, ref len, false);
-            goto q3;
-        }
         goto errorout;
     q2:
         return _BlockEnd0(s, ch, len, p, l, c);
-    q3:
-        if ((((ch >= 0) 
-                    && (ch <= 9)) 
-                    || ((ch >= 11) 
-                    && (ch <= 1114111)))) {
-            this.Advance(s, ref ch, ref len, false);
-            goto q3;
-        }
-        return FAMatch.Create(1, s.Slice(p, len).ToString(), p, l, c);
     errorout:
         if (((ch == -1) 
                     || (ch == 47))) {

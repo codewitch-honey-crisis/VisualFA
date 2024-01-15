@@ -1752,18 +1752,18 @@ string s
 int ch=-1;Advance(s,ref ch,ref len,true);if(_fa.IsDeterministic){dfaState=_fa;dfaInitial=_fa;}else{_initial.Clear();if(_fa.IsCompact){_initial.Add(_fa);
 }else{_One[0]=_fa;FA.FillEpsilonClosure(_One,_initial);}_states.Clear();_states.AddRange(_initial);}while(true){if(dfaState!=null){dfaNext=dfaState.Move(ch);
 }else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,ch,_nexts);}if(dfaNext!=null){Advance(s,ref ch,ref len,false);if(dfaNext.IsDeterministic){dfaState
-=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{_One[0]=dfaNext;FA.FillEpsilonClosure(_One,_states);}}dfaNext=null;}else
- if(_nexts.Count>0){Advance(s,ref ch,ref len,false);if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;_states.Clear();
-if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}dfaState=null;}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,
-_states);}_nexts.Clear();}else{int acc;if(dfaState!=null){acc=dfaState.AcceptSymbol;}else{acc=FA.GetFirstAcceptSymbol(_states);}if(acc>-1){if(_blockEnds
-!=null&&_blockEnds.Length>acc&&_blockEnds[acc]!=null){var be=_blockEnds[acc];if(be.IsDeterministic){dfaState=be;dfaInitial=be;_states.Clear();}else{dfaState
-=null;dfaInitial=null;_initial.Clear();if(be.IsCompact){_initial.Add(be);}else{_One[0]=be;FA.FillEpsilonClosure(_One,_initial);}_states.Clear();_states.AddRange(_initial);
-}while(true){if(dfaState!=null){dfaNext=dfaState.Move(ch);}else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,ch,_nexts);}if(dfaNext!=null){Advance(s,
-ref ch,ref len,false);if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{_One[0]=dfaNext;
-FA.FillEpsilonClosure(_One,_states);}dfaState=null;}dfaNext=null;}else if(_nexts.Count>0){Advance(s,ref ch,ref len,false);if(_nexts.Count==1){var ffa=
-_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);
-}else{_states.Add(ffa);}dfaState=null;}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{if(dfaState!=null){if(dfaState.IsAccepting)
-{return FAMatch.Create(acc,
+=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{_One[0]=dfaNext;FA.FillEpsilonClosure(_One,_states);}dfaState=null;}dfaNext
+=null;}else if(_nexts.Count>0){Advance(s,ref ch,ref len,false);if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext
+=null;_states.Clear();if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}dfaState=null;}}else{_states.Clear();
+FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{int acc;if(dfaState!=null){acc=dfaState.AcceptSymbol;}else{acc=FA.GetFirstAcceptSymbol(_states);
+}if(acc>-1){if(_blockEnds!=null&&_blockEnds.Length>acc&&_blockEnds[acc]!=null){var be=_blockEnds[acc];if(be.IsDeterministic){dfaState=be;dfaInitial=be;
+_states.Clear();}else{dfaState=null;dfaInitial=null;_initial.Clear();if(be.IsCompact){_initial.Add(be);}else{_One[0]=be;FA.FillEpsilonClosure(_One,_initial);
+}_states.Clear();_states.AddRange(_initial);}while(true){if(dfaState!=null){dfaNext=dfaState.Move(ch);}else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,
+ch,_nexts);}if(dfaNext!=null){Advance(s,ref ch,ref len,false);if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact)
+{_states.Add(dfaNext);}else{_One[0]=dfaNext;FA.FillEpsilonClosure(_One,_states);}dfaState=null;}dfaNext=null;}else if(_nexts.Count>0){Advance(s,ref ch,
+ref len,false);if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;_states.Clear();}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact)
+{_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}dfaState=null;}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();
+}else{if(dfaState!=null){if(dfaState.IsAccepting){return FAMatch.Create(acc,
 #if FALIB_SPANS
 s.Slice(unchecked((int)cursor_pos),len).ToString()
 #else
@@ -1865,7 +1865,7 @@ protected abstract RegexExpression CloneImpl();object ICloneable.Clone()=>CloneI
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <param name="compact">True to generate a compact NFA, otherwise generated an expanded NFA</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public abstract FA ToFA(int accept,bool compact=true);/// <summary>
+public abstract FA ToFA(int accept=0,bool compact=true);/// <summary>
 /// Appends the textual representation to a <see cref="StringBuilder"/>
 /// </summary>
 /// <param name="sb">The string builder to use</param>
@@ -2048,7 +2048,7 @@ public RegexLiteralExpression(){}/// <summary>
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept,bool compact=true)=>FA.Literal(Codepoints,accept,compact);/// <summary>
+public override FA ToFA(int accept=0,bool compact=true)=>FA.Literal(Codepoints,accept,compact);/// <summary>
 /// Appends the textual representation to a <see cref="StringBuilder"/>
 /// </summary>
 /// <param name="sb">The string builder to use</param>
@@ -2344,9 +2344,9 @@ public RegexCharsetExpression(){}/// <summary>
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept,bool compact=true){var ranges=new List<FARange>();for(int ic=Entries.Count,i=0;i<ic;++i){var entry=Entries[i];var crc
-=entry as RegexCharsetCharEntry;if(null!=crc)ranges.Add(new FARange(crc.Codepoint,crc.Codepoint));var crr=entry as RegexCharsetRangeEntry;if(null!=crr)
-ranges.Add(new FARange(crr.FirstCodepoint,crr.LastCodepoint));var crcl=entry as RegexCharsetClassEntry;if(null!=crcl){var known=FA.CharacterClasses.Known[crcl.Name];
+public override FA ToFA(int accept=0,bool compact=true){var ranges=new List<FARange>();for(int ic=Entries.Count,i=0;i<ic;++i){var entry=Entries[i];var
+ crc=entry as RegexCharsetCharEntry;if(null!=crc)ranges.Add(new FARange(crc.Codepoint,crc.Codepoint));var crr=entry as RegexCharsetRangeEntry;if(null!=
+crr)ranges.Add(new FARange(crr.FirstCodepoint,crr.LastCodepoint));var crcl=entry as RegexCharsetClassEntry;if(null!=crcl){var known=FA.CharacterClasses.Known[crcl.Name];
 for(int j=0;j<known.Length;j+=2){ranges.Add(new FARange(known[j],known[j+1]));}}}if(HasNegatedRanges)return FA.Set(FARange.ToNotRanges(ranges),accept,compact);
 return FA.Set(ranges,accept,compact);}/// <summary>
 /// Indicates whether the range is a "not range"
@@ -2434,7 +2434,7 @@ public RegexConcatExpression(){}/// <summary>
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept,bool compact=true){if(null==Left)return(null!=Right)?Right.ToFA(accept):null;else if(null==Right)return Left.ToFA(accept);
+public override FA ToFA(int accept=0,bool compact=true){if(null==Left)return(null!=Right)?Right.ToFA(accept):null;else if(null==Right)return Left.ToFA(accept);
 return FA.Concat(new FA[]{Left.ToFA(accept),Right.ToFA(accept)},accept,compact);}/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
@@ -2507,7 +2507,7 @@ public RegexOrExpression(){}/// <summary>
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept,bool compact=true){var left=(null!=Left)?Left.ToFA(accept,compact):null;var right=(null!=Right)?Right.ToFA(accept,compact)
+public override FA ToFA(int accept=0,bool compact=true){var left=(null!=Left)?Left.ToFA(accept,compact):null;var right=(null!=Right)?Right.ToFA(accept,compact)
 :null;return FA.Or(new FA[]{left,right},accept,compact);}/// <summary>
 /// Appends the textual representation to a <see cref="StringBuilder"/>
 /// </summary>
@@ -2576,7 +2576,7 @@ public RegexOptionalExpression(){}/// <summary>
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept,bool compact=true)=>null!=Expression?FA.Optional(Expression.ToFA(accept,compact),accept,compact):null;/// <summary>
+public override FA ToFA(int accept=0,bool compact=true)=>null!=Expression?FA.Optional(Expression.ToFA(accept,compact),accept,compact):null;/// <summary>
 /// Appends the textual representation to a <see cref="StringBuilder"/>
 /// </summary>
 /// <param name="sb">The string builder to use</param>
@@ -2654,8 +2654,8 @@ public int MaxOccurs{get;set;}=-1;/// <summary>
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>		
-public override FA ToFA(int accept,bool compact=true)=>null!=Expression?FA.Repeat(Expression.ToFA(accept,compact),MinOccurs,MaxOccurs,accept,compact):
-null;/// <summary>
+public override FA ToFA(int accept=0,bool compact=true)=>null!=Expression?FA.Repeat(Expression.ToFA(accept,compact),MinOccurs,MaxOccurs,accept,compact)
+:null;/// <summary>
 /// Appends the textual representation to a <see cref="StringBuilder"/>
 /// </summary>
 /// <param name="sb">The string builder to use</param>
