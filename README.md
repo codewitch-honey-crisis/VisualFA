@@ -9,14 +9,13 @@ Portions of this code in the file FA.cs were derived from code created by other 
 
 ### Build Tools Notice
 
-The three executables in the root folder are necessary for the build process.
+The two executables in the root folder are necessary for the build process.
 They are safe decompilable .NET assemblies
 
 CSBrick - https://github.com/codewitch-honey-crisis/CSBrick
 
 DSlang - https://github.com/codewitch-honey-crisis/Deslang
 
-The other executable is created by the CharClsTableGen project
 
 ### Performance 
 
