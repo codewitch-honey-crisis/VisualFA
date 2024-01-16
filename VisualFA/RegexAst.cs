@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 
 namespace VisualFA
 {
@@ -490,7 +491,7 @@ namespace VisualFA
 					{
 						var l = pc.CaptureBuffer.Length;
 						pc.TryReadDigits();
-						min = int.Parse(pc.GetCapture(l));
+						min = int.Parse(pc.GetCapture(l), CultureInfo.InvariantCulture.NumberFormat);
 						pc.TrySkipWhiteSpace();
 					}
 					if (','==pc.Codepoint)
@@ -502,7 +503,7 @@ namespace VisualFA
 						{
 							var l = pc.CaptureBuffer.Length;
 							pc.TryReadDigits();
-							max = int.Parse(pc.GetCapture(l));
+							max = int.Parse(pc.GetCapture(l),CultureInfo.InvariantCulture.NumberFormat);
 							pc.TrySkipWhiteSpace();
 						}
 					} else { max = min; }

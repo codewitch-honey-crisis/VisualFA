@@ -5,7 +5,6 @@ using Microsoft.VisualBasic;
 
 using VisualFA;
 
-
 var exp = "/* foo *//*baz*/ &%^ the quick /*bar */#(@*$//brown fox /* tricky */ jumped over the -10 $#(%*& lazy dog ^%$@@";
 var commentStart = FA.Parse(@"\/\*", 0, false);
 var commentEnd = FA.Parse(@"\*\/", 0, false);

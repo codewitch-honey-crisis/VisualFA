@@ -63,7 +63,9 @@ namespace ArticleImages
 			var lexer_mdfa = FA.ToLexer(exprsMinDfa);
 			opts.BlockEnds = blockEndsMinDfa;
 			lexer_mdfa.RenderCPFile(@"..\..\lexer_min_dfa.png", opts);
-
+			opts.BlockEnds = null;
+			opts.HideAcceptSymbolIds = true;
+			lexer_nfa.ToLinearized(true,false).Key.RenderCPFile(@"..\..\lexer_linearized.png", opts);
 			opts.Vertical = false;
 			opts.AcceptSymbolNames = null;
 			opts.HideAcceptSymbolIds = true;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -949,6 +950,9 @@ public static readonly FAFindFilter FinalFilter=new FAFindFilter((FA state)=>{re
 /// A filter that returns any neutral states
 /// </summary>
 public static readonly FAFindFilter NeutralFilter=new FAFindFilter((FA state)=>{return state.IsNeutral;});/// <summary>
+/// A filter that returns any trap states
+/// </summary>
+public static readonly FAFindFilter TrapFilter=new FAFindFilter((FA state)=>{return state.IsTrap;});/// <summary>
 /// Constructs a non-accepting state
 /// </summary>
 public FA(){}/// <summary>
@@ -980,6 +984,9 @@ public bool IsAccepting{get{return AcceptSymbol>-1;}}/// <summary>
 /// Indicates if the state has no transitions
 /// </summary>
 public bool IsFinal{get{return _transitions.Count==0;}}/// <summary>
+/// Indicates that the state is a honeypot for expressions going nowhere, usually to specifically disallow certain matches.
+/// </summary>
+public bool IsTrap{get{return!IsAccepting&&IsFinal;}}/// <summary>
 /// Indicates if the state is neutral in that it does not change the accepted language
 /// </summary>
 public bool IsNeutral{get{return!IsAccepting&&_transitions.Count==1&&_transitions[0].IsEpsilon;}}/// <summary>
@@ -1001,6 +1008,36 @@ public void AddTransition(FARange range,FA to){if(to==null)throw new ArgumentNul
 }if(IsDeterministic){for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(fat.To!=to){if(range.Intersects(new FARange(fat.Min,fat.Max))){IsDeterministic
 =false;break;}}}}_transitions.Add(new FATransition(to,range.Min,range.Max));}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;
 IsCompact=true;}/// <summary>
+/// Ensures that the machine has no incoming transitions to the starting state, as well as only one final state.
+/// </summary>
+/// <param name="start">The start state, in case a new one needs to be created.</param>
+/// <param name="end">The end state, in case a new one needs to be created</param>
+/// <param name="compact">True to compact any generated epsilons, otherwise false</param>
+/// <param name="flattenAccepting">Move the accepting status of any found accepting states to the new final state</param>
+/// <returns>True if the machine was modified, otherwise it was already linear</returns>
+public bool Linearize(out FA start,out FA end,bool flattenAccepting=false,bool compact=true){bool result=false;FA final=null;var acc=this.FillFind(AcceptingFilter);
+var traps=this.FillFind(TrapFilter);end=null;if(acc.Count+traps.Count>0){if(acc.Count>0){end=acc[0];}else{end=traps[0];}}start=this;var closure=FillClosure();
+if(IsLoop(closure)){start=new FA();start.AddEpsilon(this,compact);result=true;}if(traps.Count>0){final=new FA();for(int i=0;i<traps.Count;++i){result=
+true;end=final;traps[i].AddEpsilon(final);}}if(final!=null||acc.Count>1||(acc.Count>0&&!acc[0].IsFinal)){if(final==null){final=new FA();}for(int i=0;i
+<acc.Count;++i){result=true;end=final;acc[i].AddEpsilon(final,compact);}}if(flattenAccepting&&acc.Count>0&&final!=null){if(traps.Count>0){throw new FAException("Cannot flatten accepting symbols without changing the language due to the presence of trap states.");
+}else{final.AcceptSymbol=GetFirstAcceptSymbol(acc);result=true;for(int i=0;i<acc.Count;++i){acc[i].AcceptSymbol=-1;}}}return result;}/// <summary>
+/// A convenience method for returning a new <see cref="Linearize(out FA, bool)"/>ed copy of this machine
+/// </summary>
+/// <param name="flattenAccepting">Move the accepting status of any found accepting states to the new final state</param>
+/// <param name="compact">True to compact any created epsilons, otherwise false</param>
+/// <returns>A <see cref="KeyValuePair{FA, FA}"/> where the key is the new start, and the value is the new end of a new equivelent machine that has no incoming transitions to q0 and only one final state</returns>
+public KeyValuePair<FA,FA>ToLinearized(bool flattenAccepting=false,bool compact=true){FA fa=Clone();FA start,end;fa.Linearize(out start,out end,flattenAccepting,
+compact);return new KeyValuePair<FA,FA>(start,end);}/// <summary>
+/// Indicates whether q0 of the machine indicated by <paramref name="closure"/> is looping.
+/// </summary>
+/// <param name="closure">The closure of the machine</param>
+/// <returns>True if q0 has incoming transitions, otherwise false</returns>
+static bool IsLoop(IList<FA>closure){var fa=closure[0];for(int q=0;q<closure.Count;++q){var cfa=closure[q];for(int i=0;i<cfa._transitions.Count;++i){if
+(cfa._transitions[i].To==fa)return true;}}return false;}/// <summary>
+/// Indicates whether this machine loops back to its root state (q0).
+/// </summary>
+/// <returns>True if q0 (this state) has incoming transitions, otherwise false</returns>
+public bool IsLoop(){return IsLoop(FillClosure());}/// <summary>
 /// Set the ids for each state in this machine
 /// </summary>
 public void SetIds(){var cls=new List<FA>();FillClosure(cls);var closure=cls.ToArray();for(int i=0;i<closure.Length;++i){closure[i].Id=i;}}/// <summary>
@@ -1203,30 +1240,30 @@ compact);}if(makeDfa){return result.ToDfa(progress);}else{return result;}}
 static FA _ParseModifier(FA expr,StringCursor pc,int accept,bool compact){var position=pc.Position;switch(pc.Codepoint){case'*':expr=Repeat(expr,0,0,accept,
 compact);pc.Advance();break;case'+':expr=Repeat(expr,1,0,accept,compact);pc.Advance();break;case'?':expr=Optional(expr,accept,compact);pc.Advance();break;
 case'{':pc.Advance();pc.TrySkipWhiteSpace();pc.Expecting('0','1','2','3','4','5','6','7','8','9',',','}');var min=-1;var max=-1;if(','!=pc.Codepoint&&
-'}'!=pc.Codepoint){var l=pc.CaptureBuffer.Length;pc.TryReadDigits();min=int.Parse(pc.GetCapture(l));pc.TrySkipWhiteSpace();}if(','==pc.Codepoint){pc.Advance();
-pc.TrySkipWhiteSpace();pc.Expecting('0','1','2','3','4','5','6','7','8','9','}');if('}'!=pc.Codepoint){var l=pc.CaptureBuffer.Length;pc.TryReadDigits();
-max=int.Parse(pc.GetCapture(l));pc.TrySkipWhiteSpace();}}else{max=min;}pc.Expecting('}');pc.Advance();expr=Repeat(expr,min,max,accept,compact);break;}
-return expr;}static byte _FromHexChar(int hex){if(':'>hex&&'/'<hex)return(byte)(hex-'0');if('G'>hex&&'@'<hex)return(byte)(hex-'7'); if('g'>hex&&'`'<hex)
-return(byte)(hex-'W'); throw new ArgumentException("The value was not hex.","hex");}static bool _IsHexChar(int hex){if(':'>hex&&'/'<hex)return true;if
-('G'>hex&&'@'<hex)return true;if('g'>hex&&'`'<hex)return true;return false;} static int _ParseEscapePart(StringCursor pc){if(-1==pc.Codepoint)return-1;
-switch(pc.Codepoint){case'f':pc.Advance();return'\f';case'v':pc.Advance();return'\v';case't':pc.Advance();return'\t';case'n':pc.Advance();return'\n';case
-'r':pc.Advance();return'\r';case'x':if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return'x';byte b=_FromHexChar(pc.Codepoint);if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))
+'}'!=pc.Codepoint){var l=pc.CaptureBuffer.Length;pc.TryReadDigits();min=int.Parse(pc.GetCapture(l),CultureInfo.InvariantCulture.NumberFormat);pc.TrySkipWhiteSpace();
+}if(','==pc.Codepoint){pc.Advance();pc.TrySkipWhiteSpace();pc.Expecting('0','1','2','3','4','5','6','7','8','9','}');if('}'!=pc.Codepoint){var l=pc.CaptureBuffer.Length;
+pc.TryReadDigits();max=int.Parse(pc.GetCapture(l),CultureInfo.InvariantCulture.NumberFormat);pc.TrySkipWhiteSpace();}}else{max=min;}pc.Expecting('}');
+pc.Advance();expr=Repeat(expr,min,max,accept,compact);break;}return expr;}static byte _FromHexChar(int hex){if(':'>hex&&'/'<hex)return(byte)(hex-'0');
+if('G'>hex&&'@'<hex)return(byte)(hex-'7'); if('g'>hex&&'`'<hex)return(byte)(hex-'W'); throw new ArgumentException("The value was not hex.","hex");}static
+ bool _IsHexChar(int hex){if(':'>hex&&'/'<hex)return true;if('G'>hex&&'@'<hex)return true;if('g'>hex&&'`'<hex)return true;return false;} static int _ParseEscapePart(StringCursor
+ pc){if(-1==pc.Codepoint)return-1;switch(pc.Codepoint){case'f':pc.Advance();return'\f';case'v':pc.Advance();return'\v';case't':pc.Advance();return'\t';
+case'n':pc.Advance();return'\n';case'r':pc.Advance();return'\r';case'x':if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return'x';byte b=_FromHexChar(pc.Codepoint);
+if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))
 return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);
-if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);return unchecked(b);case'u':if(-1==pc.Advance())
-return'u';ushort u=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return
- unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);return unchecked(u);default:int
- i=pc.Codepoint;pc.Advance();return i;}}static int _ParseRangeEscapePart(StringCursor pc){if(-1==pc.Codepoint)return-1;switch(pc.Codepoint){case'0':pc.Advance();
-return'\0';case'f':pc.Advance();return'\f';case'v':pc.Advance();return'\v';case't':pc.Advance();return'\t';case'n':pc.Advance();return'\n';case'r':pc.Advance();
-return'\r';case'x':if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return'x';byte b=_FromHexChar(pc.Codepoint);if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))
+return unchecked(b);case'u':if(-1==pc.Advance())return'u';ushort u=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);
+u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);
+return unchecked(u);default:int i=pc.Codepoint;pc.Advance();return i;}}static int _ParseRangeEscapePart(StringCursor pc){if(-1==pc.Codepoint)return-1;
+switch(pc.Codepoint){case'0':pc.Advance();return'\0';case'f':pc.Advance();return'\f';case'v':pc.Advance();return'\v';case't':pc.Advance();return'\t';case
+'n':pc.Advance();return'\n';case'r':pc.Advance();return'\r';case'x':if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return'x';byte b=_FromHexChar(pc.Codepoint);
+if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))
 return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);
-if(-1==pc.Advance()||!_IsHexChar(pc.Codepoint))return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);return unchecked(b);case'u':if(-1==pc.Advance())
-return'u';ushort u=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return
- unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);return unchecked(u);default:int
- i=pc.Codepoint;pc.Advance();return i;}}static KeyValuePair<bool,FARange[]>_ParseSet(StringCursor pc){var result=new List<FARange>();pc.EnsureStarted();
-pc.Expecting('[');pc.Advance();pc.Expecting();var isNot=false;if('^'==pc.Codepoint){isNot=true;pc.Advance();pc.Expecting();}var firstRead=true;int firstChar
-='\0';var readFirstChar=false;var wantRange=false;while(-1!=pc.Codepoint&&(firstRead||']'!=pc.Codepoint)){if(!wantRange){ if('['==pc.Codepoint){int epos
-=pc.Position;pc.Advance();pc.Expecting();if(':'!=pc.Codepoint){firstChar='[';readFirstChar=true;}else{firstRead=false;pc.Advance();pc.Expecting();var ll
-=pc.CaptureBuffer.Length;if(!pc.TryReadUntil(':',false))throw new FAParseException("Expecting character class",pc.Position);pc.Expecting(':');pc.Advance();
+return unchecked(b);case'u':if(-1==pc.Advance())return'u';ushort u=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);
+u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);
+return unchecked(u);default:int i=pc.Codepoint;pc.Advance();return i;}}static KeyValuePair<bool,FARange[]>_ParseSet(StringCursor pc){var result=new List<FARange>();
+pc.EnsureStarted();pc.Expecting('[');pc.Advance();pc.Expecting();var isNot=false;if('^'==pc.Codepoint){isNot=true;pc.Advance();pc.Expecting();}var firstRead
+=true;int firstChar='\0';var readFirstChar=false;var wantRange=false;while(-1!=pc.Codepoint&&(firstRead||']'!=pc.Codepoint)){if(!wantRange){ if('['==pc.Codepoint)
+{int epos=pc.Position;pc.Advance();pc.Expecting();if(':'!=pc.Codepoint){firstChar='[';readFirstChar=true;}else{firstRead=false;pc.Advance();pc.Expecting();
+var ll=pc.CaptureBuffer.Length;if(!pc.TryReadUntil(':',false))throw new FAParseException("Expecting character class",pc.Position);pc.Expecting(':');pc.Advance();
 pc.Expecting(']');pc.Advance();var cls=pc.GetCapture(ll);int[]ranges;if(!CharacterClasses.Known.TryGetValue(cls,out ranges))throw new FAParseException("Unknown character class \""
 +cls+"\" specified",epos);if(ranges!=null){result.AddRange(FARange.ToUnpacked(ranges));}readFirstChar=false;wantRange=false;firstRead=false;continue;}
 }if(!readFirstChar){if('\\'==pc.Codepoint){pc.Advance();firstChar=_ParseRangeEscapePart(pc);}else{firstChar=pc.Codepoint;pc.Advance();pc.Expecting();}
@@ -1924,10 +1961,10 @@ readDash=false;}else{if(readDash)result.Add(next);readDash=true;}break;default:i
 switch(pc.Codepoint){case'*':expr=new RegexRepeatExpression(expr);expr.SetLocation(position);pc.Advance();break;case'+':expr=new RegexRepeatExpression(expr,
 1);expr.SetLocation(position);pc.Advance();break;case'?':expr=new RegexOptionalExpression(expr);expr.SetLocation(position);pc.Advance();break;case'{':
 pc.Advance();pc.TrySkipWhiteSpace();pc.Expecting('0','1','2','3','4','5','6','7','8','9',',','}');var min=-1;var max=-1;if(','!=pc.Codepoint&&'}'!=pc.Codepoint)
-{var l=pc.CaptureBuffer.Length;pc.TryReadDigits();min=int.Parse(pc.GetCapture(l));pc.TrySkipWhiteSpace();}if(','==pc.Codepoint){pc.Advance();pc.TrySkipWhiteSpace();
-pc.Expecting('0','1','2','3','4','5','6','7','8','9','}');if('}'!=pc.Codepoint){var l=pc.CaptureBuffer.Length;pc.TryReadDigits();max=int.Parse(pc.GetCapture(l));
-pc.TrySkipWhiteSpace();}}else{max=min;}pc.Expecting('}');pc.Advance();expr=new RegexRepeatExpression(expr,min,max);expr.SetLocation(position);break;}return
- expr;}/// <summary>
+{var l=pc.CaptureBuffer.Length;pc.TryReadDigits();min=int.Parse(pc.GetCapture(l),CultureInfo.InvariantCulture.NumberFormat);pc.TrySkipWhiteSpace();}if
+(','==pc.Codepoint){pc.Advance();pc.TrySkipWhiteSpace();pc.Expecting('0','1','2','3','4','5','6','7','8','9','}');if('}'!=pc.Codepoint){var l=pc.CaptureBuffer.Length;
+pc.TryReadDigits();max=int.Parse(pc.GetCapture(l),CultureInfo.InvariantCulture.NumberFormat);pc.TrySkipWhiteSpace();}}else{max=min;}pc.Expecting('}');
+pc.Advance();expr=new RegexRepeatExpression(expr,min,max);expr.SetLocation(position);break;}return expr;}/// <summary>
 /// Appends a character escape to the specified <see cref="StringBuilder"/>
 /// </summary>
 /// <param name="ch">The character to escape</param>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -330,6 +331,11 @@ namespace VisualFA
 		/// </summary>
 		public static readonly FAFindFilter NeutralFilter = new FAFindFilter((FA state) => { return state.IsNeutral; });
 		/// <summary>
+		/// A filter that returns any trap states
+		/// </summary>
+		public static readonly FAFindFilter TrapFilter = new FAFindFilter((FA state) => { return state.IsTrap; });
+
+		/// <summary>
 		/// Constructs a non-accepting state
 		/// </summary>
 		public FA()
@@ -383,6 +389,10 @@ namespace VisualFA
 		/// Indicates if the state has no transitions
 		/// </summary>
 		public bool IsFinal { get {  return _transitions.Count==0; } }
+		/// <summary>
+		/// Indicates that the state is a honeypot for expressions going nowhere, usually to specifically disallow certain matches.
+		/// </summary>
+		public bool IsTrap { get { return !IsAccepting && IsFinal; } }
 		/// <summary>
 		/// Indicates if the state is neutral in that it does not change the accepted language
 		/// </summary>
@@ -464,6 +474,120 @@ namespace VisualFA
 			_transitions.Clear();
 			IsDeterministic = true;
 			IsCompact = true;
+		}
+		/// <summary>
+		/// Ensures that the machine has no incoming transitions to the starting state, as well as only one final state.
+		/// </summary>
+		/// <param name="start">The start state, in case a new one needs to be created.</param>
+		/// <param name="end">The end state, in case a new one needs to be created</param>
+		/// <param name="compact">True to compact any generated epsilons, otherwise false</param>
+		/// <param name="flattenAccepting">Move the accepting status of any found accepting states to the new final state</param>
+		/// <returns>True if the machine was modified, otherwise it was already linear</returns>
+		public bool Linearize(out FA start, out FA end, bool flattenAccepting=false, bool compact = true)
+		{
+			bool result = false;
+			FA final = null;
+			var acc = this.FillFind(AcceptingFilter);
+			var traps = this.FillFind(TrapFilter);
+			end = null;
+			if(acc.Count+traps.Count>0)
+			{
+				if(acc.Count>0)
+				{
+					end = acc[0];
+				} else
+				{
+					end = traps[0];
+				}
+			} 
+			start = this;
+			var closure = FillClosure();
+			if (IsLoop(closure))
+			{
+				start = new FA();
+				start.AddEpsilon(this, compact);
+				result = true;
+			}
+			if(traps.Count>0)
+			{
+				final = new FA();
+				for (int i = 0; i < traps.Count; ++i)
+				{
+					result = true;
+					end = final;
+					traps[i].AddEpsilon(final);
+				}
+			}
+			
+			if (final!=null || acc.Count >1 || (acc.Count>0&&!acc[0].IsFinal))
+			{
+				if (final == null)
+				{
+					final = new FA();
+				}
+				for (int i = 0; i < acc.Count; ++i)
+				{
+					result = true;
+					end = final;
+					acc[i].AddEpsilon(final, compact);
+				}
+			}
+			if(flattenAccepting && acc.Count>0 && final!=null)
+			{
+				if(traps.Count>0)
+				{
+					throw new FAException("Cannot flatten accepting symbols without changing the language due to the presence of trap states.");
+				} else
+				{
+					final.AcceptSymbol = GetFirstAcceptSymbol(acc);
+					result = true;
+					for(int i = 0;i<acc.Count;++i)
+					{
+						acc[i].AcceptSymbol = -1;
+					}
+				}
+				
+			}
+			return result;
+		}
+		/// <summary>
+		/// A convenience method for returning a new <see cref="Linearize(out FA, bool)"/>ed copy of this machine
+		/// </summary>
+		/// <param name="flattenAccepting">Move the accepting status of any found accepting states to the new final state</param>
+		/// <param name="compact">True to compact any created epsilons, otherwise false</param>
+		/// <returns>A <see cref="KeyValuePair{FA, FA}"/> where the key is the new start, and the value is the new end of a new equivelent machine that has no incoming transitions to q0 and only one final state</returns>
+		public KeyValuePair<FA,FA> ToLinearized(bool flattenAccepting = false,bool compact = true)
+		{
+			FA fa = Clone();
+			FA start, end;
+			fa.Linearize(out start, out end, flattenAccepting, compact);
+			return new KeyValuePair<FA, FA>(start,end);
+		}
+		/// <summary>
+		/// Indicates whether q0 of the machine indicated by <paramref name="closure"/> is looping.
+		/// </summary>
+		/// <param name="closure">The closure of the machine</param>
+		/// <returns>True if q0 has incoming transitions, otherwise false</returns>
+		static bool IsLoop(IList<FA> closure)
+		{
+			var fa = closure[0];
+			for (int q = 0; q < closure.Count; ++q)
+			{
+				var cfa = closure[q];
+				for (int i = 0; i < cfa._transitions.Count; ++i)
+				{
+					if (cfa._transitions[i].To == fa) return true;
+				}
+			}
+			return false;
+		}
+		/// <summary>
+		/// Indicates whether this machine loops back to its root state (q0).
+		/// </summary>
+		/// <returns>True if q0 (this state) has incoming transitions, otherwise false</returns>
+		public bool IsLoop()
+		{
+			return IsLoop(FillClosure());
 		}
 		/// <summary>
 		/// Set the ids for each state in this machine
@@ -1171,7 +1295,7 @@ namespace VisualFA
 					{
 						var l = pc.CaptureBuffer.Length;
 						pc.TryReadDigits();
-						min = int.Parse(pc.GetCapture(l));
+						min = int.Parse(pc.GetCapture(l), CultureInfo.InvariantCulture.NumberFormat);
 						pc.TrySkipWhiteSpace();
 					}
 					if (',' == pc.Codepoint)
@@ -1183,7 +1307,7 @@ namespace VisualFA
 						{
 							var l = pc.CaptureBuffer.Length;
 							pc.TryReadDigits();
-							max = int.Parse(pc.GetCapture(l));
+							max = int.Parse(pc.GetCapture(l), CultureInfo.InvariantCulture.NumberFormat);
 							pc.TrySkipWhiteSpace();
 						}
 					}
