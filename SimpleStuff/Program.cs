@@ -3,7 +3,7 @@
 using VisualFA;
 var opts = new FADotGraphOptions();
 
-FA test = FA.Parse("Foo|[a-zA-Z]");
+FA test = FA.Parse("[a-z]|Foo|[A-Z]");
 test.SetIds();
 opts.HideAcceptSymbolIds = true;
 test.RenderToFile(@"..\..\..\test.jpg",opts);

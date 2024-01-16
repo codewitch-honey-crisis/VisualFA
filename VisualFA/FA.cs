@@ -92,9 +92,18 @@ namespace VisualFA
 		/// <returns></returns>
 		public bool Intersects(FARange rhs)
 		{
-			return ((Min >= rhs.Min && Min <= rhs.Max) || (Max >= rhs.Min && Max <= rhs.Max));
+			return (rhs.Min >= Min && rhs.Min <= Max) ||
+				rhs.Max >= Min && rhs.Max <= Max;
 		}
-		
+		/// <summary>
+		/// Indicates whether or not this codepoint intersects this range
+		/// </summary>
+		/// <param name="codepoint">The codepoint</param>
+		/// <returns>True if the codepoint is part of the range, otherwise false</returns>
+		public bool Intersects(int codepoint)
+		{
+			return codepoint >= Min && codepoint <= Max;
+		}
 		/// <summary>
 		/// Turns packed ranges into unpacked ranges
 		/// </summary>
@@ -456,7 +465,7 @@ namespace VisualFA
 			for (int i = 0; i < _transitions.Count; ++i)
 			{
 				var fat = _transitions[i];
-				if(range.Min>= fat.Min)
+				if(range.Max>fat.Max)
 				{
 					insert = i;
 				}
@@ -470,14 +479,13 @@ namespace VisualFA
 						}
 					}
 				}
-				if(!IsDeterministic && i>-1)
+				if (!IsDeterministic && range.Max < fat.Max) 
 				{
 					break;
 				}
 			}
 			
 			_transitions.Insert(insert+1,new FATransition(to, range.Min, range.Max));
-			//_transitions.Sort(_TransitionComparison);
 			
 		}
 		public void ClearTransitions()
@@ -1003,7 +1011,7 @@ namespace VisualFA
 			var result = new FA();
 			var final = new FA(accept);
 			var sortedRanges = new List<FARange>(ranges);
-			sortedRanges.Sort((x, y) => { var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max); });
+			sortedRanges.Sort((x, y) => { var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min); });
 			foreach (var range in sortedRanges)
 				result.AddTransition(range, final);
 
@@ -1964,7 +1972,7 @@ namespace VisualFA
 			}
 			foreach (var item in result)
 			{
-				((List<FARange>)item.Value).Sort((x, y) => { var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max); });
+				((List<FARange>)item.Value).Sort((x, y) => { var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min); });
 				_NormalizeSortedRangeList(item.Value);
 			}
 			return result;
@@ -2331,7 +2339,7 @@ namespace VisualFA
 
 		static int _TransitionComparison(FATransition x, FATransition y)
 		{
-			var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max);
+			var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min);
 		}
 		/// <summary>
 		/// For this closure, fills and sorts transitions such that any missing range now points to an empty non-accepting state

@@ -845,7 +845,12 @@ struct FARange{public int Min;public int Max;public FARange(int min,int max){Min
 /// </summary>
 /// <param name="rhs">The range to compare</param>
 /// <returns></returns>
-public bool Intersects(FARange rhs){return((Min>=rhs.Min&&Min<=rhs.Max)||(Max>=rhs.Min&&Max<=rhs.Max));}/// <summary>
+public bool Intersects(FARange rhs){return(rhs.Min>=Min&&rhs.Min<=Max)||rhs.Max>=Min&&rhs.Max<=Max;}/// <summary>
+/// Indicates whether or not this codepoint intersects this range
+/// </summary>
+/// <param name="codepoint">The codepoint</param>
+/// <returns>True if the codepoint is part of the range, otherwise false</returns>
+public bool Intersects(int codepoint){return codepoint>=Min&&codepoint<=Max;}/// <summary>
 /// Turns packed ranges into unpacked ranges
 /// </summary>
 /// <param name="packedRanges">The ranges to unpack</param>
@@ -1005,9 +1010,9 @@ IsDeterministic=false;}}/// <summary>
 /// <exception cref="ArgumentNullException"><paramref name="to"/> was null</exception>
 /// <exception cref="ArgumentException"><paramref name="range"/> indicated an epsilon transition</exception>
 public void AddTransition(FARange range,FA to){if(to==null)throw new ArgumentNullException(nameof(to));if(range.Min==-1&&range.Max==-1){throw new ArgumentException("Attempt to add an epsilon using the wrong method");
-}var insert=-1;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(range.Min>=fat.Min){insert=i;}if(IsDeterministic){if(fat.To!=to){if(range.Intersects(new
- FARange(fat.Min,fat.Max))){IsDeterministic=false;}}}if(!IsDeterministic&&i>-1){break;}}_transitions.Insert(insert+1,new FATransition(to,range.Min,range.Max));
-}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;IsCompact=true;}/// <summary>
+}var insert=-1;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(range.Max>fat.Max){insert=i;}if(IsDeterministic){if(fat.To!=to){if(range.Intersects(new
+ FARange(fat.Min,fat.Max))){IsDeterministic=false;}}}if(!IsDeterministic&&range.Max<fat.Max){break;}}_transitions.Insert(insert+1,new FATransition(to,
+range.Min,range.Max));}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;IsCompact=true;}/// <summary>
 /// Ensures that the machine has no incoming transitions to the starting state, as well as only one final state.
 /// </summary>
 /// <param name="start">The start state, in case a new one needs to be created.</param>
@@ -1161,7 +1166,7 @@ public static FA Literal(string@string,int accept=0,bool compact=true){return Li
 /// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 /// <returns>A new machine representing the set expression</returns>
 public static FA Set(IEnumerable<FARange>ranges,int accept=0,bool compact=true){var result=new FA();var final=new FA(accept);var sortedRanges=new List<FARange>(ranges);
-sortedRanges.Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return c;return x.Max.CompareTo(y.Max);});foreach(var range in sortedRanges)result.AddTransition(range,
+sortedRanges.Sort((x,y)=>{var c=x.Max.CompareTo(y.Max);if(0!=c)return c;return x.Min.CompareTo(y.Min);});foreach(var range in sortedRanges)result.AddTransition(range,
 final);return result;}/// <summary>
 /// Creates a machine that is a concatenation of the given expressions
 /// </summary>
@@ -1333,7 +1338,7 @@ public int FindFirstTransitionIndex(int codepoint){for(var i=0;i<_transitions.Co
 public IDictionary<FA,IList<FARange>>FillInputTransitionRangesGroupedByState(bool includeEpsilons=false,IDictionary<FA,IList<FARange>>result=null){if(null
 ==result)result=new Dictionary<FA,IList<FARange>>();foreach(var trns in _transitions){if(!includeEpsilons&&(trns.Min==-1&&trns.Max==-1)){continue;}IList<FARange>
 l;if(!result.TryGetValue(trns.To,out l)){l=new List<FARange>();result.Add(trns.To,l);}l.Add(new FARange(trns.Min,trns.Max));}foreach(var item in result)
-{((List<FARange>)item.Value).Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return c;return x.Max.CompareTo(y.Max);});_NormalizeSortedRangeList(item.Value);
+{((List<FARange>)item.Value).Sort((x,y)=>{var c=x.Max.CompareTo(y.Max);if(0!=c)return c;return x.Min.CompareTo(y.Min);});_NormalizeSortedRangeList(item.Value);
 }return result;}static void _NormalizeSortedRangeList(IList<FARange>pairs){for(int i=1;i<pairs.Count;++i){if(pairs[i-1].Max+1>=pairs[i].Min){var nr=new
  FARange(pairs[i-1].Min,pairs[i].Max);pairs[i-1]=nr;pairs.RemoveAt(i);--i;}}}/// <summary>
 /// Retrieves all transition indices given a specified UTF32 codepoint
@@ -1394,8 +1399,8 @@ if(0==acc.Count){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}
 /// <summary>
 /// For this machine, fills and sorts transitions such that any missing range now points to an empty non-accepting state
 /// </summary>
-public void Totalize(){Totalize(FillClosure());}static int _TransitionComparison(FATransition x,FATransition y){var c=x.Min.CompareTo(y.Min);if(0!=c)return
- c;return x.Max.CompareTo(y.Max);}/// <summary>
+public void Totalize(){Totalize(FillClosure());}static int _TransitionComparison(FATransition x,FATransition y){var c=x.Max.CompareTo(y.Max);if(0!=c)return
+ c;return x.Min.CompareTo(y.Min);}/// <summary>
 /// For this closure, fills and sorts transitions such that any missing range now points to an empty non-accepting state
 /// </summary>
 /// <param name="closure">The closure to totalize</param>
