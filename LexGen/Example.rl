@@ -1,5 +1,7 @@
-﻿id='[A-Z_a-z][0-9A-Z_a-z]*'
+﻿ident='[A-Z_a-z][0-9A-Z_a-z]*'
 int='0|-?[1-9][0-9]*'
-space<hidden>='[\r\n\t\v\f ]'
-lineComment<hidden>= '\/\/[^\n]*'
-blockComment<hidden,blockEnd="*/">= "/*"
+float='(0|-?[1-9][0-9]*)(\.[0-9]+([Ee]-?[1-9][0-9]*)?)?'
+space='[\r\n\t\v\f ]'
+op='[\-\+\\\*%=]'
+lineComment= '\/\/[^\n]*'
+blockComment<blockEnd="*/">= "/*"

@@ -1,7 +1,8 @@
 {
   "profiles": {
     "LexGen": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\..\\..\\Example.rl\" /textreader /runtime /nfagraph \"..\\..\\..\\Example_nfa.jpg\" /dfagraph \"..\\..\\..\\Example_dfa.jpg\" /output \"..\\..\\..\\ExampleRunner.cs\" /namespace Example /vertical"
     }
   }
 }

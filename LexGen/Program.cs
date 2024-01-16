@@ -243,14 +243,14 @@ namespace LexGen
 						}
 						if (nfagraph != null)
 						{
-							foreach (var bfa in blockEnds)
+							/*foreach (var bfa in blockEnds)
 							{
 								if (bfa != null)
 								{
 									bfa.Compact();
 								}
 							}
-							lexer.Compact();
+							lexer.Compact();*/
 							lexer.RenderToFile(nfagraph, dotopts);
 						}
 						var total = lexerFas.Length;
@@ -313,7 +313,16 @@ namespace LexGen
 							lexer.RenderToFile(dfagraph, dotopts);
 						}
 						var genopts = new FAGeneratorOptions();
-						genopts.Dependencies = noshared ? ((runtime) ? FAGeneratorDependencies.UseRuntime : FAGeneratorDependencies.None) : FAGeneratorDependencies.GenerateSharedCode;
+						if(runtime)
+						{
+							genopts.Dependencies = FAGeneratorDependencies.UseRuntime;
+						} else if(noshared)
+						{
+							genopts.Dependencies = FAGeneratorDependencies.None;
+						} else
+						{
+							genopts.Dependencies = FAGeneratorDependencies.GenerateSharedCode;
+						}
 						genopts.ClassName = codeclass;
 						genopts.Namespace = codenamespace;
 #if FALIB_SPANS
@@ -453,7 +462,7 @@ namespace LexGen
 #endif
 			w.WriteLine("   [/namespace <codenamespace>] [/language <codelanguage>] [/tables]");
 			w.WriteLine("   [/textreader] [/ignorecase] [/noshared] [/runtime] [/ifstale]");
-			w.WriteLine("   [/nfagraph <dfafile>] [/dfagraph <dfafile>] [/vertical] [/dpi <dpi>]");
+			w.WriteLine("   [/nfagraph <nfafile>] [/dfagraph <dfafile>] [/vertical] [/dpi <dpi>]");
 			w.WriteLine();
 			w.WriteLine(Name + " generates a lexer/scanner/tokenizer in the target .NET language");
 			w.WriteLine();
