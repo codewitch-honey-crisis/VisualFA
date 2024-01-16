@@ -1,8 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-
-using Microsoft.VisualBasic;
-
 using VisualFA;
 
 var exp = "/* foo *//*baz*/ &%^ the quick /*bar */#(@*$//brown fox /* tricky */ jumped over the -10 $#(%*& lazy dog ^%$@@";
