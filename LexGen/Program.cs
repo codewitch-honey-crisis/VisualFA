@@ -141,155 +141,137 @@ namespace LexGen
 							default:
 								throw new ArgumentException(string.Format("Unknown switch {0}", args[i]));
 						}
-					}
-					
-					if (dpi != 0 && (dfagraph == null && nfagraph == null))
-					{
-						throw new ArgumentException("<dpi> was specified but no GraphViz graph was indicated.", "/dpi");
-					}
-					if (vertical && (dfagraph == null && nfagraph == null))
-					{
-						throw new ArgumentException("<vertical> was specified but no GraphViz graph was indicated.", "/dpi");
-					}
+						if (dpi != 0 && (dfagraph == null && nfagraph == null))
+						{
+							throw new ArgumentException("<dpi> was specified but no GraphViz graph was indicated.", "/dpi");
+						}
+						if (vertical && (dfagraph == null && nfagraph == null))
+						{
+							throw new ArgumentException("<vertical> was specified but no GraphViz graph was indicated.", "/dpi");
+						}
 #if FALIB_SPANS
-					if (nospans && textreader)
-					{
-						throw new ArgumentException("<nospans> and <textreader> cannot both be specified since they conflict.");
-					}
+						if (nospans && textreader)
+						{
+							throw new ArgumentException("<nospans> and <textreader> cannot both be specified since they conflict.");
+						}
 #endif
 #if !DEBUG
 					parsedArgs = true;
 #endif
 
-				}
-				var dotopts = new FADotGraphOptions();
-				if (dpi != 0)
-				{
-					dotopts.Dpi = dpi;
-				}
-				// now build it
-				if (string.IsNullOrEmpty(codeclass))
-				{
-					// default we want it to be named after the code file
-					// otherwise we'll use inputfile
-					if (null != outputfile)
-						codeclass = Path.GetFileNameWithoutExtension(outputfile);
-					else
-						codeclass = Path.GetFileNameWithoutExtension(inputfile);
-				}
-				if (string.IsNullOrEmpty(codelanguage))
-				{
-					if (!string.IsNullOrEmpty(outputfile))
+					}
+					var dotopts = new FADotGraphOptions();
+					if (dpi != 0)
 					{
-						codelanguage = Path.GetExtension(outputfile);
-						if (codelanguage.StartsWith("."))
-							codelanguage = codelanguage.Substring(1);
+						dotopts.Dpi = dpi;
+					}
+					// now build it
+					if (string.IsNullOrEmpty(codeclass))
+					{
+						// default we want it to be named after the code file
+						// otherwise we'll use inputfile
+						if (null != outputfile)
+							codeclass = Path.GetFileNameWithoutExtension(outputfile);
+						else
+							codeclass = Path.GetFileNameWithoutExtension(inputfile);
 					}
 					if (string.IsNullOrEmpty(codelanguage))
-						codelanguage = "cs";
-				}
-				var stale = true;
-				if (ifstale && null != outputfile)
-				{
-					stale = _IsStale(inputfile, outputfile);
-					if (!stale)
-						stale = _IsStale(CodeBase, outputfile);
-				}
-				if (!stale)
-				{
-					stderr.WriteLine("{0} skipped building {1} because it was not stale.", Name, outputfile);
-				}
-				else
-				{
-					if (null != outputfile)
-						stderr.WriteLine("{0} is building file: {1}", Name, outputfile);
-					else
-						stderr.WriteLine("{0} is building tokenizer.", Name);
-					input = new StreamReader(inputfile);
-					var rules = new List<LexRule>();
-					string line;
-					while (null != (line = input.ReadLine()))
 					{
-						var lc = LexContext.Create(line);
-						lc.TrySkipCCommentsAndWhiteSpace();
-						if (-1 != lc.Current)
-							rules.Add(LexRule.Parse(lc));
-					}
-					input.Close();
-					input = null;
-					LexRule.FillRuleIds(rules);
-					rules.Sort(new Comparison<LexRule>((LexRule lhs, LexRule rhs) => {
-						int cmp = lhs.Id.CompareTo(rhs.Id);
-						return cmp;
-					}));
-
-					var symmap = new Dictionary<int, string>();
-					for (int i = 0; i < rules.Count; ++i)
-					{
-						symmap.Add(rules[i].Id, rules[i].Expression);
-					}
-					FA[] lexerFas = _BuildLexerFAs(rules, ignorecase, inputfile, stderr);
-					var symbolTable = _BuildSymbolTable(rules);
-					var symids = new int[symbolTable.Length];
-					for (var i = 0; i < symbolTable.Length; ++i)
-						symids[i] = i;
-					var blockEnds = _BuildBlockEnds(rules, ignorecase, inputfile);
-
-					dotopts.BlockEnds = blockEnds;
-					dotopts.AcceptSymbolNames = symbolTable;
-					dotopts.Vertical = vertical;
-					var lexer = new FA();
-					foreach (var lfa in lexerFas)
-					{
-						lexer.AddEpsilon(lfa, false);
-					}
-					if (nfagraph != null)
-					{
-						foreach (var bfa in blockEnds)
+						if (!string.IsNullOrEmpty(outputfile))
 						{
-							if (bfa != null)
+							codelanguage = Path.GetExtension(outputfile);
+							if (codelanguage.StartsWith("."))
+								codelanguage = codelanguage.Substring(1);
+						}
+						if (string.IsNullOrEmpty(codelanguage))
+							codelanguage = "cs";
+					}
+					var stale = true;
+					if (ifstale && null != outputfile)
+					{
+						stale = _IsStale(inputfile, outputfile);
+						if (!stale)
+							stale = _IsStale(CodeBase, outputfile);
+					}
+					if (!stale)
+					{
+						stderr.WriteLine("{0} skipped building {1} because it was not stale.", Name, outputfile);
+					}
+					else
+					{
+						if (null != outputfile)
+							stderr.WriteLine("{0} is building file: {1}", Name, outputfile);
+						else
+							stderr.WriteLine("{0} is building tokenizer.", Name);
+						input = new StreamReader(inputfile);
+						var rules = new List<LexRule>();
+						string line;
+						while (null != (line = input.ReadLine()))
+						{
+							var lc = LexContext.Create(line);
+							lc.TrySkipCCommentsAndWhiteSpace();
+							if (-1 != lc.Current)
+								rules.Add(LexRule.Parse(lc));
+						}
+						input.Close();
+						input = null;
+						LexRule.FillRuleIds(rules);
+						rules.Sort(new Comparison<LexRule>((LexRule lhs, LexRule rhs) => {
+							int cmp = lhs.Id.CompareTo(rhs.Id);
+							return cmp;
+						}));
+
+						var symmap = new Dictionary<int, string>();
+						for (int i = 0; i < rules.Count; ++i)
+						{
+							symmap.Add(rules[i].Id, rules[i].Expression);
+						}
+						FA[] lexerFas = _BuildLexerFAs(rules, ignorecase, inputfile, stderr);
+						var symbolTable = _BuildSymbolTable(rules);
+						var symids = new int[symbolTable.Length];
+						for (var i = 0; i < symbolTable.Length; ++i)
+							symids[i] = i;
+						var blockEnds = _BuildBlockEnds(rules, ignorecase, inputfile);
+
+						dotopts.BlockEnds = blockEnds;
+						dotopts.AcceptSymbolNames = symbolTable;
+						dotopts.Vertical = vertical;
+						var lexer = new FA();
+						foreach (var lfa in lexerFas)
+						{
+							lexer.AddEpsilon(lfa, false);
+						}
+						if (nfagraph != null)
+						{
+							foreach (var bfa in blockEnds)
 							{
-								bfa.Compact();
+								if (bfa != null)
+								{
+									bfa.Compact();
+								}
+							}
+							lexer.Compact();
+							lexer.RenderToFile(nfagraph, dotopts);
+						}
+						var total = lexerFas.Length;
+						foreach (var be in blockEnds)
+						{
+							if (be != null)
+							{
+								++total;
 							}
 						}
-						lexer.Compact();
-						lexer.RenderToFile(nfagraph, dotopts);
-					}
-					var total = lexerFas.Length;
-					foreach (var be in blockEnds)
-					{
-						if (be != null)
-						{
-							++total;
-						}
-					}
-					var current = 0;
-					stderr.Write("Converting to DFA ");
-					if (!staticprogress)
-					{
-						_WriteProgressBar(0, false, stderr);
-					}
-					var dfaLexer = new FA();
-					for (int i = 0; i < lexerFas.Length; ++i)
-					{
-						var mfa = lexerFas[i].ToMinimizedDfa();
-						lexer.AddEpsilon(mfa);
-						++current;
+						var current = 0;
+						stderr.Write("Converting to DFA ");
 						if (!staticprogress)
 						{
-							_WriteProgressBar((int)(((double)current / (double)total) * 100.0d), true, stderr);
+							_WriteProgressBar(0, false, stderr);
 						}
-						else
+						var dfaLexer = new FA();
+						for (int i = 0; i < lexerFas.Length; ++i)
 						{
-							stderr.Write(".");
-						}
-					}
-					for (int i = 0; i < blockEnds.Length; ++i)
-					{
-						var be = blockEnds[i];
-						if (be != null)
-						{
-							blockEnds[i] = be.ToMinimizedDfa();
+							var mfa = lexerFas[i].ToMinimizedDfa();
+							lexer.AddEpsilon(mfa);
 							++current;
 							if (!staticprogress)
 							{
@@ -300,53 +282,70 @@ namespace LexGen
 								stderr.Write(".");
 							}
 						}
-					}
-					if (!staticprogress)
-					{
-						_WriteProgressBar(100, true, stderr);
-					}
-					stderr.WriteLine(" Done!");
-					stderr.Write("Finalizing lexer DFA ");
-					var reporter = new Reporter(stderr, /*staticprogress*/true);
-					lexer = lexer.ToDfa(reporter);
-					stderr.WriteLine(" Done!");
-					if (dfagraph != null)
-					{
-						lexer.RenderToFile(dfagraph, dotopts);
-					}
-					var genopts = new FAGeneratorOptions();
-					genopts.Dependencies = noshared ? ((runtime) ? FAGeneratorDependencies.UseRuntime : FAGeneratorDependencies.None) : FAGeneratorDependencies.GenerateSharedCode;
-					genopts.ClassName = codeclass;
-					genopts.Namespace = codenamespace;
+						for (int i = 0; i < blockEnds.Length; ++i)
+						{
+							var be = blockEnds[i];
+							if (be != null)
+							{
+								blockEnds[i] = be.ToMinimizedDfa();
+								++current;
+								if (!staticprogress)
+								{
+									_WriteProgressBar((int)(((double)current / (double)total) * 100.0d), true, stderr);
+								}
+								else
+								{
+									stderr.Write(".");
+								}
+							}
+						}
+						if (!staticprogress)
+						{
+							_WriteProgressBar(100, true, stderr);
+						}
+						stderr.WriteLine(" Done!");
+						stderr.Write("Finalizing lexer DFA ");
+						var reporter = new Reporter(stderr, /*staticprogress*/true);
+						lexer = lexer.ToDfa(reporter);
+						stderr.WriteLine(" Done!");
+						if (dfagraph != null)
+						{
+							lexer.RenderToFile(dfagraph, dotopts);
+						}
+						var genopts = new FAGeneratorOptions();
+						genopts.Dependencies = noshared ? ((runtime) ? FAGeneratorDependencies.UseRuntime : FAGeneratorDependencies.None) : FAGeneratorDependencies.GenerateSharedCode;
+						genopts.ClassName = codeclass;
+						genopts.Namespace = codenamespace;
 #if FALIB_SPANS
-					genopts.UseSpans = !nospans;
+						genopts.UseSpans = !nospans;
 #endif
-					genopts.GenerateTextReaderMatcher = textreader;
-					
-					genopts.GenerateTables = tables;
+						genopts.GenerateTextReaderMatcher = textreader;
 
-					stderr.WriteLine("Generating code...");
+						genopts.GenerateTables = tables;
 
-					var ccu = lexer.Generate(blockEnds, genopts);
-					//	_GenerateSymbolConstants(td, symmap, symbolTable);
-					stderr.WriteLine();
-					var prov = CodeDomProvider.CreateProvider(codelanguage);
-					var opts = new CodeGeneratorOptions();
-					opts.BlankLinesBetweenMembers = false;
-					opts.VerbatimOrder = true;
-					if (null == outputfile)
-						output = stdout;
-					else
-					{
-						// open the file and truncate it if necessary
-						var stm = File.Open(outputfile, FileMode.Create);
-						stm.SetLength(0);
-						output = new StreamWriter(stm);
+						stderr.WriteLine("Generating code...");
+
+						var ccu = lexer.Generate(blockEnds, genopts);
+						//	_GenerateSymbolConstants(td, symmap, symbolTable);
+						stderr.WriteLine();
+						var prov = CodeDomProvider.CreateProvider(codelanguage);
+						var opts = new CodeGeneratorOptions();
+						opts.BlankLinesBetweenMembers = false;
+						opts.VerbatimOrder = true;
+						if (null == outputfile)
+							output = stdout;
+						else
+						{
+							// open the file and truncate it if necessary
+							var stm = File.Open(outputfile, FileMode.Create);
+							stm.SetLength(0);
+							output = new StreamWriter(stm);
+						}
+						prov.GenerateCodeFromCompileUnit(ccu, output, opts);
+
+						stderr.WriteLine();
+
 					}
-					prov.GenerateCodeFromCompileUnit(ccu, output, opts);
-
-					stderr.WriteLine();
-
 				}
 				result = 0;
 			}
@@ -452,9 +451,9 @@ namespace LexGen
 #else
 			w.WriteLine("<inputfile> [/output <outputfile>] [/class <codeclass>]");
 #endif
-			w.WriteLine("   [/namespace <codenamespace>] [/language <codelanguage>] [/tables] [/textreader]");
-			w.WriteLine("   [/ignorecase] [/noshared] [/ifstale] [/nfagraph <dfafile>] [/dfagraph <dfafile>]");
-			w.WriteLine("   [/vertical] [/dpi <dpi>]");
+			w.WriteLine("   [/namespace <codenamespace>] [/language <codelanguage>] [/tables]");
+			w.WriteLine("   [/textreader] [/ignorecase] [/noshared] [/runtime] [/ifstale]");
+			w.WriteLine("   [/nfagraph <dfafile>] [/dfagraph <dfafile>] [/vertical] [/dpi <dpi>]");
 			w.WriteLine();
 			w.WriteLine(Name + " generates a lexer/scanner/tokenizer in the target .NET language");
 			w.WriteLine();
@@ -470,6 +469,7 @@ namespace LexGen
 			w.WriteLine("   <textreader>     Generate lexers that stream off of TextReaders instead of strings");
 			w.WriteLine("   <ignorecase>     Create a case insensitive lexer - defaults to case sensitive");
 			w.WriteLine("   <noshared>       Do not generate the shared code as part of the output - defaults to generating the shared code");
+			w.WriteLine("   <runtime>        Reference the Visual FA runtime - defaults to generating the shared code");
 			w.WriteLine("   <ifstale>        Only generate if the input is newer than the output");
 			w.WriteLine("   <staticprogress> Do not use dynamic console features for progress indicators");
 			w.WriteLine("   <nfafile>        Write the NFA lexer graph to the specified image file.*");

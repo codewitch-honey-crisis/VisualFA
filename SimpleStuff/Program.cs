@@ -2,10 +2,48 @@
 
 using VisualFA;
 
+FA commentBlock = FA.Parse(@"\/\*", 0);
+FA commentBlockEnd = FA.Parse(@"\*\/");
+FA commentLine = FA.Parse(@"\/\/[^\n]*", 1);
+FA wspace = FA.Parse("[ \\t\\r\\n]+", 2);
+FA ident = FA.Parse("[A-Za-z_][A-Za-z0-9_]*", 3);
+FA intNum = FA.Parse("0|\\-?[1-9][0-9]*", 4);
+FA realNum = FA.Parse("0|\\-?[1-9][0-9]*(\\.[0-9]+([Ee]\\-?[1-9][0-9]*)?)?", 5);
+FA op = FA.Parse(@"[\-\+\*\/\=]",6);
+FA[] tokens = new FA[] { 
+	commentBlock, 
+	commentLine, 
+	wspace, 
+	ident, 
+	intNum, 
+	realNum,
+	op
+};
+// our tokens will be minimized by ToLexer
+// we must minimize our block ends ourselves.
+FA[] blockEnds = new FA[] { 
+	commentBlockEnd.ToMinimizedDfa() 
+};
+// ToLexer will minimize its tokens and create
+// a DFA lexer by default
+FA lexer = FA.ToLexer(tokens);
+// NOTE: never call ToMinimizedDfa() on a lexer machine
+// as it will lose its distinct accept states
+// ToDfa() is okay, and ToMinimizedDfa() is
+// usually okay on states other than the root.
+
+string tolex = "/* example lex */" + Environment.NewLine +
+	"var a = 2 + 2" + Environment.NewLine +
+	"print a";
+
+foreach(var token in lexer.Run(tolex,blockEnds)) {
+	Console.WriteLine("{0}:{1} at position {2}",token.SymbolId,token.Value,token.Position);
+}
+return;
 var exp = "/* foo *//*baz*/ &%^ the quick /*bar */#(@*$//brown fox /* tricky */ jumped over the -10 $#(%*& lazy dog ^%$@@";
 var commentStart = FA.Parse(@"\/\*", 0, false);
 var commentEnd = FA.Parse(@"\*\/", 0, false);
-var commentLine = FA.Parse(@"\/\/[^\n]*", 1, false);
+commentLine = FA.Parse(@"\/\/[^\n]*", 1, false);
 var lexer_nfa = FA.ToLexer(new FA[] { commentStart, commentLine }, false, false);
 var opts = new FADotGraphOptions();
 opts.BlockEnds = new FA[] { commentEnd.Clone() };
@@ -48,6 +86,13 @@ lexer_mdfa.RenderToFile(@"..\..\..\clexer_minimized_dfa.jpg", opts);
 
 var mdfa_table = lexer_mdfa.ToArray();
 var nfa_runner = lexer_nfa.Run(exp, new FA[] { commentEnd.Clone() });
+foreach (var m in nfa_runner)
+{
+	if (m.IsSuccess)
+	{
+		Console.WriteLine("{0} at {1}", m.Value, m.Position);
+	}
+}
 var cec = commentEnd.Clone();
 cec.Compact();
 var cnfa_runner = lexer_cnfa.Run(new StringReader(exp), new FA[] {  cec });

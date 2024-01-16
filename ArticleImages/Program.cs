@@ -46,9 +46,9 @@ namespace ArticleImages
 			var ident = FA.Parse("[A-Za-z_][A-Za-z0-9_]*", 3, false);
 			var intNum = FA.Parse("0|\\-?[1-9][0-9]*", 4, false);
 			var realNum = FA.Parse("0|\\-?[1-9][0-9]*(\\.[0-9]+([Ee]\\-?[1-9][0-9]*)?)?", 5, false);
-			var syms = new string[] { "cblock", "cline", "wspace", "ident", "intNum", "realNum" };
 			var exprs = new FA[] { commentBlock, commentLine, wspace, ident, intNum, realNum };
 			var blockEnds = new FA[] { commentBlockEnd };
+			var syms = new string[] { "cblock", "cline", "wspace", "ident", "intNum", "realNum" };
 			var opts = new FADotGraphOptions();
 			opts.Vertical = true;
 			opts.BlockEnds = blockEnds;
