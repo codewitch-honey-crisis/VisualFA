@@ -1005,9 +1005,9 @@ IsDeterministic=false;}}/// <summary>
 /// <exception cref="ArgumentNullException"><paramref name="to"/> was null</exception>
 /// <exception cref="ArgumentException"><paramref name="range"/> indicated an epsilon transition</exception>
 public void AddTransition(FARange range,FA to){if(to==null)throw new ArgumentNullException(nameof(to));if(range.Min==-1&&range.Max==-1){throw new ArgumentException("Attempt to add an epsilon using the wrong method");
-}if(IsDeterministic){for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(fat.To!=to){if(range.Intersects(new FARange(fat.Min,fat.Max))){IsDeterministic
-=false;break;}}}}_transitions.Add(new FATransition(to,range.Min,range.Max));}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;
-IsCompact=true;}/// <summary>
+}var insert=-1;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(range.Min>=fat.Min){insert=i;}if(IsDeterministic){if(fat.To!=to){if(range.Intersects(new
+ FARange(fat.Min,fat.Max))){IsDeterministic=false;}}}if(!IsDeterministic&&i>-1){break;}}_transitions.Insert(insert+1,new FATransition(to,range.Min,range.Max));
+}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;IsCompact=true;}/// <summary>
 /// Ensures that the machine has no incoming transitions to the starting state, as well as only one final state.
 /// </summary>
 /// <param name="start">The start state, in case a new one needs to be created.</param>

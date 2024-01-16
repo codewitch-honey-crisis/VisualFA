@@ -452,21 +452,32 @@ namespace VisualFA
 			{
 				throw new ArgumentException("Attempt to add an epsilon using the wrong method");
 			}
-			if (IsDeterministic)
+			var insert = -1;
+			for (int i = 0; i < _transitions.Count; ++i)
 			{
-				for (int i = 0; i < _transitions.Count; ++i)
+				var fat = _transitions[i];
+				if(range.Min>= fat.Min)
 				{
-					var fat = _transitions[i];
+					insert = i;
+				}
+				if (IsDeterministic)
+				{
 					if (fat.To != to)
 					{
 						if (range.Intersects(new FARange(fat.Min, fat.Max)))
 						{
-							IsDeterministic = false; break;
+							IsDeterministic = false;
 						}
 					}
 				}
+				if(!IsDeterministic && i>-1)
+				{
+					break;
+				}
 			}
-			_transitions.Add(new FATransition(to, range.Min, range.Max));
+			
+			_transitions.Insert(insert+1,new FATransition(to, range.Min, range.Max));
+			//_transitions.Sort(_TransitionComparison);
 			
 		}
 		public void ClearTransitions()

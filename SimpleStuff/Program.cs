@@ -1,7 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using VisualFA;
+var opts = new FADotGraphOptions();
 
+FA test = FA.Parse("Foo|[a-zA-Z]");
+test.SetIds();
+opts.HideAcceptSymbolIds = true;
+test.RenderToFile(@"..\..\..\test.jpg",opts);
+opts.HideAcceptSymbolIds = false;
 FA commentBlock = FA.Parse(@"\/\*", 0);
 FA commentBlockEnd = FA.Parse(@"\*\/");
 FA commentLine = FA.Parse(@"\/\/[^\n]*", 1);
@@ -45,7 +51,6 @@ var commentStart = FA.Parse(@"\/\*", 0, false);
 var commentEnd = FA.Parse(@"\*\/", 0, false);
 commentLine = FA.Parse(@"\/\/[^\n]*", 1, false);
 var lexer_nfa = FA.ToLexer(new FA[] { commentStart, commentLine }, false, false);
-var opts = new FADotGraphOptions();
 opts.BlockEnds = new FA[] { commentEnd.Clone() };
 opts.AcceptSymbolNames = new string[] { "blockComment","lineComment" };
 opts.Vertical = true;
