@@ -1,6 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Runtime.CompilerServices;
+using System.CodeDom;
 using VisualFA;
+
 var opts = new FADotGraphOptions();
 
 FA test = FA.Parse("[a-z]|Foo|[A-Z]");
@@ -13,30 +16,48 @@ FA commentBlockEnd = FA.Parse(@"\*\/");
 FA commentLine = FA.Parse(@"\/\/[^\n]*", 1);
 FA wspace = FA.Parse("[ \\t\\r\\n]+", 2);
 FA ident = FA.Parse("[A-Za-z_][A-Za-z0-9_]*", 3);
-FA intNum = FA.Parse("0|\\-?[1-9][0-9]*", 4);
-FA realNum = FA.Parse("0|\\-?[1-9][0-9]*(\\.[0-9]+([Ee]\\-?[1-9][0-9]*)?)?", 5);
-FA op = FA.Parse(@"[\-\+\*\/\=]",6);
+FA num= FA.Parse(@"[0-9]+((\.[0-9]+[Ee]\-?[1-9][0-9]*)?|\.[0-9]+)", 4);
+FA op = FA.Parse(@"[\-\+\*\/\=]",5);
 FA[] tokens = new FA[] { 
 	commentBlock, 
 	commentLine, 
 	wspace, 
 	ident, 
-	intNum, 
-	realNum,
+	num,
 	op
+};
+string[] syms = new string[] {
+	"commentBlock",
+	"commentLine",
+	"wspace",
+	"ident",
+	"num",
+	"op"
 };
 // our tokens will be minimized by ToLexer
 // we must minimize our block ends ourselves.
 FA[] blockEnds = new FA[] { 
-	commentBlockEnd.ToMinimizedDfa() 
+	commentBlockEnd.ToMinimizedDfa()
 };
 // ToLexer will minimize its tokens and create
 // a DFA lexer by default
-FA lexer = FA.ToLexer(tokens);
+FA lexer = FA.ToLexer(tokens,true);
+//lexer = lexer.ToDfa();
 // NOTE: never call ToMinimizedDfa() on a lexer machine
 // as it will lose its distinct accept states
 // ToDfa() is okay, and ToMinimizedDfa() is
 // usually okay on states other than the root.
+
+var dgo = new FADotGraphOptions();
+dgo.Vertical = true;
+dgo.BlockEnds = blockEnds;
+dgo.DebugShowNfa = false;
+dgo.AcceptSymbolNames = syms;
+//dgo.DebugSourceNfa = lexer.FromStates[0];
+dgo.AcceptSymbolNames = syms;
+
+lexer.RenderToFile(@"..\..\..\lexer_dfa.jpg", dgo);
+return;
 
 string tolex = "/* example lex */" + Environment.NewLine +
 	"var a = 2 + 2" + Environment.NewLine +
@@ -45,7 +66,7 @@ string tolex = "/* example lex */" + Environment.NewLine +
 foreach(var token in lexer.Run(tolex,blockEnds)) {
 	Console.WriteLine("{0}:{1} at position {2}",token.SymbolId,token.Value,token.Position);
 }
-return;
+
 var exp = "/* foo *//*baz*/ &%^ the quick /*bar */#(@*$//brown fox /* tricky */ jumped over the -10 $#(%*& lazy dog ^%$@@";
 var commentStart = FA.Parse(@"\/\*", 0, false);
 var commentEnd = FA.Parse(@"\*\/", 0, false);

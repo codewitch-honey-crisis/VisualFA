@@ -1011,7 +1011,7 @@ namespace VisualFA
 			var result = new FA();
 			var final = new FA(accept);
 			var sortedRanges = new List<FARange>(ranges);
-			sortedRanges.Sort((x, y) => { var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min); });
+			sortedRanges.Sort((x, y) => { var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max); });
 			foreach (var range in sortedRanges)
 				result.AddTransition(range, final);
 
@@ -1176,6 +1176,7 @@ namespace VisualFA
 						case 1:
 							return expr;
 						default:
+							// TODO: Can make this more compact
 							result = Concat(new FA[] { expr, Repeat(expr, 0, maxOccurs - 1, accept, compact) }, accept, compact);
 							return result;
 					}
@@ -1210,8 +1211,8 @@ namespace VisualFA
 		/// Makes a machine case insensitive
 		/// </summary>
 		/// <param name="expr">The expression to make case insensitive</param>
-		/// <returns></returns>
-		/// <exception cref="NotSupportedException"></exception>
+		/// <returns>A case insensitive copy of the machine</returns>
+		/// <exception cref="NotSupportedException">A range could not be made case insensitive because one of the codepoints was not a letter.</exception>
 		public static FA CaseInsensitive(FA expr)
 		{
 			var result = expr.Clone();
@@ -1221,7 +1222,7 @@ namespace VisualFA
 			{
 				var fa = closure[i];
 				var t = new List<FATransition>(fa._transitions);
-				fa._transitions.Clear();
+				fa.ClearTransitions();
 				foreach (var trns in t)
 				{
 					var f = char.ConvertFromUtf32(trns.Min);
@@ -1908,7 +1909,7 @@ namespace VisualFA
 		/// <returns></returns>
 		public bool IsDfa()
 		{
-			return IsDfa(FillClosure());
+			return FindFirst(new FAFindFilter((fa) => !IsDeterministic)) == null;
 		}
 		/// <summary>
 		/// Performs subset construction to turn an NFA or DFA machine into a minimized DFA machine
@@ -1972,7 +1973,7 @@ namespace VisualFA
 			}
 			foreach (var item in result)
 			{
-				((List<FARange>)item.Value).Sort((x, y) => { var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min); });
+				((List<FARange>)item.Value).Sort((x, y) => { var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max); });
 				_NormalizeSortedRangeList(item.Value);
 			}
 			return result;
@@ -2187,6 +2188,7 @@ namespace VisualFA
 			var p = new HashSet<int>();
 			var closure = new List<FA>();
 			fa.FillClosure(closure);
+			fa.SetIds();
 			for (int ic = closure.Count, i = 0; i < ic; ++i)
 			{
 				var ffa = closure[i];
@@ -2221,7 +2223,6 @@ namespace VisualFA
 			{
 				initial.Add(efa);
 			}
-
 			sets.Add(initial, initial);
 			working.Enqueue(initial);
 			var result = new FA();
@@ -2242,7 +2243,9 @@ namespace VisualFA
 			{
 				var s = working.Dequeue();
 				FA dfa = dfaMap[s];
-				foreach (FA q in s)
+				var accSort = s.ToList();
+				accSort.Sort((x, y) => x.AcceptSymbol.CompareTo(y.AcceptSymbol));
+				foreach (FA q in accSort)
 				{
 					if (q.IsAccepting)
 					{
@@ -2339,7 +2342,7 @@ namespace VisualFA
 
 		static int _TransitionComparison(FATransition x, FATransition y)
 		{
-			var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min);
+			var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max);
 		}
 		/// <summary>
 		/// For this closure, fills and sorts transitions such that any missing range now points to an empty non-accepting state

@@ -33,7 +33,7 @@ namespace VisualFA
 		public FAGeneratorDependencies Dependencies { get; set; } = FAGeneratorDependencies.None;
 
 		public bool GenerateTables { get; set; } = false;
-		public bool GenerateTextReaderMatcher { get; set; } = false;
+		public bool GenerateTextReaderRunner { get; set; } = false;
 		// not always supported
 #if FALIB_SPANS
 		public bool UseSpans { get; set; } = FAStringRunner.UsingSpans;
@@ -490,7 +490,7 @@ namespace VisualFA
 			nextMatch.ReturnType = new CodeTypeReference(typeof(FAMatch).Name);
 			CodeStatementCollection target;
 			_GenerateBlockEnds(textReader, result, blockEnds,options);
-			if (!options.GenerateTextReaderMatcher)
+			if (!options.GenerateTextReaderRunner)
 			{
 				var nextMatchImpl = new CodeMemberMethod();
 				nextMatchImpl.Name = "NextMatchImpl";
@@ -648,7 +648,7 @@ namespace VisualFA
 			result.Namespaces.Add(ns);
 			if (options.GenerateTables)
 			{
-				if (options.GenerateTextReaderMatcher)
+				if (options.GenerateTextReaderRunner)
 				{
 					ns.Types.Add(_GenerateTableRunner(true, closure, blockEnds, options));
 				}
@@ -660,7 +660,7 @@ namespace VisualFA
 			}
 			else
 			{
-				if (options.GenerateTextReaderMatcher)
+				if (options.GenerateTextReaderRunner)
 				{
 					ns.Types.Add(_GenerateRunner(true, closure, blockEnds, options));
 				}

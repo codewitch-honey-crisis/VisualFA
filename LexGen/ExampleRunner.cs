@@ -58,30 +58,23 @@ namespace Example {
                 this.Advance();
                 goto q1;
             }
-            if (((((this.current == 37) 
+            if ((((((this.current == 37) 
                         || ((this.current >= 42) 
                         && (this.current <= 43))) 
+                        || (this.current == 45)) 
                         || (this.current == 61)) 
                         || (this.current == 92))) {
                 this.Advance();
                 goto q2;
             }
-            if ((this.current == 45)) {
+            if ((this.current == 47)) {
                 this.Advance();
                 goto q3;
             }
-            if ((this.current == 47)) {
-                this.Advance();
-                goto q13;
-            }
-            if ((this.current == 48)) {
-                this.Advance();
-                goto q17;
-            }
-            if (((this.current >= 49) 
+            if (((this.current >= 48) 
                         && (this.current <= 57))) {
                 this.Advance();
-                goto q20;
+                goto q6;
             }
             if (((((this.current >= 65) 
                         && (this.current <= 90)) 
@@ -89,7 +82,7 @@ namespace Example {
                         || ((this.current >= 97) 
                         && (this.current <= 122)))) {
                 this.Advance();
-                goto q21;
+                goto q12;
             }
             goto errorout;
         q1:
@@ -97,79 +90,74 @@ namespace Example {
         q2:
             return FAMatch.Create(4, this.capture.ToString(), p, l, c);
         q3:
-            if (((this.current >= 49) 
-                        && (this.current <= 57))) {
+            if ((this.current == 42)) {
                 this.Advance();
                 goto q4;
             }
-            return FAMatch.Create(4, this.capture.ToString(), p, l, c);
-        q4:
-            if ((this.current == 46)) {
+            if ((this.current == 47)) {
                 this.Advance();
                 goto q5;
             }
-            if (((this.current >= 48) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q12;
-            }
-            return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+            goto errorout;
+        q4:
+            return _BlockEnd6(p, l, c);
         q5:
+            if ((((this.current >= 0) 
+                        && (this.current <= 9)) 
+                        || ((this.current >= 11) 
+                        && (this.current <= 1114111)))) {
+                this.Advance();
+                goto q5;
+            }
+            return FAMatch.Create(5, this.capture.ToString(), p, l, c);
+        q6:
+            if ((this.current == 46)) {
+                this.Advance();
+                goto q7;
+            }
             if (((this.current >= 48) 
                         && (this.current <= 57))) {
                 this.Advance();
                 goto q6;
-            }
-            goto errorout;
-        q6:
-            if (((this.current >= 48) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q7;
-            }
-            if (((this.current == 69) 
-                        || (this.current == 101))) {
-                this.Advance();
-                goto q8;
             }
             return FAMatch.Create(2, this.capture.ToString(), p, l, c);
         q7:
             if (((this.current >= 48) 
                         && (this.current <= 57))) {
                 this.Advance();
-                goto q7;
+                goto q8;
+            }
+            goto errorout;
+        q8:
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q8;
             }
             if (((this.current == 69) 
                         || (this.current == 101))) {
                 this.Advance();
-                goto q8;
-            }
-            return FAMatch.Create(2, this.capture.ToString(), p, l, c);
-        q8:
-            if ((this.current == 45)) {
-                this.Advance();
                 goto q9;
             }
-            if (((this.current >= 49) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q10;
-            }
-            goto errorout;
+            return FAMatch.Create(2, this.capture.ToString(), p, l, c);
         q9:
-            if (((this.current >= 49) 
-                        && (this.current <= 57))) {
+            if ((this.current == 45)) {
                 this.Advance();
                 goto q10;
             }
-            goto errorout;
-        q10:
-            if (((this.current >= 48) 
+            if (((this.current >= 49) 
                         && (this.current <= 57))) {
                 this.Advance();
                 goto q11;
             }
-            return FAMatch.Create(2, this.capture.ToString(), p, l, c);
+            goto errorout;
+        q10:
+            if (((this.current >= 49) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q11;
+            }
+            goto errorout;
         q11:
             if (((this.current >= 48) 
                         && (this.current <= 57))) {
@@ -178,83 +166,6 @@ namespace Example {
             }
             return FAMatch.Create(2, this.capture.ToString(), p, l, c);
         q12:
-            if ((this.current == 46)) {
-                this.Advance();
-                goto q5;
-            }
-            if (((this.current >= 48) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q12;
-            }
-            return FAMatch.Create(1, this.capture.ToString(), p, l, c);
-        q13:
-            if ((this.current == 42)) {
-                this.Advance();
-                goto q14;
-            }
-            if ((this.current == 47)) {
-                this.Advance();
-                goto q15;
-            }
-            goto errorout;
-        q14:
-            return _BlockEnd6(p, l, c);
-        q15:
-            if ((((this.current >= 0) 
-                        && (this.current <= 9)) 
-                        || ((this.current >= 11) 
-                        && (this.current <= 1114111)))) {
-                this.Advance();
-                goto q16;
-            }
-            return FAMatch.Create(5, this.capture.ToString(), p, l, c);
-        q16:
-            if ((((this.current >= 0) 
-                        && (this.current <= 9)) 
-                        || ((this.current >= 11) 
-                        && (this.current <= 1114111)))) {
-                this.Advance();
-                goto q16;
-            }
-            return FAMatch.Create(5, this.capture.ToString(), p, l, c);
-        q17:
-            if ((this.current == 46)) {
-                this.Advance();
-                goto q18;
-            }
-            if (((this.current >= 48) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q19;
-            }
-            return FAMatch.Create(1, this.capture.ToString(), p, l, c);
-        q18:
-            if (((this.current >= 48) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q6;
-            }
-            goto errorout;
-        q19:
-            if (((this.current >= 48) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q11;
-            }
-            return FAMatch.Create(2, this.capture.ToString(), p, l, c);
-        q20:
-            if ((this.current == 46)) {
-                this.Advance();
-                goto q5;
-            }
-            if (((this.current >= 48) 
-                        && (this.current <= 57))) {
-                this.Advance();
-                goto q12;
-            }
-            return FAMatch.Create(1, this.capture.ToString(), p, l, c);
-        q21:
             if ((((((this.current >= 48) 
                         && (this.current <= 57)) 
                         || ((this.current >= 65) 
@@ -263,35 +174,22 @@ namespace Example {
                         || ((this.current >= 97) 
                         && (this.current <= 122)))) {
                 this.Advance();
-                goto q22;
-            }
-            return FAMatch.Create(0, this.capture.ToString(), p, l, c);
-        q22:
-            if ((((((this.current >= 48) 
-                        && (this.current <= 57)) 
-                        || ((this.current >= 65) 
-                        && (this.current <= 90))) 
-                        || (this.current == 95)) 
-                        || ((this.current >= 97) 
-                        && (this.current <= 122)))) {
-                this.Advance();
-                goto q22;
+                goto q12;
             }
             return FAMatch.Create(0, this.capture.ToString(), p, l, c);
         errorout:
-            if (((((((((((((((this.current == -1) 
+            if ((((((((((((((this.current == -1) 
                         || ((this.current >= 9) 
                         && (this.current <= 13))) 
                         || (this.current == 32)) 
                         || (this.current == 37)) 
                         || ((this.current >= 42) 
                         && (this.current <= 43))) 
+                        || (this.current == 45)) 
                         || (this.current == 61)) 
                         || (this.current == 92)) 
-                        || (this.current == 45)) 
                         || (this.current == 47)) 
-                        || (this.current == 48)) 
-                        || ((this.current >= 49) 
+                        || ((this.current >= 48) 
                         && (this.current <= 57))) 
                         || ((this.current >= 65) 
                         && (this.current <= 90))) 

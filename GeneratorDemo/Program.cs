@@ -15,7 +15,7 @@ dgo.AcceptSymbolNames = new string[] { "block", "line", "space" };
 lexer.RenderToFile(@"..\..\..\lexer_dfa.jpg",dgo);
 var gopts = new FAGeneratorOptions();
 gopts.GenerateTables = false;
-gopts.GenerateTextReaderMatcher = false;
+gopts.GenerateTextReaderRunner = false;
 gopts.ClassName = "CommentRunner";
 gopts.Dependencies = FAGeneratorDependencies.UseRuntime;
 var ccu = lexer.Generate(new FA[] { commentEnd }, gopts);

@@ -12,7 +12,7 @@ Module Program
         Dim lexer As FA = FA.ToLexer(New FA() {commentStart, commentLine}, True)
         Dim gopts As FAGeneratorOptions = New FAGeneratorOptions()
         gopts.GenerateTables = False
-        gopts.GenerateTextReaderMatcher = False
+        gopts.GenerateTextReaderRunner = False
         gopts.ClassName = "CommentRunner"
         gopts.UseSpans = False ' not supported by VB
         ' must generate our own shared code if we're not using spans

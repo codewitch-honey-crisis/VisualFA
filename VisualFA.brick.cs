@@ -1166,7 +1166,7 @@ public static FA Literal(string@string,int accept=0,bool compact=true){return Li
 /// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 /// <returns>A new machine representing the set expression</returns>
 public static FA Set(IEnumerable<FARange>ranges,int accept=0,bool compact=true){var result=new FA();var final=new FA(accept);var sortedRanges=new List<FARange>(ranges);
-sortedRanges.Sort((x,y)=>{var c=x.Max.CompareTo(y.Max);if(0!=c)return c;return x.Min.CompareTo(y.Min);});foreach(var range in sortedRanges)result.AddTransition(range,
+sortedRanges.Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return c;return x.Max.CompareTo(y.Max);});foreach(var range in sortedRanges)result.AddTransition(range,
 final);return result;}/// <summary>
 /// Creates a machine that is a concatenation of the given expressions
 /// </summary>
@@ -1211,7 +1211,7 @@ public static FA Repeat(FA expr,int minOccurs=-1,int maxOccurs=-1,int accept=0,b
  FA(accept);result.AddEpsilon(expr,compact);foreach(var afa in expr.FillFind(AcceptingFilter)){afa.AddEpsilon(result,compact);}return result;case 1:result
 =Optional(expr,accept,compact);return result;default:var l=new List<FA>();expr=Optional(expr,accept,compact);l.Add(expr);for(int i=1;i<maxOccurs;++i){
 l.Add(expr.Clone());}result=Concat(l,accept,compact);return result;}case 1:switch(maxOccurs){case-1:case 0:result=Concat(new FA[]{expr,Repeat(expr,0,0,
-accept,compact)},accept,compact);return result;case 1:return expr;default:result=Concat(new FA[]{expr,Repeat(expr,0,maxOccurs-1,accept,compact)},accept,
+accept,compact)},accept,compact);return result;case 1:return expr;default: result=Concat(new FA[]{expr,Repeat(expr,0,maxOccurs-1,accept,compact)},accept,
 compact);return result;}default:switch(maxOccurs){case-1:case 0:result=Concat(new FA[]{Repeat(expr,minOccurs,minOccurs,accept,compact),Repeat(expr,0,0,
 accept,compact)},accept,compact);return result;case 1:throw new ArgumentOutOfRangeException(nameof(maxOccurs));default:if(minOccurs==maxOccurs){var l=
 new List<FA>();l.Add(expr);for(int i=1;i<minOccurs;++i){var e=expr.Clone();l.Add(e);}result=Concat(l,accept);return result;}result=Concat(new FA[]{Repeat(expr,
@@ -1220,10 +1220,10 @@ minOccurs,minOccurs,accept,compact),Repeat(Optional(expr,accept,compact),maxOccu
 /// Makes a machine case insensitive
 /// </summary>
 /// <param name="expr">The expression to make case insensitive</param>
-/// <returns></returns>
-/// <exception cref="NotSupportedException"></exception>
+/// <returns>A case insensitive copy of the machine</returns>
+/// <exception cref="NotSupportedException">A range could not be made case insensitive because one of the codepoints was not a letter.</exception>
 public static FA CaseInsensitive(FA expr){var result=expr.Clone();var closure=new List<FA>();result.FillClosure(closure);for(int ic=closure.Count,i=0;
-i<ic;++i){var fa=closure[i];var t=new List<FATransition>(fa._transitions);fa._transitions.Clear();foreach(var trns in t){var f=char.ConvertFromUtf32(trns.Min);
+i<ic;++i){var fa=closure[i];var t=new List<FATransition>(fa._transitions);fa.ClearTransitions();foreach(var trns in t){var f=char.ConvertFromUtf32(trns.Min);
 var l=char.ConvertFromUtf32(trns.Max);if(char.IsLower(f,0)){if(!char.IsLower(l,0))throw new NotSupportedException("Attempt to make an invalid range case insensitive");
 fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);f=f.ToUpperInvariant();l=l.ToUpperInvariant();fa.AddTransition(new FARange(char.ConvertToUtf32(f,
 0),char.ConvertToUtf32(l,0)),trns.To);}else if(char.IsUpper(f,0)){if(!char.IsUpper(l,0))throw new NotSupportedException("Attempt to make an invalid range case insensitive");
@@ -1317,7 +1317,7 @@ public static bool IsDfa(IList<FA>closure){for(int q=0;q<closure.Count;++q){if(!
 /// Indiciates whether the entire machine is deterministic or not
 /// </summary>
 /// <returns></returns>
-public bool IsDfa(){return IsDfa(FillClosure());}/// <summary>
+public bool IsDfa(){return FindFirst(new FAFindFilter((fa)=>!IsDeterministic))==null;}/// <summary>
 /// Performs subset construction to turn an NFA or DFA machine into a minimized DFA machine
 /// </summary>
 /// <remarks>The result will not have duplicate states.</remarks>
@@ -1338,7 +1338,7 @@ public int FindFirstTransitionIndex(int codepoint){for(var i=0;i<_transitions.Co
 public IDictionary<FA,IList<FARange>>FillInputTransitionRangesGroupedByState(bool includeEpsilons=false,IDictionary<FA,IList<FARange>>result=null){if(null
 ==result)result=new Dictionary<FA,IList<FARange>>();foreach(var trns in _transitions){if(!includeEpsilons&&(trns.Min==-1&&trns.Max==-1)){continue;}IList<FARange>
 l;if(!result.TryGetValue(trns.To,out l)){l=new List<FARange>();result.Add(trns.To,l);}l.Add(new FARange(trns.Min,trns.Max));}foreach(var item in result)
-{((List<FARange>)item.Value).Sort((x,y)=>{var c=x.Max.CompareTo(y.Max);if(0!=c)return c;return x.Min.CompareTo(y.Min);});_NormalizeSortedRangeList(item.Value);
+{((List<FARange>)item.Value).Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return c;return x.Max.CompareTo(y.Max);});_NormalizeSortedRangeList(item.Value);
 }return result;}static void _NormalizeSortedRangeList(IList<FARange>pairs){for(int i=1;i<pairs.Count;++i){if(pairs[i-1].Max+1>=pairs[i].Min){var nr=new
  FARange(pairs[i-1].Min,pairs[i].Max);pairs[i-1]=nr;pairs.RemoveAt(i);--i;}}}/// <summary>
 /// Retrieves all transition indices given a specified UTF32 codepoint
@@ -1380,27 +1380,28 @@ public void Compact(){Compact(FillClosure());}
 #endregion // Compact()
 #region _Determinize()
 private static FA _Determinize(FA fa,IProgress<int>progress){int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();fa.FillClosure(closure);
-for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.Min==-1&&t.Max==-1){continue;}p.Add(t.Min);
+fa.SetIds();for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.Min==-1&&t.Max==-1){continue;}p.Add(t.Min);
 if(t.Max<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(points,0);Array.Sort(points);++prog;progress?.Report(prog);var sets=new Dictionary<_KeySet<FA>,
 _KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();var epscl=new List<FA>();
 _Seen.Clear();fa._FillEpsilonClosureImpl(epscl,_Seen);foreach(var efa in epscl){initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var
  result=new FA();result.IsDeterministic=true;result.FromStates=epscl.ToArray();foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;
-break;}}++prog;progress?.Report(prog);dfaMap.Add(initial,result);while(working.Count>0){var s=working.Dequeue();FA dfa=dfaMap[s];foreach(FA q in s){if
-(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;}}for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s)
-{_Seen.Clear();var ecs=new List<FA>();c._FillEpsilonClosureImpl(ecs,_Seen);foreach(var efa in ecs){foreach(var trns in efa._transitions){if(trns.Min==
--1&&trns.Max==-1){continue;}if(trns.Min<=pnt&&pnt<=trns.Max){_Seen.Clear();var efcs=new List<FA>();trns.To._FillEpsilonClosureImpl(efcs,_Seen);foreach
-(var eefa in efcs){set.Add(eefa);}}}}_Seen.Clear();}if(!sets.ContainsKey(set)){sets.Add(set,set);working.Enqueue(set);var newfa=new FA();newfa.IsDeterministic
-=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set);newfa.FromStates=fas.ToArray();}FA dst=dfaMap[set];int first=pnt;int last;if(i+1<points.Length)last
-=(points[i+1]-1);else last=0x10ffff;dfa._transitions.Add(new FATransition(dst,first,last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);
-} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns){var acc=trns.To.FillFind(AcceptingFilter);
-if(0==acc.Count){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;progress?.Report(prog);return result;}
+break;}}++prog;progress?.Report(prog);dfaMap.Add(initial,result);while(working.Count>0){var s=working.Dequeue();FA dfa=dfaMap[s];var accSort=s.ToList();
+accSort.Sort((x,y)=>x.AcceptSymbol.CompareTo(y.AcceptSymbol));foreach(FA q in accSort){if(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;}}for(var
+ i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s){_Seen.Clear();var ecs=new List<FA>();c._FillEpsilonClosureImpl(ecs,_Seen);
+foreach(var efa in ecs){foreach(var trns in efa._transitions){if(trns.Min==-1&&trns.Max==-1){continue;}if(trns.Min<=pnt&&pnt<=trns.Max){_Seen.Clear();
+var efcs=new List<FA>();trns.To._FillEpsilonClosureImpl(efcs,_Seen);foreach(var eefa in efcs){set.Add(eefa);}}}}_Seen.Clear();}if(!sets.ContainsKey(set))
+{sets.Add(set,set);working.Enqueue(set);var newfa=new FA();newfa.IsDeterministic=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set);newfa.FromStates
+=fas.ToArray();}FA dst=dfaMap[set];int first=pnt;int last;if(i+1<points.Length)last=(points[i+1]-1);else last=0x10ffff;dfa._transitions.Add(new FATransition(dst,first,
+last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);
+foreach(var trns in itrns){var acc=trns.To.FillFind(AcceptingFilter);if(0==acc.Count){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;
+progress?.Report(prog);return result;}
 #endregion // _Determinize()
 #region Totalize()
 /// <summary>
 /// For this machine, fills and sorts transitions such that any missing range now points to an empty non-accepting state
 /// </summary>
-public void Totalize(){Totalize(FillClosure());}static int _TransitionComparison(FATransition x,FATransition y){var c=x.Max.CompareTo(y.Max);if(0!=c)return
- c;return x.Min.CompareTo(y.Min);}/// <summary>
+public void Totalize(){Totalize(FillClosure());}static int _TransitionComparison(FATransition x,FATransition y){var c=x.Min.CompareTo(y.Min);if(0!=c)return
+ c;return x.Max.CompareTo(y.Max);}/// <summary>
 /// For this closure, fills and sorts transitions such that any missing range now points to an empty non-accepting state
 /// </summary>
 /// <param name="closure">The closure to totalize</param>

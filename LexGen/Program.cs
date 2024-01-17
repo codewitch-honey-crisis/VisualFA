@@ -271,7 +271,7 @@ namespace LexGen
 						for (int i = 0; i < lexerFas.Length; ++i)
 						{
 							var mfa = lexerFas[i].ToMinimizedDfa();
-							lexer.AddEpsilon(mfa);
+							dfaLexer.AddEpsilon(mfa);
 							++current;
 							if (!staticprogress)
 							{
@@ -306,11 +306,11 @@ namespace LexGen
 						stderr.WriteLine(" Done!");
 						stderr.Write("Finalizing lexer DFA ");
 						var reporter = new Reporter(stderr, /*staticprogress*/true);
-						lexer = lexer.ToDfa(reporter);
+						dfaLexer = dfaLexer.ToDfa(reporter);
 						stderr.WriteLine(" Done!");
 						if (dfagraph != null)
 						{
-							lexer.RenderToFile(dfagraph, dotopts);
+							dfaLexer.RenderToFile(dfagraph, dotopts);
 						}
 						var genopts = new FAGeneratorOptions();
 						if(runtime)
@@ -328,13 +328,13 @@ namespace LexGen
 #if FALIB_SPANS
 						genopts.UseSpans = !nospans;
 #endif
-						genopts.GenerateTextReaderMatcher = textreader;
+						genopts.GenerateTextReaderRunner = textreader;
 
 						genopts.GenerateTables = tables;
 
 						stderr.WriteLine("Generating code...");
 
-						var ccu = lexer.Generate(blockEnds, genopts);
+						var ccu = dfaLexer.Generate(blockEnds, genopts);
 						//	_GenerateSymbolConstants(td, symmap, symbolTable);
 						stderr.WriteLine();
 						var prov = CodeDomProvider.CreateProvider(codelanguage);

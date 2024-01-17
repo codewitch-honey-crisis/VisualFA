@@ -1350,7 +1350,7 @@ UseRuntime}
 public
 #endif
 partial class FAGeneratorOptions{public FAGeneratorDependencies Dependencies{get;set;}=FAGeneratorDependencies.None;public bool GenerateTables{get;set;
-}=false;public bool GenerateTextReaderMatcher{get;set;}=false;
+}=false;public bool GenerateTextReaderRunner{get;set;}=false;
 #if FALIB_SPANS
 public bool UseSpans{get;set;}=FAStringRunner.UsingSpans;
 #endif
@@ -1455,7 +1455,7 @@ position,line,column}))});error.Statement=ifEnd;dest.Add(error);dest.Add(adv);de
 result.TypeAttributes=TypeAttributes.NotPublic|TypeAttributes.Sealed;result.BaseTypes.Add(new CodeTypeReference(textReader?typeof(FATextReaderRunner).Name
 :typeof(FAStringRunner).Name));result.IsClass=true;result.IsPartial=true;var nextMatch=new CodeMemberMethod();nextMatch.Name="NextMatch";nextMatch.Attributes
 =MemberAttributes.Public|MemberAttributes.Override;nextMatch.ReturnType=new CodeTypeReference(typeof(FAMatch).Name);CodeStatementCollection target;_GenerateBlockEnds(textReader,
-result,blockEnds,options);if(!options.GenerateTextReaderMatcher){var nextMatchImpl=new CodeMemberMethod();nextMatchImpl.Name="NextMatchImpl";CodeTypeReference
+result,blockEnds,options);if(!options.GenerateTextReaderRunner){var nextMatchImpl=new CodeMemberMethod();nextMatchImpl.Name="NextMatchImpl";CodeTypeReference
  pt=null;
 #if FALIB_SPANS
 if(options.UseSpans){pt=new CodeTypeReference("ReadOnlySpan`1",new CodeTypeReference[]{new CodeTypeReference(typeof(char))});}
@@ -1499,8 +1499,8 @@ ns.Types.AddRange(Deslanged.GetFADfaTableRunner(options.UseSpans).Namespaces[0].
 #else
 ns.Types.AddRange(Deslanged.GetFADfaTableRunner(false).Namespaces[0].Types);
 #endif
-}break;}result.Namespaces.Add(ns);if(options.GenerateTables){if(options.GenerateTextReaderMatcher){ns.Types.Add(_GenerateTableRunner(true,closure,blockEnds,
-options));}else{ns.Types.Add(_GenerateTableRunner(false,closure,blockEnds,options));}}else{if(options.GenerateTextReaderMatcher){ns.Types.Add(_GenerateRunner(true,
+}break;}result.Namespaces.Add(ns);if(options.GenerateTables){if(options.GenerateTextReaderRunner){ns.Types.Add(_GenerateTableRunner(true,closure,blockEnds,
+options));}else{ns.Types.Add(_GenerateTableRunner(false,closure,blockEnds,options));}}else{if(options.GenerateTextReaderRunner){ns.Types.Add(_GenerateRunner(true,
 closure,blockEnds,options));}else{ns.Types.Add(_GenerateRunner(false,closure,blockEnds,options));}}var ver=typeof(FA).Assembly.GetName().Version.ToString();
 var gendecl=new CodeAttributeDeclaration(new CodeTypeReference(typeof(GeneratedCodeAttribute)),new CodeAttributeArgument(new CodePrimitiveExpression("Visual FA")),
 new CodeAttributeArgument(new CodePrimitiveExpression(ver)));foreach(CodeTypeDeclaration type in ns.Types){type.CustomAttributes.Add(gendecl);}return result;
