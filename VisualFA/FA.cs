@@ -847,6 +847,7 @@ namespace VisualFA
 				nfa.IsDeterministic = fa.IsDeterministic;
 				nfa.IsCompact = fa.IsCompact;
 				nfa.FromStates = fa.FromStates;
+				nfa.Id = fa.Id;
 				nfa._Tag = fa._Tag;
 				nclosure[i] = nfa;
 			}
@@ -2639,6 +2640,7 @@ namespace VisualFA
 					{
 						a = s;
 					}
+					s.Id = q.Id;
 					s.AcceptSymbol = q.AcceptSymbol;
 					s._Tag = q._Tag; // Select representative.				
 					q._Tag = n;
