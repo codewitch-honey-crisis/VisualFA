@@ -1,6 +1,9 @@
 ﻿# Visual FA
 Visual FA a Unicode enabled DFA regular expression engine
 
+There's a series of articles on it starting here:
+https://www.codeproject.com/Articles/5375797/Visual-FA-Part-1-Understanding-Finite-Automata
+
 ### License Notice
 
 Portions of this code in the file FA.cs were derived from code created by other authors, and similarly licensed under MIT
