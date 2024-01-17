@@ -48,16 +48,51 @@ FA lexer = FA.ToLexer(tokens,true);
 // ToDfa() is okay, and ToMinimizedDfa() is
 // usually okay on states other than the root.
 
-var dgo = new FADotGraphOptions();
+// create an expanded NFA
+FA nfa = FA.Parse("foo|bar", 0, false);
+// we're going to show the
+// subset construction in
+// the graph. ToMinimuzedDfa()
+// doesn't preserve that.
+// So use ToDfa();
+FA dfa = nfa.ToDfa();
+FADotGraphOptions dgo = new FADotGraphOptions();
+// the image is wide for this 
+// website. Let's make it a 
+// little less wide by making
+// it top to bottom instead of
+// left to right
 dgo.Vertical = true;
-dgo.BlockEnds = blockEnds;
-dgo.DebugShowNfa = false;
-dgo.AcceptSymbolNames = syms;
-//dgo.DebugSourceNfa = lexer.FromStates[0];
-dgo.AcceptSymbolNames = syms;
-
-lexer.RenderToFile(@"..\..\..\lexer_dfa.jpg", dgo);
+// this expression does not use
+// blockEnds. If we did, we'd
+// put the block end array here
+dgo.BlockEnds = null;
+// let's show the NFA together
+// with the DFA
+dgo.DebugShowNfa = true;
+// and so we give it
+// the source NFA to use
+dgo.DebugSourceNfa = nfa;
+// we don't need to show the accept 
+// symbols. That's for lexers
+dgo.HideAcceptSymbolIds = true;
+// this is also for lexers
+// it takes a string[] of names
+// that map to the accept symbol
+// of the same index in the array
+// it works like blockEnds in 
+// terms of how it associates
+dgo.AcceptSymbolNames = null;
+// let's do something fun
+// we can graph movement
+// through the machine by providing
+// an input string. 
+dgo.DebugString = "ba";
+// finally, render it.
+dfa.RenderToFile(@"..\..\..\dfa_subset.jpg", dgo);
 return;
+lexer.RenderToFile(@"..\..\..\lexer_dfa.jpg", dgo);
+
 
 string tolex = "/* example lex */" + Environment.NewLine +
 	"var a = 2 + 2" + Environment.NewLine +
