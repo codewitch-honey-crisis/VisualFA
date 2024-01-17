@@ -2243,9 +2243,7 @@ namespace VisualFA
 			{
 				var s = working.Dequeue();
 				FA dfa = dfaMap[s];
-				var accSort = s.ToList();
-				accSort.Sort((x, y) => x.AcceptSymbol.CompareTo(y.AcceptSymbol));
-				foreach (FA q in accSort)
+				foreach (FA q in s)
 				{
 					if (q.IsAccepting)
 					{

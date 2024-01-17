@@ -1385,16 +1385,15 @@ if(t.Max<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(poin
 _KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();var epscl=new List<FA>();
 _Seen.Clear();fa._FillEpsilonClosureImpl(epscl,_Seen);foreach(var efa in epscl){initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var
  result=new FA();result.IsDeterministic=true;result.FromStates=epscl.ToArray();foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;
-break;}}++prog;progress?.Report(prog);dfaMap.Add(initial,result);while(working.Count>0){var s=working.Dequeue();FA dfa=dfaMap[s];var accSort=s.ToList();
-accSort.Sort((x,y)=>x.AcceptSymbol.CompareTo(y.AcceptSymbol));foreach(FA q in accSort){if(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;}}for(var
- i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s){_Seen.Clear();var ecs=new List<FA>();c._FillEpsilonClosureImpl(ecs,_Seen);
-foreach(var efa in ecs){foreach(var trns in efa._transitions){if(trns.Min==-1&&trns.Max==-1){continue;}if(trns.Min<=pnt&&pnt<=trns.Max){_Seen.Clear();
-var efcs=new List<FA>();trns.To._FillEpsilonClosureImpl(efcs,_Seen);foreach(var eefa in efcs){set.Add(eefa);}}}}_Seen.Clear();}if(!sets.ContainsKey(set))
-{sets.Add(set,set);working.Enqueue(set);var newfa=new FA();newfa.IsDeterministic=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set);newfa.FromStates
-=fas.ToArray();}FA dst=dfaMap[set];int first=pnt;int last;if(i+1<points.Length)last=(points[i+1]-1);else last=0x10ffff;dfa._transitions.Add(new FATransition(dst,first,
-last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);
-foreach(var trns in itrns){var acc=trns.To.FillFind(AcceptingFilter);if(0==acc.Count){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;
-progress?.Report(prog);return result;}
+break;}}++prog;progress?.Report(prog);dfaMap.Add(initial,result);while(working.Count>0){var s=working.Dequeue();FA dfa=dfaMap[s];foreach(FA q in s){if
+(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;}}for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s)
+{_Seen.Clear();var ecs=new List<FA>();c._FillEpsilonClosureImpl(ecs,_Seen);foreach(var efa in ecs){foreach(var trns in efa._transitions){if(trns.Min==
+-1&&trns.Max==-1){continue;}if(trns.Min<=pnt&&pnt<=trns.Max){_Seen.Clear();var efcs=new List<FA>();trns.To._FillEpsilonClosureImpl(efcs,_Seen);foreach
+(var eefa in efcs){set.Add(eefa);}}}}_Seen.Clear();}if(!sets.ContainsKey(set)){sets.Add(set,set);working.Enqueue(set);var newfa=new FA();newfa.IsDeterministic
+=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set);newfa.FromStates=fas.ToArray();}FA dst=dfaMap[set];int first=pnt;int last;if(i+1<points.Length)last
+=(points[i+1]-1);else last=0x10ffff;dfa._transitions.Add(new FATransition(dst,first,last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);
+} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns){var acc=trns.To.FillFind(AcceptingFilter);
+if(0==acc.Count){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;progress?.Report(prog);return result;}
 #endregion // _Determinize()
 #region Totalize()
 /// <summary>

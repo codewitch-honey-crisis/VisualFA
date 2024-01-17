@@ -3,15 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualFA", "VisualFA\VisualFA.csproj", "{135D42E3-4C33-4FB0-9453-E18CDE5046BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualFA", "VisualFA\VisualFA.csproj", "{135D42E3-4C33-4FB0-9453-E18CDE5046BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{15DEE5C1-9EC7-4611-9274-A11E0DFEF619}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{15DEE5C1-9EC7-4611-9274-A11E0DFEF619}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleStuff", "SimpleStuff\SimpleStuff.csproj", "{D2A7CC01-A055-4205-8616-4FFB12E8B2B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleStuff", "SimpleStuff\SimpleStuff.csproj", "{D2A7CC01-A055-4205-8616-4FFB12E8B2B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualFA.Compiler", "VisualFA.Compiler\VisualFA.Compiler.csproj", "{F1D05E7F-1BF0-4738-BE43-29150B6766E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualFA.Compiler", "VisualFA.Compiler\VisualFA.Compiler.csproj", "{F1D05E7F-1BF0-4738-BE43-29150B6766E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualFA.DNF", "VisualFA.DNF\VisualFA.DNF.csproj", "{B00132B8-5C68-4F2A-A61E-4AEF54D67FBF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{135D42E3-4C33-4FB0-9453-E18CDE5046BC} = {135D42E3-4C33-4FB0-9453-E18CDE5046BC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsmExplorer", "FsmExplorer\FsmExplorer.csproj", "{6C532A4A-5004-478F-8EE9-C697BC6A628C}"
 EndProject
@@ -21,13 +24,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualFA.Generator", "Visua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualFA.Generator.DNF", "VisualFA.Generator.DNF\VisualFA.Generator.DNF.csproj", "{E6C761D7-E903-4AF1-A326-C011EB78D9C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneratorDemo", "GeneratorDemo\GeneratorDemo.csproj", "{D73BD6C3-8DFC-4776-849B-125AA9D923C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeneratorDemo", "GeneratorDemo\GeneratorDemo.csproj", "{D73BD6C3-8DFC-4776-849B-125AA9D923C3}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GeneratorDemoVB", "GeneratorDemoVB\GeneratorDemoVB.vbproj", "{5C534DE9-0780-445B-BCE5-D07EDCD33EFB}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "GeneratorDemoVB", "GeneratorDemoVB\GeneratorDemoVB.vbproj", "{5C534DE9-0780-445B-BCE5-D07EDCD33EFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexGen", "LexGen\LexGen.csproj", "{2E312C15-BDA8-4095-998C-04F3CE67523D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexGen", "LexGen\LexGen.csproj", "{2E312C15-BDA8-4095-998C-04F3CE67523D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{135D42E3-4C33-4FB0-9453-E18CDE5046BC} = {135D42E3-4C33-4FB0-9453-E18CDE5046BC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexGen.DNF", "LexGen.DNF\LexGen.DNF.csproj", "{2388598C-3EBB-4D0C-9109-96CF626AD2EE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B00132B8-5C68-4F2A-A61E-4AEF54D67FBF} = {B00132B8-5C68-4F2A-A61E-4AEF54D67FBF}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DAD0136B-C492-42A8-A13D-64DA5281F8F8}"
 	ProjectSection(SolutionItems) = preProject
