@@ -977,7 +977,6 @@ namespace VisualFA
 		readonly List<FA> _states;
 		readonly List<FA> _nexts;
 		readonly List<FA> _initial;
-		FA[] _One = new FA[1];
 		public FATextReaderStateRunner(FA fa, FA[] blockEnds = null)
 		{
 			if (null == fa)
@@ -1015,8 +1014,7 @@ namespace VisualFA
 				}
 				else
 				{
-					_One[0] = _fa;
-					FA.FillEpsilonClosure(_One, _initial);
+					FA.FillEpsilonClosure(_fa, _initial);
 				}
 				_states.Clear();
 				_states.AddRange(_initial);
@@ -1050,8 +1048,7 @@ namespace VisualFA
 						}
 						else
 						{
-							_One[0] = dfaNext;
-							FA.FillEpsilonClosure(_One, _states);
+							FA.FillEpsilonClosure(dfaNext, _states);
 						}
 					}
 					dfaNext = null;
@@ -1073,8 +1070,7 @@ namespace VisualFA
 							_states.Clear();
 							if (!ffa.IsCompact)
 							{
-								_One[0] = ffa;
-								FA.FillEpsilonClosure(_One, _states);
+								FA.FillEpsilonClosure(ffa, _states);
 							}
 							else
 							{
@@ -1119,8 +1115,7 @@ namespace VisualFA
 								}
 								else
 								{
-									_One[0] = be;
-									FA.FillEpsilonClosure(_One, _initial);
+									FA.FillEpsilonClosure(be, _initial);
 								}
 								_states.Clear();
 								_states.AddRange(_initial);
@@ -1153,8 +1148,7 @@ namespace VisualFA
 										}
 										else
 										{
-											_One[0] = dfaNext;
-											FA.FillEpsilonClosure(_One, _states);
+											FA.FillEpsilonClosure(dfaNext, _states);
 										}
 									}
 									dfaNext = null;
@@ -1177,8 +1171,7 @@ namespace VisualFA
 											_states.Clear();
 											if (!ffa.IsCompact)
 											{
-												_One[0] = ffa;
-												FA.FillEpsilonClosure(_One, _states);
+												FA.FillEpsilonClosure(ffa, _states);
 											}
 											else
 											{

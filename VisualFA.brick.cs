@@ -1853,27 +1853,27 @@ s.Substring(unchecked((int)cursor_pos),len)
 public
 #endif
 partial class FATextReaderStateRunner:FATextReaderRunner{readonly FA _fa;readonly FA[]_blockEnds;readonly List<FA>_states;readonly List<FA>_nexts;readonly
- List<FA>_initial;FA[]_One=new FA[1];public FATextReaderStateRunner(FA fa,FA[]blockEnds=null){if(null==fa){throw new ArgumentNullException(nameof(fa));
-}_fa=fa;_blockEnds=blockEnds;_states=new List<FA>();_nexts=new List<FA>();_initial=new List<FA>();}public override FAMatch NextMatch(){capture.Clear();
-FA dfaState=null,dfaNext=null,dfaInitial=null;if(current==-2){Advance();}long cursor_pos=position;int line=this.line;int column=this.column;if(_fa.IsDeterministic)
-{dfaState=_fa;dfaInitial=_fa;}else{_initial.Clear();if(_fa.IsCompact){_initial.Add(_fa);}else{_One[0]=_fa;FA.FillEpsilonClosure(_One,_initial);}_states.Clear();
-_states.AddRange(_initial);}while(true){if(dfaState!=null){dfaNext=dfaState.Move(current);}else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,current,
-_nexts);}if(dfaNext!=null){Advance();if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else
-{_One[0]=dfaNext;FA.FillEpsilonClosure(_One,_states);}}dfaNext=null;}else if(_nexts.Count>0){Advance();if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic)
-{dfaState=ffa;}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}}}else{_states.Clear();
-FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{int acc;if(dfaState!=null){acc=dfaState.AcceptSymbol;}else{acc=FA.GetFirstAcceptSymbol(_states);
-}if(acc>-1){if(_blockEnds!=null&&_blockEnds.Length>acc&&_blockEnds[acc]!=null){var be=_blockEnds[acc];if(be.IsDeterministic){dfaState=be;dfaInitial=be;
-}else{_initial.Clear();if(be.IsCompact){_initial.Add(be);}else{_One[0]=be;FA.FillEpsilonClosure(_One,_initial);}_states.Clear();_states.AddRange(_initial);
+ List<FA>_initial;public FATextReaderStateRunner(FA fa,FA[]blockEnds=null){if(null==fa){throw new ArgumentNullException(nameof(fa));}_fa=fa;_blockEnds
+=blockEnds;_states=new List<FA>();_nexts=new List<FA>();_initial=new List<FA>();}public override FAMatch NextMatch(){capture.Clear();FA dfaState=null,
+dfaNext=null,dfaInitial=null;if(current==-2){Advance();}long cursor_pos=position;int line=this.line;int column=this.column;if(_fa.IsDeterministic){dfaState
+=_fa;dfaInitial=_fa;}else{_initial.Clear();if(_fa.IsCompact){_initial.Add(_fa);}else{FA.FillEpsilonClosure(_fa,_initial);}_states.Clear();_states.AddRange(_initial);
 }while(true){if(dfaState!=null){dfaNext=dfaState.Move(current);}else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,current,_nexts);}if(dfaNext!=null)
-{Advance();if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{_One[0]=dfaNext;FA.FillEpsilonClosure(_One,
+{Advance();if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{FA.FillEpsilonClosure(dfaNext,
 _states);}}dfaNext=null;}else if(_nexts.Count>0){Advance();if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;
-_states.Clear();if(!ffa.IsCompact){_One[0]=ffa;FA.FillEpsilonClosure(_One,_states);}else{_states.Add(ffa);}}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,
-_states);}_nexts.Clear();}else{if(dfaState!=null){if(dfaState.IsAccepting){return FAMatch.Create(acc,capture.ToString(),cursor_pos,line,column);}}else
-{if(-1<FA.GetFirstAcceptSymbol(_states)){return FAMatch.Create(acc,capture.ToString(),cursor_pos,line,column);}}Advance();if(dfaInitial!=null){_states.Clear();
-dfaState=dfaInitial;}else{dfaState=null;_states.Clear();_states.AddRange(_initial);}if(current==-1){return FAMatch.Create(-1,capture.ToString(),cursor_pos,
-line,column);}}}}else{return FAMatch.Create(acc,capture.ToString(),cursor_pos,line,column);}}else{if(dfaInitial!=null){while(current!=-1&&dfaInitial.Move(current)
-==null){Advance();}}else{_states.Clear();while(current!=-1&&FA.FillMove(_initial,current,_states).Count==0){Advance();}}if(capture.Length==0){return FAMatch.Create(-2,
-null,0,0,0);}return FAMatch.Create(-1,capture.ToString(),cursor_pos,line,column);}}}}}
+_states.Clear();if(!ffa.IsCompact){FA.FillEpsilonClosure(ffa,_states);}else{_states.Add(ffa);}}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);
+}_nexts.Clear();}else{int acc;if(dfaState!=null){acc=dfaState.AcceptSymbol;}else{acc=FA.GetFirstAcceptSymbol(_states);}if(acc>-1){if(_blockEnds!=null&&
+_blockEnds.Length>acc&&_blockEnds[acc]!=null){var be=_blockEnds[acc];if(be.IsDeterministic){dfaState=be;dfaInitial=be;}else{_initial.Clear();if(be.IsCompact)
+{_initial.Add(be);}else{FA.FillEpsilonClosure(be,_initial);}_states.Clear();_states.AddRange(_initial);}while(true){if(dfaState!=null){dfaNext=dfaState.Move(current);
+}else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,current,_nexts);}if(dfaNext!=null){Advance();if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{
+_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{FA.FillEpsilonClosure(dfaNext,_states);}}dfaNext=null;}else if(_nexts.Count>0){Advance();
+if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact){FA.FillEpsilonClosure(ffa,
+_states);}else{_states.Add(ffa);}}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{if(dfaState!=null){if(dfaState.IsAccepting)
+{return FAMatch.Create(acc,capture.ToString(),cursor_pos,line,column);}}else{if(-1<FA.GetFirstAcceptSymbol(_states)){return FAMatch.Create(acc,capture.ToString(),
+cursor_pos,line,column);}}Advance();if(dfaInitial!=null){_states.Clear();dfaState=dfaInitial;}else{dfaState=null;_states.Clear();_states.AddRange(_initial);
+}if(current==-1){return FAMatch.Create(-1,capture.ToString(),cursor_pos,line,column);}}}}else{return FAMatch.Create(acc,capture.ToString(),cursor_pos,
+line,column);}}else{if(dfaInitial!=null){while(current!=-1&&dfaInitial.Move(current)==null){Advance();}}else{_states.Clear();while(current!=-1&&FA.FillMove(_initial,
+current,_states).Count==0){Advance();}}if(capture.Length==0){return FAMatch.Create(-2,null,0,0,0);}return FAMatch.Create(-1,capture.ToString(),cursor_pos,
+line,column);}}}}}
 #endregion // FATextReaderDfaTableRunner
 }namespace VisualFA{
 #if FALIB
