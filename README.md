@@ -22,9 +22,9 @@ DSlang - https://github.com/codewitch-honey-crisis/Deslang
 
 ### Performance 
 
-Microsoft Regex "Lexer": [■■■■■■■■■■] 100% Found 220000 matches in 35ms
+Microsoft Regex "Lexer": [■■■■■■■■■■] 100% Found 220000 matches in 33ms
 
-Microsoft Regex compiled "Lexer": [■■■■■■■■■■] 100% Found 220000 matches in 19ms
+Microsoft Regex compiled "Lexer": [■■■■■■■■■■] 100% Found 220000 matches in 20ms
 
 FAStringRunner (proto): [■■■■■■■■■■] 100% Found 220000 matches in 7ms
 
@@ -34,15 +34,15 @@ FAStringDfaTableRunner: [■■■■■■■■■■] 100% Found 220000 match
 
 FATextReaderDfaTableRunner: [■■■■■■■■■■] 100% Found 220000 matches in 14ms
 
-FAStringStateRunner (NFA): [■■■■■■■■■■] 100% Found 220000 matches in 208ms
+FAStringStateRunner (NFA): [■■■■■■■■■■] 100% Found 220000 matches in 144ms
 
-FAStringStateRunner (Compact NFA): [■■■■■■■■■■] 100% Found 220000 matches in 105ms
+FAStringStateRunner (Compact NFA): [■■■■■■■■■■] 100% Found 220000 matches in 42ms
 
-FATextReaderStateRunner (Compact NFA): [■■■■■■■■■■] 100% Found 220000 matches in 108ms
+FATextReaderStateRunner (Compact NFA): [■■■■■■■■■■] 100% Found 220000 matches in 47ms
 
-FAStringStateRunner (DFA): [■■■■■■■■■■] 100% Found 220000 matches in 12ms
+FAStringStateRunner (DFA): [■■■■■■■■■■] 100% Found 220000 matches in 11ms
 
-FATextReaderStateRunner (DFA): [■■■■■■■■■■] 100% Found 220000 matches in 17ms
+FATextReaderStateRunner (DFA): [■■■■■■■■■■] 100% Found 220000 matches in 15ms
 
 FAStringRunner (Compiled): [■■■■■■■■■■] 100% Found 220000 matches in 7ms
 
