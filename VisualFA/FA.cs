@@ -233,6 +233,23 @@ namespace VisualFA
 			}
 			return string.Concat("[", char.ConvertFromUtf32(Min),"-", char.ConvertFromUtf32(Max), "]-> ", To.ToString());
 		}
+		public bool Equals(FATransition rhs)
+		{
+			return To == rhs.To && Min == rhs.Min && Max == rhs.Max;
+		}
+		public override int GetHashCode()
+		{
+			if(To==null)
+			{
+				return Min.GetHashCode() ^ Max.GetHashCode();
+			}
+			return Min.GetHashCode() ^ Max.GetHashCode() ^ To.GetHashCode();
+		}
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(obj, null)) return false;
+			return Equals((FATransition)obj);
+		}
 	}
 	#endregion // FATransition
 	#region FAFindFilter
@@ -416,24 +433,20 @@ namespace VisualFA
 			if(to==null) throw new ArgumentNullException(nameof(to));
 			if (compact)
 			{
-				if (!IsDeterministic && !IsCompact)
+				
+				for (int i = 0; i < to._transitions.Count; ++i)
 				{
-					_transitions.AddRange(to._transitions);
-				} else
-				{
-					for (int i = 0; i < to._transitions.Count; ++i)
+					var fat = to._transitions[i];
+					if (!fat.IsEpsilon)
 					{
-						var fat = to._transitions[i];
-						if (!fat.IsEpsilon)
-						{
-							AddTransition(new FARange(fat.Min, fat.Max), fat.To);
-						}
-						else
-						{
-							AddEpsilon(fat.To, compact);
-						}
+						AddTransition(new FARange(fat.Min, fat.Max), fat.To);
+					}
+					else
+					{
+						AddEpsilon(fat.To, compact);
 					}
 				}
+				
 				if(!IsAccepting & to.IsAccepting)
 				{
 					AcceptSymbol = to.AcceptSymbol;
@@ -441,9 +454,12 @@ namespace VisualFA
 			}
 			else
 			{
-				_transitions.Add(new FATransition(to));
-				IsCompact = false;
-				IsDeterministic = false;
+				if (!_transitions.Contains(new FATransition(to)))
+				{
+					_transitions.Add(new FATransition(to));
+					IsCompact = false;
+					IsDeterministic = false;
+				}
 			}
 			
 		}
@@ -465,7 +481,14 @@ namespace VisualFA
 			for (int i = 0; i < _transitions.Count; ++i)
 			{
 				var fat = _transitions[i];
-				if(range.Max>fat.Max)
+				if (to == fat.To)
+				{
+					if(range.Min==fat.Min && range.Max==fat.Max)
+					{
+						return;
+					}
+				}
+				if (range.Max>fat.Max)
 				{
 					insert = i;
 				}

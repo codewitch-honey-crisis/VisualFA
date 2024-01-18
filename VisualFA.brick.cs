@@ -883,7 +883,9 @@ public
 struct FATransition{public int Min;public int Max;public FA To;public FATransition(FA to,int min=-1,int max=-1){Min=min;Max=max;To=to;}public bool IsEpsilon
 {get{return Min==-1&&Max==-1;}}public override string ToString(){if(IsEpsilon){return string.Concat("-> ",To.ToString());}if(Min==Max){return string.Concat("[",
 char.ConvertFromUtf32(Min),"]-> ",To.ToString());}return string.Concat("[",char.ConvertFromUtf32(Min),"-",char.ConvertFromUtf32(Max),"]-> ",To.ToString());
-}}
+}public bool Equals(FATransition rhs){return To==rhs.To&&Min==rhs.Min&&Max==rhs.Max;}public override int GetHashCode(){if(To==null){return Min.GetHashCode()
+^Max.GetHashCode();}return Min.GetHashCode()^Max.GetHashCode()^To.GetHashCode();}public override bool Equals(object obj){if(ReferenceEquals(obj,null))
+return false;return Equals((FATransition)obj);}}
 #endregion // FATransition
 #region FAFindFilter
 /// <summary>
@@ -999,10 +1001,10 @@ public bool IsNeutral{get{return!IsAccepting&&_transitions.Count==1&&_transition
 /// </summary>
 /// <param name="to">The state to transition to</param>
 /// <param name="compact">True to collapse epsilon transitions onto this state, otherwise false</param>
-public void AddEpsilon(FA to,bool compact=true){if(to==null)throw new ArgumentNullException(nameof(to));if(compact){if(!IsDeterministic&&!IsCompact){_transitions.AddRange(to._transitions);
-}else{for(int i=0;i<to._transitions.Count;++i){var fat=to._transitions[i];if(!fat.IsEpsilon){AddTransition(new FARange(fat.Min,fat.Max),fat.To);}else{
-AddEpsilon(fat.To,compact);}}}if(!IsAccepting&to.IsAccepting){AcceptSymbol=to.AcceptSymbol;}}else{_transitions.Add(new FATransition(to));IsCompact=false;
-IsDeterministic=false;}}/// <summary>
+public void AddEpsilon(FA to,bool compact=true){if(to==null)throw new ArgumentNullException(nameof(to));if(compact){for(int i=0;i<to._transitions.Count;
+++i){var fat=to._transitions[i];if(!fat.IsEpsilon){AddTransition(new FARange(fat.Min,fat.Max),fat.To);}else{AddEpsilon(fat.To,compact);}}if(!IsAccepting
+&to.IsAccepting){AcceptSymbol=to.AcceptSymbol;}}else{if(!_transitions.Contains(new FATransition(to))){_transitions.Add(new FATransition(to));IsCompact
+=false;IsDeterministic=false;}}}/// <summary>
 /// Adds an input transition
 /// </summary>
 /// <param name="range">The range of input codepoints to transition on</param>
@@ -1010,9 +1012,10 @@ IsDeterministic=false;}}/// <summary>
 /// <exception cref="ArgumentNullException"><paramref name="to"/> was null</exception>
 /// <exception cref="ArgumentException"><paramref name="range"/> indicated an epsilon transition</exception>
 public void AddTransition(FARange range,FA to){if(to==null)throw new ArgumentNullException(nameof(to));if(range.Min==-1&&range.Max==-1){throw new ArgumentException("Attempt to add an epsilon using the wrong method");
-}var insert=-1;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(range.Max>fat.Max){insert=i;}if(IsDeterministic){if(fat.To!=to){if(range.Intersects(new
- FARange(fat.Min,fat.Max))){IsDeterministic=false;}}}if(!IsDeterministic&&range.Max<fat.Max){break;}}_transitions.Insert(insert+1,new FATransition(to,
-range.Min,range.Max));}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;IsCompact=true;}/// <summary>
+}var insert=-1;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(to==fat.To){if(range.Min==fat.Min&&range.Max==fat.Max){return;}}if(range.Max>fat.Max)
+{insert=i;}if(IsDeterministic){if(fat.To!=to){if(range.Intersects(new FARange(fat.Min,fat.Max))){IsDeterministic=false;}}}if(!IsDeterministic&&range.Max
+<fat.Max){break;}}_transitions.Insert(insert+1,new FATransition(to,range.Min,range.Max));}public void ClearTransitions(){_transitions.Clear();IsDeterministic
+=true;IsCompact=true;}/// <summary>
 /// Ensures that the machine has no incoming transitions to the starting state, as well as only one final state.
 /// </summary>
 /// <param name="start">The start state, in case a new one needs to be created.</param>
