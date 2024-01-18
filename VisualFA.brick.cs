@@ -1141,8 +1141,8 @@ public static int GetFirstAcceptSymbol(IEnumerable<FA>states){foreach(var state 
 /// <param name="result">A list to hold the next states. If null, one will be created.</param>
 /// <returns>The list of next states</returns>
 public static IList<FA>FillMove(IEnumerable<FA>states,int codepoint,IList<FA>result=null){_Seen.Clear();if(result==null)result=new List<FA>();foreach(var
- state in states){for(int i=0;i<state._transitions.Count;++i){var fat=state._transitions[i];if(fat.Min==-1&&fat.Max==-1){continue;}if(fat.Min<=codepoint
-&&codepoint<=fat.Max){if(_Seen.Add(fat.To)){result.Add(fat.To);}}}}_Seen.Clear();return FillEpsilonClosure(result,null);}/// <summary>
+ state in states){for(int i=0;i<state._transitions.Count;++i){var fat=state._transitions[i];if(fat.Min==-1&&fat.Max==-1){continue;}if(codepoint<fat.Min)
+{break;}if(codepoint<=fat.Max){fat.To._FillEpsilonClosureImpl(result,_Seen);}}}_Seen.Clear();return result;}/// <summary>
 /// Returns the next state
 /// </summary>
 /// <param name="codepoint">The codepoint to move on</param>

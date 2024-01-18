@@ -964,18 +964,18 @@ namespace VisualFA
 					{
 						continue;
 					}
-					if (fat.Min <= codepoint && codepoint <= fat.Max)
+					if(codepoint<fat.Min)
 					{
-						if (_Seen.Add(fat.To))
-						{
-							result.Add(fat.To);
-						}
-
+						break;
+					}
+					if (codepoint <= fat.Max)
+					{
+						fat.To._FillEpsilonClosureImpl(result, _Seen);
 					}
 				}
 			}
 			_Seen.Clear();
-			return FillEpsilonClosure(result, null);
+			return result;
 		}
 		/// <summary>
 		/// Returns the next state
