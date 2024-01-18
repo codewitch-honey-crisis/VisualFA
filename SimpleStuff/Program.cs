@@ -45,7 +45,9 @@ FA lexer = FA.ToLexer(tokens,true);
 // usually okay on states other than the root.
 
 // create an expanded NFA
-FA nfa = FA.Parse("([z-a_Z-A9-0]+)?", 0);
+// small bug in rendering the movement through
+// this expression (NFA) w/ Graphviz. Not easy to fix
+FA nfa = FA.Parse("([z-a_Z-A9-0]+|(foo)+)?", 0);
 Console.WriteLine("q0 trans count {0}", nfa.Transitions.Count);
 // we're going to show the
 // subset construction in
@@ -84,7 +86,7 @@ dgo.AcceptSymbolNames = null;
 // we can graph movement
 // through the machine by providing
 // an input string. 
-dgo.DebugString = "ba";
+dgo.DebugString = "fo";
 // finally, render it.
 dfa.RenderToFile(@"..\..\..\dfa_subset.jpg", dgo);
 dgo.BlockEnds = blockEnds;
