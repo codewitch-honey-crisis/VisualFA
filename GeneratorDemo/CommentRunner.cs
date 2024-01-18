@@ -18,12 +18,14 @@ using VisualFA;
 internal sealed partial class CommentRunner : FAStringRunner {
     private FAMatch _BlockEnd0(ReadOnlySpan<char> s, int cp, int len, int position, int line, int column) {
     q0:
+        // [\*]
         if ((cp == 42)) {
             this.Advance(s, ref cp, ref len, false);
             goto q1;
         }
         goto errorout;
     q1:
+        // [\/]
         if ((cp == 47)) {
             this.Advance(s, ref cp, ref len, false);
             goto q2;
@@ -54,12 +56,14 @@ internal sealed partial class CommentRunner : FAStringRunner {
         c = this.column;
         this.Advance(s, ref ch, ref len, true);
         // q0:
+        // [\/]
         if ((ch == 47)) {
             this.Advance(s, ref ch, ref len, false);
             goto q1;
         }
         goto errorout;
     q1:
+        // [\*]
         if ((ch == 42)) {
             this.Advance(s, ref ch, ref len, false);
             goto q2;

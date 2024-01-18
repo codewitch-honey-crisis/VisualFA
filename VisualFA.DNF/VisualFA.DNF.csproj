@@ -55,6 +55,9 @@
     <Compile Include="..\VisualFA\FARunner.cs">
       <Link>FARunner.cs</Link>
     </Compile>
+    <Compile Include="..\VisualFA\RegexAst.cs">
+      <Link>RegexAst.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

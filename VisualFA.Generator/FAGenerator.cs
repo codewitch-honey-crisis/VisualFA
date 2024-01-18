@@ -191,23 +191,39 @@ namespace VisualFA
 					{
 						q0ranges.AddRange(trn.Value);
 					}
+					var tmp = new RegexCharsetExpression();
+					foreach (var rng in trn.Value)
+					{
 
-					var iftrans = new CodeConditionStatement(_GenerateRangesExpression(cmp, trn.Value));
+						if (rng.Min == rng.Max)
+						{
+							tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
+						}
+						else
+						{
+							tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min, rng.Max));
+						}
+					}
+					var rngcmt = new CodeCommentStatement(tmp.ToString());
 					if (!attachedlabel)
 					{
 						attachedlabel = true;
 						if (state != null)
 						{
-							state.Statement = iftrans;
-						} else
+							state.Statement = rngcmt;
+						}
+						else
 						{
-							dest.Add(iftrans);
+							dest.Add(rngcmt);
 						}
 					}
 					else
 					{
-						dest.Add(iftrans);
+						dest.Add(rngcmt);
 					}
+					var iftrans = new CodeConditionStatement(_GenerateRangesExpression(cmp, trn.Value));
+					dest.Add(iftrans);
+					
 					iftrans.TrueStatements.AddRange(new CodeStatement[] {
 						adv,
 						new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())
@@ -437,17 +453,40 @@ namespace VisualFA
 						var attachedlabel = false;
 						foreach (var trn in trnsgrp)
 						{
-							
-							var iftrans = new CodeConditionStatement(_GenerateRangesExpression(cmp, trn.Value));
+							var tmp = new RegexCharsetExpression();
+							foreach (var rng in trn.Value)
+							{
+
+								if (rng.Min == rng.Max)
+								{
+									tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
+								}
+								else
+								{
+									tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min, rng.Max));
+								}
+							}
+							var rngcmt = new CodeCommentStatement(tmp.ToString());
 							if (!attachedlabel)
 							{
 								attachedlabel = true;
-								state.Statement = iftrans;
+								if (state != null)
+								{
+									state.Statement = rngcmt;
+								}
+								else
+								{
+									dest.Add(rngcmt);
+								}
 							}
 							else
 							{
-								dest.Add(iftrans);
+								dest.Add(rngcmt);
 							}
+							var iftrans = new CodeConditionStatement(_GenerateRangesExpression(cmp, trn.Value));
+							
+							dest.Add(iftrans);
+							
 							iftrans.TrueStatements.AddRange(new CodeStatement[] {
 								adv,
 								new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())
