@@ -471,13 +471,20 @@ namespace VisualFA
 		/// <param name="range">The range of input codepoints to transition on</param>
 		/// <param name="to">The state to transition to</param>
 		/// <exception cref="ArgumentNullException"><paramref name="to"/> was null</exception>
-		/// <exception cref="ArgumentException"><paramref name="range"/> indicated an epsilon transition</exception>
 		public void AddTransition(FARange range,FA to)
 		{
-			if (to == null) throw new ArgumentNullException(nameof(to));
-			if(range.Min==-1&&range.Max==-1)
+			if (to == null) 
+				throw new ArgumentNullException(nameof(to));
+			if(range.Min==-1 && range.Max==-1)
 			{
-				throw new ArgumentException("Attempt to add an epsilon using the wrong method");
+				AddEpsilon(to);
+				return;
+			}
+			if(range.Min>range.Max)
+			{
+				int tmp = range.Min;
+				range.Min = range.Max;
+				range.Max = tmp;
 			}
 			var insert = -1;
 			for (int i = 0; i < _transitions.Count; ++i)
@@ -485,33 +492,32 @@ namespace VisualFA
 				var fat = _transitions[i];
 				if (to == fat.To)
 				{
-					if(range.Min==fat.Min && range.Max==fat.Max)
+					if(range.Min==fat.Min && 
+						range.Max==fat.Max)
 					{
 						return;
 					}
-				}
-				if (range.Max>fat.Max)
-				{
-					insert = i;
-				}
-				if (IsDeterministic)
-				{
-					if (fat.To != to)
+					if (IsDeterministic)
 					{
-						if (range.Intersects(new FARange(fat.Min, fat.Max)))
+						if (range.Intersects(
+							new FARange(fat.Min, fat.Max)))
 						{
 							IsDeterministic = false;
 						}
 					}
 				}
-				if (!IsDeterministic && range.Max < fat.Max) 
+				if (range.Min>fat.Min)
+				{
+					insert = i;
+				}
+				if (!IsDeterministic && 
+					range.Min < fat.Min) 
 				{
 					break;
 				}
 			}
-			
-			_transitions.Insert(insert+1,new FATransition(to, range.Min, range.Max));
-			
+			_transitions.Insert(insert+1,
+				new FATransition(to, range.Min, range.Max));	
 		}
 		public void ClearTransitions()
 		{
