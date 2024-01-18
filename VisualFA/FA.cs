@@ -249,7 +249,8 @@ namespace VisualFA
 		{
 			if (ReferenceEquals(obj, null)) return false;
 			if (!(obj is FATransition)) return false;
-			return Equals((FATransition)obj);
+			FATransition rhs = (FATransition) obj;
+			return To == rhs.To && Min == rhs.Min && Max == rhs.Max;
 		}
 	}
 	#endregion // FATransition
@@ -457,7 +458,7 @@ namespace VisualFA
 			{
 				if (!_transitions.Contains(new FATransition(to)))
 				{
-					_transitions.Add(new FATransition(to));
+					_transitions.Insert(0,new FATransition(to));
 					IsCompact = false;
 					IsDeterministic = false;
 				}
