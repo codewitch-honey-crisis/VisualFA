@@ -1076,8 +1076,9 @@ ic;++i){var t=_transitions[i];var fa=t.To._FindFirst(filter);if(null!=fa){return
 /// <param name="filter">The filter predicate to use</param>
 /// <returns>The first state that matches the filter criteria, or null if not found.</returns>
 public FA FindFirst(FAFindFilter filter){_Seen.Clear();var result=_FindFirst(filter);_Seen.Clear();return result;}IList<FA>_FillEpsilonClosureImpl(IList<FA>
-result,HashSet<FA>seen){if(!seen.Add(this)){return result;}result.Add(this);for(int ic=_transitions.Count,i=0;i<ic;++i){var t=_transitions[i];if(t.IsEpsilon)
-{if(t.To.IsDeterministic||t.To.IsCompact){if(seen.Add(t.To)){result.Add(t.To);}}else{t.To._FillEpsilonClosureImpl(result,seen);}}}return result;}/// <summary>
+result,HashSet<FA>seen){if(!seen.Add(this)){return result;}result.Add(this);if(IsCompact){return result;}for(int ic=_transitions.Count,i=0;i<ic;++i){var
+ t=_transitions[i];if(t.Min==-1&&t.Max==-1){if(t.To.IsCompact){if(seen.Add(t.To)){result.Add(t.To);}}else{t.To._FillEpsilonClosureImpl(result,seen);}}
+}return result;}/// <summary>
 /// Computes the total epsilon closure of a list of states
 /// </summary>
 /// <remarks>The epsilon closure is the list of all states reachable from these states on no input.</remarks>

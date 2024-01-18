@@ -759,12 +759,16 @@ namespace VisualFA
 				return result;
 			}
 			result.Add(this);
+			if(IsCompact)
+			{
+				return result;
+			}
 			for (int ic = _transitions.Count, i = 0; i < ic; ++i)
 			{
 				var t = _transitions[i];
-				if(t.IsEpsilon)
+				if(t.Min==-1 && t.Max==-1)
 				{
-					if (t.To.IsDeterministic || t.To.IsCompact)
+					if (t.To.IsCompact)
 					{
 						if (seen.Add(t.To))
 						{
