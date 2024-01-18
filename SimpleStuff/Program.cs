@@ -45,7 +45,7 @@ FA lexer = FA.ToLexer(tokens,true);
 // usually okay on states other than the root.
 
 // create an expanded NFA
-FA nfa = FA.Parse("foo|bar", 0, false);
+FA nfa = FA.Parse("a+", 0, false);
 // we're going to show the
 // subset construction in
 // the graph. ToMinimuzedDfa()

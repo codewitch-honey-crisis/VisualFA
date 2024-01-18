@@ -1183,12 +1183,13 @@ namespace VisualFA
 					{
 						case -1:
 						case 0:
-							result = Concat(new FA[] { expr, Repeat(expr, 0, 0, accept, compact) }, accept, compact);
+							//result = Concat(new FA[] { expr, Repeat(expr, 0, 0, accept, compact) }, accept, compact);
+							result = Repeat(expr, 0, 0, accept, compact);
+							result.AcceptSymbol = -1;
 							return result;
 						case 1:
 							return expr;
 						default:
-							// TODO: Can make this more compact
 							result = Concat(new FA[] { expr, Repeat(expr, 0, maxOccurs - 1, accept, compact) }, accept, compact);
 							return result;
 					}
