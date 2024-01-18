@@ -587,7 +587,7 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="closure">The closure of the machine</param>
 		/// <returns>True if q0 has incoming transitions, otherwise false</returns>
-		static bool IsLoop(IList<FA> closure)
+		public static bool IsLoop(IList<FA> closure)
 		{
 			var fa = closure[0];
 			for (int q = 0; q < closure.Count; ++q)

@@ -53,7 +53,7 @@ internal sealed partial class CommentRunner : FAStringRunner {
         l = this.line;
         c = this.column;
         this.Advance(s, ref ch, ref len, true);
-    q0:
+        // q0:
         if ((ch == 47)) {
             this.Advance(s, ref ch, ref len, false);
             goto q1;

@@ -171,8 +171,17 @@ namespace VisualFA
 			for (var q = 0; q < closure.Count; ++q)
 			{
 				var fromState = closure[q];
-				var state = new CodeLabeledStatement("q" + q.ToString());
-				dest.Add(state);
+
+				CodeLabeledStatement state = null;
+				if (q > 0 || FA.IsLoop(closure))
+				{
+					state = new CodeLabeledStatement("q" + q.ToString());
+					dest.Add(state);
+				} else if(q==0)
+				{
+					
+					dest.Add(new CodeCommentStatement("q0:"));
+				}
 				var trnsgrp = fromState.FillInputTransitionRangesGroupedByState();
 				var attachedlabel = false;
 
@@ -187,7 +196,13 @@ namespace VisualFA
 					if (!attachedlabel)
 					{
 						attachedlabel = true;
-						state.Statement = iftrans;
+						if (state != null)
+						{
+							state.Statement = iftrans;
+						} else
+						{
+							dest.Add(iftrans);
+						}
 					}
 					else
 					{
@@ -224,7 +239,13 @@ namespace VisualFA
 						if (!attachedlabel)
 						{
 							attachedlabel = true;
-							state.Statement = retbe;
+							if (state != null)
+							{
+								state.Statement = retbe;
+							} else
+							{
+								dest.Add(retbe);
+							}
 						}
 						else
 						{
@@ -246,7 +267,13 @@ namespace VisualFA
 						if (!attachedlabel)
 						{
 							attachedlabel = true;
-							state.Statement = retmatch;
+							if (state != null)
+							{
+								state.Statement = retmatch;
+							} else
+							{
+								dest.Add(retmatch);
+							}
 						}
 						else
 						{
@@ -260,7 +287,13 @@ namespace VisualFA
 					if (!attachedlabel)
 					{
 						attachedlabel = true;
-						state.Statement = gerror;
+						if (state != null)
+						{
+							state.Statement = gerror;
+						} else
+						{
+							dest.Add(gerror);
+						}
 					}
 					else
 					{
