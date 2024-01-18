@@ -1195,8 +1195,9 @@ public static FA Or(IEnumerable<FA>exprs,int accept=0,bool compact=true){var res
 /// <param name="accept">The accept id</param>
 /// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 /// <returns>A new machine representing the optional expression</returns>
-public static FA Optional(FA expr,int accept=0,bool compact=true){var result=expr.Clone();var acc=result.FillFind(AcceptingFilter);for(int ic=acc.Count,
-i=0;i<ic;++i){var fa=acc[i];fa.AcceptSymbol=accept;result.AddEpsilon(fa,compact);}return result;}/// <summary>
+public static FA Optional(FA expr,int accept=0,bool compact=true){var result=expr.Clone();var acc=result.FillFind(AcceptingFilter);FA final=null;if(acc.Count>1)
+{final=new FA(accept);for(int ic=acc.Count,i=0;i<ic;++i){var fa=acc[i];fa.AcceptSymbol=-1;fa.AddEpsilon(final,compact);}}else{final=acc[0];}result.AddEpsilon(final,
+compact);return result;}/// <summary>
 /// Creates a repetition of the given expression
 /// </summary>
 /// <param name="expr">The expression to repeat</param>

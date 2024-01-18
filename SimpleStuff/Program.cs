@@ -5,11 +5,20 @@ using System.CodeDom;
 using VisualFA;
 
 var opts = new FADotGraphOptions();
-
-FA test = FA.Parse("[a-z]|Foo|[A-Z]");
+var tst = "(0|([1-9][0-9]*))(\\.[0-9]+)?";
+FA test = FA.Parse(tst,0,true);
 test.SetIds();
 opts.HideAcceptSymbolIds = true;
+test=test.ToMinimizedDfa();
 test.RenderToFile(@"..\..\..\test.jpg",opts);
+var tmp = RegexExpression.Parse(tst).ToFA(0, false);
+//tmp.RenderToFile(@"..\..\..\test.jpg", opts);
+opts.DebugSourceNfa = tmp;
+opts.DebugShowNfa = true;
+opts.HideAcceptSymbolIds = true;
+tmp.ToDfa().RenderToFile(@"..\..\..\test2.jpg", opts);
+
+return;
 opts.HideAcceptSymbolIds = false;
 FA commentBlock = FA.Parse(@"\/\*", 0);
 FA commentBlockEnd = FA.Parse(@"\*\/");

@@ -1114,12 +1114,23 @@ namespace VisualFA
 		{
 			var result = expr.Clone();
 			var acc = result.FillFind(AcceptingFilter);
-			for (int ic = acc.Count, i = 0; i < ic; ++i)
+			FA final = null;
+			if(acc.Count>1)
 			{
-				var fa = acc[i];
-				fa.AcceptSymbol = accept;
-				result.AddEpsilon(fa, compact);
+				final = new FA(accept);
+				for (int ic = acc.Count, i = 0; i < ic; ++i)
+				{
+					var fa = acc[i];
+					fa.AcceptSymbol = -1;
+					fa.AddEpsilon(final, compact);
+				}
+			} else
+			{
+				final = acc[0];
 			}
+			
+			result.AddEpsilon(final, compact);
+		
 			return result;
 		}
 		/// <summary>
