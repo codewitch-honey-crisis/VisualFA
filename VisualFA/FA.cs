@@ -511,7 +511,7 @@ namespace VisualFA
 					insert = i;
 				}
 				if (!IsDeterministic && 
-					range.Min < fat.Min) 
+					range.Max < fat.Min) 
 				{
 					break;
 				}
