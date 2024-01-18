@@ -12,7 +12,7 @@ FA commentBlockEnd = FA.Parse(@"\*\/");
 FA commentLine = FA.Parse(@"\/\/[^\n]*", 1);
 FA wspace = FA.Parse("[ \\t\\r\\n]+", 2);
 FA ident = FA.Parse("[A-Za-z_][A-Za-z0-9_]*", 3);
-FA num= FA.Parse(@"[0-9]+((\.[0-9]+[Ee]\-?[1-9][0-9]*)?|\.[0-9]+)", 4);
+FA num= FA.Parse(@"(0|-?([1-9][0-9]*))((\.[0-9]+[Ee]\-?[1-9][0-9]*)?|\.[0-9]+)", 4);
 FA op = FA.Parse(@"[\-\+\*\/\=]",5);
 FA[] tokens = new FA[] { 
 	commentBlock, 
@@ -86,7 +86,12 @@ dgo.AcceptSymbolNames = null;
 dgo.DebugString = "ba";
 // finally, render it.
 dfa.RenderToFile(@"..\..\..\dfa_subset.jpg", dgo);
-
+dgo.BlockEnds = blockEnds;
+dgo.DebugString = null;
+dgo.DebugSourceNfa = null;
+dgo.DebugShowNfa = false;
+dgo.AcceptSymbolNames = syms;
+dgo.HideAcceptSymbolIds = false;
 lexer.RenderToFile(@"..\..\..\lexer_dfa.jpg", dgo);
 
 
