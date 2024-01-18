@@ -798,6 +798,21 @@ namespace VisualFA
 			return result;
 		}
 		/// <summary>
+		/// Computes the total epsilon closure of a list of states
+		/// </summary>
+		/// <remarks>The epsilon closure is the list of all states reachable from these states on no input.</remarks>
+		/// <param name="state">The state to compute on</param>
+		/// <param name="result">The result to fill, or null if a new list is to be returned. This parameter is required in order to disambiguate with the instance method of the same name.</param>
+		/// <returns></returns>
+		public static IList<FA> FillEpsilonClosure(FA state, IList<FA> result = null)
+		{
+			if (null == result)
+				result = new List<FA>();
+			_Seen.Clear();
+			state._FillEpsilonClosureImpl(result, _Seen);
+			return result;
+		}
+		/// <summary>
 		/// Computes state indices that represent the path to a given state, excluding other states.
 		/// </summary>
 		/// <param name="to">The state to traverse to</param>
