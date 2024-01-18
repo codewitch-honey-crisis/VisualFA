@@ -439,31 +439,42 @@ namespace VisualFA
 				for (int i = 0; i < to._transitions.Count; ++i)
 				{
 					var fat = to._transitions[i];
-					if (!fat.IsEpsilon)
+					if (fat.Min!=-1 || fat.Max!=-1)
 					{
 						AddTransition(new FARange(fat.Min, fat.Max), fat.To);
 					}
 					else
 					{
-						AddEpsilon(fat.To, compact);
+						AddEpsilon(fat.To, true);
 					}
 				}
-				
-				if(!IsAccepting & to.IsAccepting)
+
+				if (AcceptSymbol < 0 && to.AcceptSymbol > -1)
 				{
 					AcceptSymbol = to.AcceptSymbol;
 				}
 			}
 			else
 			{
-				if (!_transitions.Contains(new FATransition(to)))
+				var found = false;
+				for(int i = 0;i<_transitions.Count;++i)
+				{
+					var fat = _transitions[i];
+					// this is why we don't use List.Contains:
+					if (fat.Min != -1 || fat.Max != -1) break;
+					if(fat.To==to)
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found)
 				{
 					_transitions.Insert(0,new FATransition(to));
 					IsCompact = false;
 					IsDeterministic = false;
 				}
 			}
-			
 		}
 		/// <summary>
 		/// Adds an input transition

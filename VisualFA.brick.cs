@@ -1002,9 +1002,10 @@ public bool IsNeutral{get{return!IsAccepting&&_transitions.Count==1&&_transition
 /// <param name="to">The state to transition to</param>
 /// <param name="compact">True to collapse epsilon transitions onto this state, otherwise false</param>
 public void AddEpsilon(FA to,bool compact=true){if(to==null)throw new ArgumentNullException(nameof(to));if(compact){for(int i=0;i<to._transitions.Count;
-++i){var fat=to._transitions[i];if(!fat.IsEpsilon){AddTransition(new FARange(fat.Min,fat.Max),fat.To);}else{AddEpsilon(fat.To,compact);}}if(!IsAccepting
-&to.IsAccepting){AcceptSymbol=to.AcceptSymbol;}}else{if(!_transitions.Contains(new FATransition(to))){_transitions.Insert(0,new FATransition(to));IsCompact
-=false;IsDeterministic=false;}}}/// <summary>
+++i){var fat=to._transitions[i];if(fat.Min!=-1||fat.Max!=-1){AddTransition(new FARange(fat.Min,fat.Max),fat.To);}else{AddEpsilon(fat.To,true);}}if(AcceptSymbol
+<0&&to.AcceptSymbol>-1){AcceptSymbol=to.AcceptSymbol;}}else{var found=false;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i]; if(fat.Min!=
+-1||fat.Max!=-1)break;if(fat.To==to){found=true;break;}}if(!found){_transitions.Insert(0,new FATransition(to));IsCompact=false;IsDeterministic=false;}
+}}/// <summary>
 /// Adds an input transition
 /// </summary>
 /// <param name="range">The range of input codepoints to transition on</param>
