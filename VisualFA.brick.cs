@@ -1085,8 +1085,8 @@ result,HashSet<FA>seen){if(!seen.Add(this)){return result;}result.Add(this);if(I
 /// <param name="states">The states to compute on</param>
 /// <param name="result">The result to fill, or null if a new list is to be returned. This parameter is required in order to disambiguate with the instance method of the same name.</param>
 /// <returns></returns>
-public static IList<FA>FillEpsilonClosure(IEnumerable<FA>states,IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();foreach(var fa
- in states){fa._FillEpsilonClosureImpl(result,_Seen);}return result;}/// <summary>
+public static IList<FA>FillEpsilonClosure(IList<FA>states,IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();for(int i=0;i<states.Count;++i)
+{var fa=states[i];fa._FillEpsilonClosureImpl(result,_Seen);}return result;}/// <summary>
 /// Computes the total epsilon closure of a list of states
 /// </summary>
 /// <remarks>The epsilon closure is the list of all states reachable from these states on no input.</remarks>
@@ -1134,16 +1134,17 @@ ch);chh=-1;continue;}yield return ch;}}/// <summary>
 /// </summary>
 /// <param name="states">The states to check</param>
 /// <returns>True if one or more of the states is accepting, otherwise false</returns>
-public static int GetFirstAcceptSymbol(IEnumerable<FA>states){foreach(var state in states){if(state.IsAccepting)return state.AcceptSymbol;}return-1;}/// <summary>
+public static int GetFirstAcceptSymbol(IList<FA>states){for(int i=0;i<states.Count;++i){var state=states[i];if(state.IsAccepting)return state.AcceptSymbol;
+}return-1;}/// <summary>
 /// Fills a list with all of the new states after moving from a given set of states along a given input. (NFA-move)
 /// </summary>
 /// <param name="states">The current states</param>
 /// <param name="codepoint">The codepoint to move on</param>
 /// <param name="result">A list to hold the next states. If null, one will be created.</param>
 /// <returns>The list of next states</returns>
-public static IList<FA>FillMove(IEnumerable<FA>states,int codepoint,IList<FA>result=null){_Seen.Clear();if(result==null)result=new List<FA>();foreach(var
- state in states){for(int i=0;i<state._transitions.Count;++i){var fat=state._transitions[i];if(fat.Min==-1&&fat.Max==-1){continue;}if(codepoint<fat.Min)
-{break;}if(codepoint<=fat.Max){fat.To._FillEpsilonClosureImpl(result,_Seen);}}}_Seen.Clear();return result;}/// <summary>
+public static IList<FA>FillMove(IList<FA>states,int codepoint,IList<FA>result=null){_Seen.Clear();if(result==null)result=new List<FA>();for(int q=0;q<
+states.Count;++q){var state=states[q];for(int i=0;i<state._transitions.Count;++i){var fat=state._transitions[i];if(fat.Min==-1&&fat.Max==-1){continue;
+}if(codepoint<fat.Min){break;}if(codepoint<=fat.Max){fat.To._FillEpsilonClosureImpl(result,_Seen);}}}_Seen.Clear();return result;}/// <summary>
 /// Returns the next state
 /// </summary>
 /// <param name="codepoint">The codepoint to move on</param>

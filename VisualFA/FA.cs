@@ -790,13 +790,14 @@ namespace VisualFA
 		/// <param name="states">The states to compute on</param>
 		/// <param name="result">The result to fill, or null if a new list is to be returned. This parameter is required in order to disambiguate with the instance method of the same name.</param>
 		/// <returns></returns>
-		public static IList<FA> FillEpsilonClosure(IEnumerable<FA> states, IList<FA> result=null)
+		public static IList<FA> FillEpsilonClosure(IList<FA> states, IList<FA> result=null)
 		{
 			if (null == result)
 				result = new List<FA>();
 			_Seen.Clear();
-			foreach (var fa in states)
+			for(int i = 0;i<states.Count;++i)
 			{
+				var fa = states[i];
 				fa._FillEpsilonClosureImpl(result,_Seen);
 			}
 			return result;
@@ -940,10 +941,11 @@ namespace VisualFA
 		/// </summary>
 		/// <param name="states">The states to check</param>
 		/// <returns>True if one or more of the states is accepting, otherwise false</returns>
-		public static int GetFirstAcceptSymbol(IEnumerable<FA> states)
+		public static int GetFirstAcceptSymbol(IList<FA> states)
 		{
-			foreach (var state in states)
+			for(int i = 0;i< states.Count;++i)
 			{
+				var state = states[i];
 				if (state.IsAccepting) return state.AcceptSymbol;
 			}
 			return -1;
@@ -955,12 +957,13 @@ namespace VisualFA
 		/// <param name="codepoint">The codepoint to move on</param>
 		/// <param name="result">A list to hold the next states. If null, one will be created.</param>
 		/// <returns>The list of next states</returns>
-		public static IList<FA> FillMove(IEnumerable<FA> states, int codepoint, IList<FA> result = null)
+		public static IList<FA> FillMove(IList<FA> states, int codepoint, IList<FA> result = null)
 		{
 			_Seen.Clear();
 			if (result == null) result = new List<FA>();
-			foreach (var state in states)
+			for (int q = 0; q < states.Count;++q)
 			{
+				var state = states[q];
 				for (int i = 0; i < state._transitions.Count; ++i)
 				{
 					var fat = state._transitions[i];
