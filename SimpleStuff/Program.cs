@@ -47,14 +47,28 @@ FA lexer = FA.ToLexer(tokens,true);
 // create an expanded NFA
 // small bug in rendering the movement through
 // this expression (NFA) w/ Graphviz. Not easy to fix
-FA nfa = FA.Parse("([z-a_Z-A9-0]+|(foo)+)?", 0);
-Console.WriteLine("q0 trans count {0}", nfa.Transitions.Count);
+var sexp = "(ba[rz])+|foo(bar)?";
+FA testFa = FA.Parse(sexp, 0,false);
+testFa.RenderToFile(@"..\..\..\testFa.png");
+Console.WriteLine("var nfa = FA.Parse(@\"{0}\");",sexp);
+Console.WriteLine("nfa.ToString(\"e\") = @\"{0}\"", testFa.ToString("e"));
+return;
+var mdfa = testFa.ToMinimizedDfa();
+mdfa.RenderToFile(@"..\..\..\mdfa.png");
+testFa.SetIds();
+Console.WriteLine(testFa.ToString());
+var fexp = mdfa.ToString("e");
+Console.WriteLine(fexp);
+var mdfa2 = FA.Parse(fexp).ToMinimizedDfa();
+mdfa2.RenderToFile(@"..\..\..\mdfa2.png");
+return;
+Console.WriteLine("q0 trans count {0}", testFa.Transitions.Count);
 // we're going to show the
 // subset construction in
 // the graph. ToMinimuzedDfa()
 // doesn't preserve that.
 // So use ToDfa();
-FA dfa = nfa.ToDfa();
+FA dfa = testFa.ToDfa();
 FADotGraphOptions dgo = new FADotGraphOptions();
 // the image is wide for this 
 // website. Let's make it a 
@@ -71,7 +85,7 @@ dgo.BlockEnds = null;
 dgo.DebugShowNfa = true;
 // and so we give it
 // the source NFA to use
-dgo.DebugSourceNfa = nfa;
+dgo.DebugSourceNfa = testFa;
 // we don't need to show the accept 
 // symbols. That's for lexers
 dgo.HideAcceptSymbolIds = true;

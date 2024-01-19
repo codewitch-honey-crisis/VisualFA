@@ -592,7 +592,7 @@ namespace VisualFA
 					end = final;
 					acc[i].AddEpsilon(final, compact);
 				}
-			}
+			} 
 			if(flattenAccepting && acc.Count>0 && final!=null)
 			{
 				if(traps.Count>0)
@@ -607,7 +607,10 @@ namespace VisualFA
 						acc[i].AcceptSymbol = -1;
 					}
 				}
-				
+			}
+			if(final==null && acc.Count==1)
+			{
+				final = acc[0];
 			}
 			return result;
 		}
@@ -663,22 +666,7 @@ namespace VisualFA
 				closure[i].Id = i;
 			}
 		}
-		/// <summary>
-		/// Converts the state to a string.
-		/// </summary>
-		/// <remarks>If the id is set, this will report it.</remarks>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			if (Id < 0)
-			{
-				return base.ToString();
-			}
-			else
-			{
-				return "q" + Id.ToString();
-			}
-		}
+		
 		void _Closure(IList<FA> result)
 		{
 			if (!_Seen.Add(this))
@@ -1697,8 +1685,11 @@ namespace VisualFA
 				switch (pc.Codepoint)
 				{
 					case -1:
-						//result = result.ToMinimized();
-						System.Diagnostics.Debug.Assert(result != null);
+						if (result == null)
+						{
+							// empty string
+							result = new FA(accept);
+						}
 						return result;
 					case '.':
 						var dot = FA.Set(new FARange[] { new FARange(0, 0x10ffff) }, accept, compact);

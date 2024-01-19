@@ -80,6 +80,7 @@ namespace ArticleImages
 			var foo = FA.Literal("foo");
 			var bar = FA.Literal("bar");
 			ABC.RenderCPFile(@"..\..\ABC.png", opts);
+			FA.CaseInsensitive(ABC).RenderCPFile(@"..\..\ABCci.png", opts);
 			FA.Repeat(ABC, 3, 3).RenderCPFile(@"..\..\ABCx3.png",opts);
 			FA.Repeat(ABC, 2, 3,0,false).RenderCPFile(@"..\..\ABCx2or3.png", opts);
 			FA.Parse("[ABC]").RenderCPFile(@"..\..\ABCset.png", opts);
