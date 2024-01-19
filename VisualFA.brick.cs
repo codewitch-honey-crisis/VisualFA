@@ -1188,9 +1188,9 @@ result.AddTransition(range,final);return result;}/// <summary>
 public static FA Concat(IEnumerable<FA>exprs,int accept=0,bool compact=true){FA result=null,left=null,right=null;foreach(var val in exprs){if(null==val)
 continue;var nval=val.Clone();if(null==left){if(null==result)result=nval;left=nval;continue;}if(null==right){right=nval;}nval=right.Clone();_Concat(left,
 nval,compact);right=null;left=nval;}if(null!=right){var acc=right.FillFind(AcceptingFilter);for(int ic=acc.Count,i=0;i<ic;++i)acc[i].AcceptSymbol=accept;
-}else{ System.Diagnostics.Debug.Assert(result!=null);var acc=result.FillFind(AcceptingFilter);for(int ic=acc.Count,i=0;i<ic;++i)acc[i].AcceptSymbol=accept;
-}return result==null?new FA():result;}static void _Concat(FA lhs,FA rhs,bool compact){var acc=lhs.FillFind(AcceptingFilter);for(int ic=acc.Count,i=0;i
-<ic;++i){var f=acc[i];f.AcceptSymbol=-1;f.AddEpsilon(rhs,compact);}}/// <summary>
+}else{var acc=result.FillFind(AcceptingFilter);for(int ic=acc.Count,i=0;i<ic;++i)acc[i].AcceptSymbol=accept;}return result==null?new FA():result;}static
+ void _Concat(FA lhs,FA rhs,bool compact){var acc=lhs.FillFind(AcceptingFilter);for(int ic=acc.Count,i=0;i<ic;++i){var f=acc[i];f.AcceptSymbol=-1;f.AddEpsilon(rhs,
+compact);}}/// <summary>
 /// Creates a machine that is a disjunction between several expressions.
 /// </summary>
 /// <param name="exprs">The expressions that represent the possible choices to match</param>
@@ -1206,9 +1206,9 @@ public static FA Or(IEnumerable<FA>exprs,int accept=0,bool compact=true){var res
 /// <param name="accept">The accept id</param>
 /// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 /// <returns>A new machine representing the optional expression</returns>
-public static FA Optional(FA expr,int accept=0,bool compact=true){var result=expr.Clone();var acc=result.FillFind(AcceptingFilter);FA final=null;if(acc.Count>1)
-{final=new FA(accept);for(int ic=acc.Count,i=0;i<ic;++i){var fa=acc[i];fa.AcceptSymbol=-1;fa.AddEpsilon(final,compact);}}else{final=acc[0];}result.AddEpsilon(final,
-compact);return result;}/// <summary>
+public static FA Optional(FA expr,int accept=0,bool compact=true){var result=expr.Clone();if(result.IsAccepting)return result;var acc=result.FillFind(AcceptingFilter);
+FA final=null;if(acc.Count>1){final=new FA(accept);for(int ic=acc.Count,i=0;i<ic;++i){var fa=acc[i];fa.AcceptSymbol=-1;fa.AddEpsilon(final,compact);}}
+else{final=acc[0];final.AcceptSymbol=accept;}result.AddEpsilon(final,compact);return result;}/// <summary>
 /// Creates a repetition of the given expression
 /// </summary>
 /// <param name="expr">The expression to repeat</param>

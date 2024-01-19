@@ -1171,6 +1171,7 @@ namespace VisualFA
 		public static FA Optional(FA expr, int accept = 0, bool compact = true)
 		{
 			var result = expr.Clone();
+			if (result.IsAccepting) return result;
 			var acc = result.FillFind(AcceptingFilter);
 			FA final = null;
 			if (acc.Count > 1)
