@@ -1205,6 +1205,8 @@ namespace VisualFA
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="minOccurs"/> or <paramref name="maxOccurs"/> is an invalid value</exception>
 		public static FA Repeat(FA expr, int minOccurs = -1, int maxOccurs = -1, int accept = 0, bool compact = true)
 		{
+			if (minOccurs < -1) throw new ArgumentOutOfRangeException(nameof(minOccurs));
+			if (maxOccurs < -1) throw new ArgumentOutOfRangeException(nameof(maxOccurs));
 			expr = expr.Clone();
 			if (minOccurs > 0 && maxOccurs > 0 && minOccurs > maxOccurs)
 				throw new ArgumentOutOfRangeException(nameof(maxOccurs));
@@ -1212,7 +1214,7 @@ namespace VisualFA
 			switch (minOccurs)
 			{
 				case -1:
-				case 0:
+				case 0: // lower bound unbounded. whole expression is optional
 					switch (maxOccurs)
 					{
 						case -1:
@@ -1243,6 +1245,7 @@ namespace VisualFA
 					{
 						case -1:
 						case 0:
+							// thought below might be safer but nah.
 							//result = Concat(new FA[] { expr, Repeat(expr, 0, 0, accept, compact) }, accept, compact);
 							result = Repeat(expr, 0, 0, accept, compact);
 							result.AcceptSymbol = -1;

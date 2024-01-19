@@ -1218,16 +1218,17 @@ else{final=acc[0];final.AcceptSymbol=accept;}result.AddEpsilon(final,compact);re
 /// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 /// <returns>A new machine representing the repeated expression</returns>
 /// <exception cref="ArgumentOutOfRangeException"><paramref name="minOccurs"/> or <paramref name="maxOccurs"/> is an invalid value</exception>
-public static FA Repeat(FA expr,int minOccurs=-1,int maxOccurs=-1,int accept=0,bool compact=true){expr=expr.Clone();if(minOccurs>0&&maxOccurs>0&&minOccurs
->maxOccurs)throw new ArgumentOutOfRangeException(nameof(maxOccurs));FA result;switch(minOccurs){case-1:case 0:switch(maxOccurs){case-1:case 0:result=new
- FA(accept);result.AddEpsilon(expr,compact);foreach(var afa in expr.FillFind(AcceptingFilter)){afa.AddEpsilon(result,compact);}return result;case 1:result
-=Optional(expr,accept,compact);return result;default:var l=new List<FA>();expr=Optional(expr,accept,compact);l.Add(expr);for(int i=1;i<maxOccurs;++i){
-l.Add(expr.Clone());}result=Concat(l,accept,compact);return result;}case 1:switch(maxOccurs){case-1:case 0: result=Repeat(expr,0,0,accept,compact);result.AcceptSymbol
-=-1;return result;case 1:return expr;default:result=Concat(new FA[]{expr,Repeat(expr,0,maxOccurs-1,accept,compact)},accept,compact);return result;}default:
-switch(maxOccurs){case-1:case 0:result=Concat(new FA[]{Repeat(expr,minOccurs,minOccurs,accept,compact),Repeat(expr,0,0,accept,compact)},accept,compact);
-return result;case 1:throw new ArgumentOutOfRangeException(nameof(maxOccurs));default:if(minOccurs==maxOccurs){var l=new List<FA>();l.Add(expr);for(int
- i=1;i<minOccurs;++i){var e=expr.Clone();l.Add(e);}result=Concat(l,accept);return result;}result=Concat(new FA[]{Repeat(expr,minOccurs,minOccurs,accept,
-compact),Repeat(Optional(expr,accept,compact),maxOccurs-minOccurs,maxOccurs-minOccurs,accept,compact)},accept,compact);return result;}}}/// <summary>
+public static FA Repeat(FA expr,int minOccurs=-1,int maxOccurs=-1,int accept=0,bool compact=true){if(minOccurs<-1)throw new ArgumentOutOfRangeException(nameof(minOccurs));
+if(maxOccurs<-1)throw new ArgumentOutOfRangeException(nameof(maxOccurs));expr=expr.Clone();if(minOccurs>0&&maxOccurs>0&&minOccurs>maxOccurs)throw new ArgumentOutOfRangeException(nameof(maxOccurs));
+FA result;switch(minOccurs){case-1:case 0: switch(maxOccurs){case-1:case 0:result=new FA(accept);result.AddEpsilon(expr,compact);foreach(var afa in expr.FillFind(AcceptingFilter))
+{afa.AddEpsilon(result,compact);}return result;case 1:result=Optional(expr,accept,compact);return result;default:var l=new List<FA>();expr=Optional(expr,
+accept,compact);l.Add(expr);for(int i=1;i<maxOccurs;++i){l.Add(expr.Clone());}result=Concat(l,accept,compact);return result;}case 1:switch(maxOccurs){
+case-1:case 0: result=Repeat(expr,0,0,accept,compact);result.AcceptSymbol=-1;return result;case 1:return expr;default:result=Concat(new FA[]{expr,Repeat(expr,
+0,maxOccurs-1,accept,compact)},accept,compact);return result;}default:switch(maxOccurs){case-1:case 0:result=Concat(new FA[]{Repeat(expr,minOccurs,minOccurs,
+accept,compact),Repeat(expr,0,0,accept,compact)},accept,compact);return result;case 1:throw new ArgumentOutOfRangeException(nameof(maxOccurs));default:
+if(minOccurs==maxOccurs){var l=new List<FA>();l.Add(expr);for(int i=1;i<minOccurs;++i){var e=expr.Clone();l.Add(e);}result=Concat(l,accept);return result;
+}result=Concat(new FA[]{Repeat(expr,minOccurs,minOccurs,accept,compact),Repeat(Optional(expr,accept,compact),maxOccurs-minOccurs,maxOccurs-minOccurs,accept,
+compact)},accept,compact);return result;}}}/// <summary>
 /// Makes a machine case insensitive
 /// </summary>
 /// <param name="expr">The expression to make case insensitive</param>
