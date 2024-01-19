@@ -39,9 +39,8 @@ namespace VisualFA
 		private class _ExpMachine
 		{
 		}
-		static IList<_ExpEdge> _ToExpressionEdgesIn(IList<_ExpEdge> edges, FA node)
+		static void _ToExpressionFillEdgesIn(IList<_ExpEdge> edges, FA node,IList<_ExpEdge> result)
 		{
-			var result = new List<_ExpEdge>();
 			for (int i = 0; i < edges.Count; ++i)
 			{
 				if (edges[i].To == node)
@@ -49,11 +48,9 @@ namespace VisualFA
 					result.Add(edges[i]);
 				}
 			}
-			return result;
 		}
-		static IList<_ExpEdge> _ToExpressionEdgesOut(IList<_ExpEdge> edges, FA node)
+		static void _ToExpressionFillEdgesOut(IList<_ExpEdge> edges, FA node, IList<_ExpEdge> result)
 		{
-			var result = new List<_ExpEdge>();
 			for (int i = 0; i < edges.Count; ++i)
 			{
 				var edge = edges[i];
@@ -62,7 +59,6 @@ namespace VisualFA
 					result.Add(edge);
 				}
 			}
-			return result;
 		}
 		static string _ToExpression(FA fa)
 		{
@@ -93,11 +89,12 @@ namespace VisualFA
 			first.FillClosure(Closure);
 			var sb = new StringBuilder();
 			// build the machine from the FA
+			var trnsgrp = new Dictionary<FA, IList<FARange>>(Closure.Count);
 			for (int q = 0; q < Closure.Count; ++q)
 			{
 				var cfa = Closure[q];
-
-				foreach (var trns in cfa.FillInputTransitionRangesGroupedByState(true))
+				trnsgrp.Clear();
+				foreach (var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp))
 				{
 					sb.Clear();
 					if (trns.Value.Count == 1 && trns.Value[0].Min == trns.Value[0].Max)
@@ -149,14 +146,16 @@ namespace VisualFA
 			Edges.Add(newEdge);
 			Closure.Insert(0, first);
 			Closure.Add(final);
-
+			var inEdges = new List<_ExpEdge>();
+			var outEdges = new List<_ExpEdge>();
 			while (Closure.Count > 2)
 			{
 				for (int q = 1; q < Closure.Count - 1; ++q)
 				{
 					var node = Closure[q];
 					var loops = new List<string>();
-					var inEdges = _ToExpressionEdgesIn(Edges, node);
+					inEdges.Clear();
+					_ToExpressionFillEdgesIn(Edges, node, inEdges);
 					for (int i = 0; i < inEdges.Count; ++i)
 					{
 						var edge = inEdges[i];
@@ -173,7 +172,8 @@ namespace VisualFA
 						{
 							continue;
 						}
-						var outEdges = _ToExpressionEdgesOut(Edges, node);
+						outEdges.Clear();
+						_ToExpressionFillEdgesOut(Edges, node, outEdges);
 						for (int j = 0; j < outEdges.Count; ++j)
 						{
 							var outEdge = outEdges[j];
@@ -188,9 +188,11 @@ namespace VisualFA
 							Edges.Add(expEdge);
 						}
 					}
-					var newEdges = _ToExpressionOrphanState(Edges, node);
+					// reuse inedges since we're not using it
+					inEdges.Clear();
+					_ToExpressionFillEdgesOrphanState(Edges, node,inEdges);
 					Edges.Clear();
-					Edges.AddRange(newEdges);
+					Edges.AddRange(inEdges);
 					Closure.Remove(node);
 				}
 			}
@@ -224,9 +226,8 @@ namespace VisualFA
 
 
 
-		static IList<_ExpEdge> _ToExpressionOrphanState(IList<_ExpEdge> edges, FA node)
+		static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge> edges, FA node, IList<_ExpEdge> result)
 		{
-			var newEdges = new List<_ExpEdge>(edges.Count);
 			for (int i = 0; i < edges.Count; ++i)
 			{
 				var edge = edges[i];
@@ -234,9 +235,8 @@ namespace VisualFA
 				{
 					continue;
 				}
-				newEdges.Add(edge);
+				result.Add(edge);
 			}
-			return newEdges;
 		}
 
 		public string ToString(string format)

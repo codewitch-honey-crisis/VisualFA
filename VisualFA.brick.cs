@@ -1669,30 +1669,30 @@ return;default:var s=char.ConvertFromUtf32(rangeChar);if(!char.IsLetterOrDigit(s
 }}else builder.Append(s);break;}}static string _EscapeLabel(string label){if(string.IsNullOrEmpty(label))return label;string result=label.Replace("\\",
 @"\\");result=result.Replace("\"","\\\"");result=result.Replace("\n","\\n");result=result.Replace("\r","\\r");result=result.Replace("\0","\\0");result
 =result.Replace("\v","\\v");result=result.Replace("\t","\\t");result=result.Replace("\f","\\f");return result;}}}namespace VisualFA{partial class FA{private
- class _ExpEdge{public string Exp;public FA From;public FA To;}private class _ExpMachine{}static IList<_ExpEdge>_ToExpressionEdgesIn(IList<_ExpEdge>edges,
-FA node){var result=new List<_ExpEdge>();for(int i=0;i<edges.Count;++i){if(edges[i].To==node){result.Add(edges[i]);}}return result;}static IList<_ExpEdge>
-_ToExpressionEdgesOut(IList<_ExpEdge>edges,FA node){var result=new List<_ExpEdge>();for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node)
-{result.Add(edge);}}return result;}static string _ToExpression(FA fa){List<FA>Closure=new List<FA>();List<_ExpEdge>Edges=new List<_ExpEdge>();FA first,
-final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count==1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);
-final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}Closure.Clear();first.FillClosure(Closure);
-var sb=new StringBuilder(); for(int q=0;q<Closure.Count;++q){var cfa=Closure[q];foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true))
+ class _ExpEdge{public string Exp;public FA From;public FA To;}private class _ExpMachine{}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA
+ node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){if(edges[i].To==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>
+edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpression(FA
+ fa){List<FA>Closure=new List<FA>();List<_ExpEdge>Edges=new List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count
+==1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;
+++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}Closure.Clear();first.FillClosure(Closure);var sb=new StringBuilder(); var trnsgrp=new
+ Dictionary<FA,IList<FARange>>(Closure.Count);for(int q=0;q<Closure.Count;++q){var cfa=Closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp))
 {sb.Clear();if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();
 eedge.Exp=string.Empty;eedge.From=cfa;eedge.To=trns.Key;Edges.Add(eedge);continue;}_AppendRangeCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,
 trns.Value);sb.Append("]");}var edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;Edges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,
 false);var q0=first;first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,false);final=tmp; var newEdge=
 new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=first;newEdge.To=q0;Edges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From
-=qLast;newEdge.To=final;;Edges.Add(newEdge);Closure.Insert(0,first);Closure.Add(final);while(Closure.Count>2){for(int q=1;q<Closure.Count-1;++q){var node
-=Closure[q];var loops=new List<string>();var inEdges=_ToExpressionEdgesIn(Edges,node);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From
-==edge.To){loops.Add(edge.Exp);}}var middle=_ToExpressionKleeneStar(_ToExpressionOrJoin(loops),loops.Count>1);for(int i=0;i<inEdges.Count;++i){var inEdge
-=inEdges[i];if(inEdge.From==inEdge.To){continue;}var outEdges=_ToExpressionEdgesOut(Edges,node);for(int j=0;j<outEdges.Count;++j){var outEdge=outEdges[j];
-if(outEdge.From==outEdge.To){continue;}var expEdge=new _ExpEdge();expEdge.From=inEdge.From;expEdge.To=outEdge.To;expEdge.Exp=string.Concat(inEdge.Exp,
-middle,outEdge.Exp);Edges.Add(expEdge);}}var newEdges=_ToExpressionOrphanState(Edges,node);Edges.Clear();Edges.AddRange(newEdges);Closure.Remove(node);
-}}var result=new List<string>(Edges.Count);for(int i=0;i<Edges.Count;++i){var edge=Edges[i];result.Add(edge.Exp.ToString());}return _ToExpressionOrJoin(result);
-}static string _ToExpressionOrJoin(IList<string>strings){if(strings.Count==0)return string.Empty;if(strings.Count==1)return strings[0];return string.Concat("(",
-string.Join("|",strings),")");}static string _ToExpressionKleeneStar(string s,bool noWrap){if(string.IsNullOrEmpty(s))return"";if(noWrap||s.Length==1)
-{return s+"*";}return string.Concat("(",s,")*");}static IList<_ExpEdge>_ToExpressionOrphanState(IList<_ExpEdge>edges,FA node){var newEdges=new List<_ExpEdge>(edges.Count);
-for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node||edge.To==node){continue;}newEdges.Add(edge);}return newEdges;}public string ToString(string
- format){if(string.IsNullOrEmpty(format)){return ToString();}if(format=="e"){return _ToExpression(this);}throw new FormatException("Invalid format specifier");
+=qLast;newEdge.To=final;;Edges.Add(newEdge);Closure.Insert(0,first);Closure.Add(final);var inEdges=new List<_ExpEdge>();var outEdges=new List<_ExpEdge>();
+while(Closure.Count>2){for(int q=1;q<Closure.Count-1;++q){var node=Closure[q];var loops=new List<string>();inEdges.Clear();_ToExpressionFillEdgesIn(Edges,
+node,inEdges);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);}}var middle=_ToExpressionKleeneStar(_ToExpressionOrJoin(loops),
+loops.Count>1);for(int i=0;i<inEdges.Count;++i){var inEdge=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();_ToExpressionFillEdgesOut(Edges,
+node,outEdges);for(int j=0;j<outEdges.Count;++j){var outEdge=outEdges[j];if(outEdge.From==outEdge.To){continue;}var expEdge=new _ExpEdge();expEdge.From
+=inEdge.From;expEdge.To=outEdge.To;expEdge.Exp=string.Concat(inEdge.Exp,middle,outEdge.Exp);Edges.Add(expEdge);}} inEdges.Clear();_ToExpressionFillEdgesOrphanState(Edges,
+node,inEdges);Edges.Clear();Edges.AddRange(inEdges);Closure.Remove(node);}}var result=new List<string>(Edges.Count);for(int i=0;i<Edges.Count;++i){var
+ edge=Edges[i];result.Add(edge.Exp.ToString());}return _ToExpressionOrJoin(result);}static string _ToExpressionOrJoin(IList<string>strings){if(strings.Count
+==0)return string.Empty;if(strings.Count==1)return strings[0];return string.Concat("(",string.Join("|",strings),")");}static string _ToExpressionKleeneStar(string
+ s,bool noWrap){if(string.IsNullOrEmpty(s))return"";if(noWrap||s.Length==1){return s+"*";}return string.Concat("(",s,")*");}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>
+edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node||edge.To==node){continue;}result.Add(edge);}}
+public string ToString(string format){if(string.IsNullOrEmpty(format)){return ToString();}if(format=="e"){return _ToExpression(this);}throw new FormatException("Invalid format specifier");
 }/// <summary>
 /// Converts the state machine to a regular expression.
 /// </summary>
