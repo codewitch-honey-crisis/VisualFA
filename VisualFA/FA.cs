@@ -1040,13 +1040,12 @@ namespace VisualFA
 		/// <returns>A new machine representing the literal expression</returns>
 		public static FA Literal(IEnumerable<int> codepoints, int accept = 0, bool compact = true)
 		{
-			var result = new FA();
+			var result = new FA(accept);
 			var current = result;
 			foreach (var codepoint in codepoints)
 			{
 				current.AcceptSymbol = -1;
-				var fa = new FA();
-				fa.AcceptSymbol = accept;
+				var fa = new FA(accept);
 				current.AddTransition(new FARange(codepoint, codepoint), fa);
 				current = fa;
 			}
@@ -1075,11 +1074,8 @@ namespace VisualFA
 		{
 			var result = new FA();
 			var final = new FA(accept);
-			var sortedRanges = new List<FARange>(ranges);
-			sortedRanges.Sort((x, y) => { var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max); });
-			foreach (var range in sortedRanges)
+			foreach (var range in ranges)
 				result.AddTransition(range, final);
-
 			return result;
 		}
 		/// <summary>
@@ -1120,8 +1116,6 @@ namespace VisualFA
 			}
 			else
 			{
-				// shut the code analysis up.
-				System.Diagnostics.Debug.Assert(result != null);
 				var acc = result.FillFind(AcceptingFilter);
 				for (int ic = acc.Count, i = 0; i < ic; ++i)
 					acc[i].AcceptSymbol = accept;
@@ -1179,7 +1173,7 @@ namespace VisualFA
 			var result = expr.Clone();
 			var acc = result.FillFind(AcceptingFilter);
 			FA final = null;
-			if(acc.Count>1)
+			if (acc.Count > 1)
 			{
 				final = new FA(accept);
 				for (int ic = acc.Count, i = 0; i < ic; ++i)
@@ -1188,11 +1182,12 @@ namespace VisualFA
 					fa.AcceptSymbol = -1;
 					fa.AddEpsilon(final, compact);
 				}
-			} else
+			}
+			else
 			{
 				final = acc[0];
+				final.AcceptSymbol = accept;
 			}
-			
 			result.AddEpsilon(final, compact);
 		
 			return result;

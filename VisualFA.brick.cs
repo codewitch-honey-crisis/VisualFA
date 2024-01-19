@@ -1161,9 +1161,8 @@ public FA Move(int codepoint){if(!IsDeterministic){throw new InvalidOperationExc
 /// <param name="accept">The accepting id</param>
 /// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 /// <returns>A new machine representing the literal expression</returns>
-public static FA Literal(IEnumerable<int>codepoints,int accept=0,bool compact=true){var result=new FA();var current=result;foreach(var codepoint in codepoints)
-{current.AcceptSymbol=-1;var fa=new FA();fa.AcceptSymbol=accept;current.AddTransition(new FARange(codepoint,codepoint),fa);current=fa;}return result;}
-/// <summary>
+public static FA Literal(IEnumerable<int>codepoints,int accept=0,bool compact=true){var result=new FA(accept);var current=result;foreach(var codepoint
+ in codepoints){current.AcceptSymbol=-1;var fa=new FA(accept);current.AddTransition(new FARange(codepoint,codepoint),fa);current=fa;}return result;}/// <summary>
 /// Creates a literal machine given the string
 /// </summary>
 /// <remarks>Use <code>ToUtf32()</code> to compute from characters.</remarks>
@@ -1178,9 +1177,8 @@ public static FA Literal(string@string,int accept=0,bool compact=true){return Li
 /// <param name="accept">The accepting id</param>
 /// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 /// <returns>A new machine representing the set expression</returns>
-public static FA Set(IEnumerable<FARange>ranges,int accept=0,bool compact=true){var result=new FA();var final=new FA(accept);var sortedRanges=new List<FARange>(ranges);
-sortedRanges.Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return c;return x.Max.CompareTo(y.Max);});foreach(var range in sortedRanges)result.AddTransition(range,
-final);return result;}/// <summary>
+public static FA Set(IEnumerable<FARange>ranges,int accept=0,bool compact=true){var result=new FA();var final=new FA(accept);foreach(var range in ranges)
+result.AddTransition(range,final);return result;}/// <summary>
 /// Creates a machine that is a concatenation of the given expressions
 /// </summary>
 /// <param name="exprs">The expressions to concatenate</param>
