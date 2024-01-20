@@ -11,7 +11,7 @@ var nfaKeywords = FA.Parse(keywords, 1);
 var nfaWhitespace = FA.Parse(whitespace,2);
 var nfa = FA.ToLexer(new FA[] { nfaIdent,nfaKeywords, nfaWhitespace }, false, true);
 var sw = new Stopwatch();
-Console.Write(" minimizing");
+Console.Write("Minimizing");
 sw.Start();
 var dfa = FA.ToLexer(new FA[] { nfaIdent, nfaKeywords, nfaWhitespace }, true, true, new Progress<int>((i) => { if (0 == (i % 10000)) Console.Write("."); }));
 sw.Stop();
