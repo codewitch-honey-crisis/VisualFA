@@ -48,13 +48,13 @@ FA lexer = FA.ToLexer(tokens,true);
 // create an expanded NFA
 // small bug in rendering the movement through
 // this expression (NFA) w/ Graphviz. Not easy to fix
-var sexp = "(ba[rz])*";
+var sexp = "(ba[rz])*foofoofoo";
 FA testFa = FA.Parse(sexp, 0) ;
 testFa.RenderToFile(@"..\..\..\testFa.png");
 Console.WriteLine("var nfa = FA.Parse(@\"{0}\");",sexp);
 Console.WriteLine("nfa.ToString(\"e\") = @\"{0}\"", testFa.ToString("e"));
 Console.WriteLine("nfa.ToString(\"r\") = @\"{0}\"", testFa.ToString("r"));
-return;
+
 var mdfa = testFa.ToMinimizedDfa();
 mdfa.RenderToFile(@"..\..\..\mdfa.png");
 testFa.SetIds();
@@ -63,7 +63,7 @@ var fexp = mdfa.ToString("e");
 Console.WriteLine(fexp);
 var mdfa2 = FA.Parse(fexp).ToMinimizedDfa();
 mdfa2.RenderToFile(@"..\..\..\mdfa2.png");
-return;
+
 Console.WriteLine("q0 trans count {0}", testFa.Transitions.Count);
 // we're going to show the
 // subset construction in
