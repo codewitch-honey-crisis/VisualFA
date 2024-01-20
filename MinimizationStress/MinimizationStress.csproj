@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.CodeDom" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VisualFA.Generator\VisualFA.Generator.csproj" />
     <ProjectReference Include="..\VisualFA\VisualFA.csproj" />
   </ItemGroup>
 
