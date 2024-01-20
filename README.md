@@ -77,6 +77,12 @@ FA dfa = nfa.ToDfa();
 // *or* turn it into an optimized DFA
 FA mdfa = nfa.ToMinimizedDfa();
 
+// turn it back into a regular expression
+Console.WriteLine(mdfa.ToString("e"));
+// or do that, and reduce the expression
+// (slower)
+Console.WriteLine(mdfa.ToString("r"));
+
 // FARunner has MatchNext()/Reset()
 // and IEnumerable<FAMatch>
 
