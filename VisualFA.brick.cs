@@ -1061,25 +1061,24 @@ result){if(!_Seen.Add(this)){return;}result.Add(this);for(int ic=_transitions.Co
 /// <remarks>The closure is the list of states reachable from this state including itself. It essentially lists the states that make up the machine. This state is always the first state in the list.</remarks>
 /// <param name="result">The list to fill</param>
 /// <returns>A list filled with the closure. If <paramref name="result"/> is specified, that instance will be filled and returned. Otherwise a new list is filled and returned.</returns>
-public IList<FA>FillClosure(IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();_Closure(result);_Seen.Clear();return result;}void
- _Find(FAFindFilter filter,IList<FA>result){if(!_Seen.Add(this)){return;}if(filter(this)){result.Add(this);}for(int ic=_transitions.Count,i=0;i<ic;++i)
-{var t=_transitions[i];t.To._Find(filter,result);}}/// <summary>
+public IList<FA>FillClosure(IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();_Closure(result);return result;}void _Find(FAFindFilter
+ filter,IList<FA>result){if(!_Seen.Add(this)){return;}if(filter(this)){result.Add(this);}for(int i=0;i<_transitions.Count;++i){var t=_transitions[i];t.To._Find(filter,
+result);}}/// <summary>
 /// Finds states within the closure that match the filter criteria
 /// </summary>
 /// <param name="filter">The filter predicate to use.</param>
 /// <param name="result">The result to fill</param>
 /// <returns>A list filled with the result of the find. If <paramref name="result"/> is specified, that instance will be filled and returned. Otherwise a new list is filled and returned.</returns>
-public IList<FA>FillFind(FAFindFilter filter,IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();_Find(filter,result);_Seen.Clear();
-return result;}FA _FindFirst(FAFindFilter filter){if(!_Seen.Add(this)){return null;}if(filter(this)){return this;}for(int ic=_transitions.Count,i=0;i<
-ic;++i){var t=_transitions[i];var fa=t.To._FindFirst(filter);if(null!=fa){return fa;}}return null;}/// <summary>
+public IList<FA>FillFind(FAFindFilter filter,IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();_Find(filter,result);return result;
+}FA _FindFirst(FAFindFilter filter){if(!_Seen.Add(this)){return null;}if(filter(this)){return this;}for(int ic=_transitions.Count,i=0;i<ic;++i){var t=
+_transitions[i];var fa=t.To._FindFirst(filter);if(null!=fa){return fa;}}return null;}/// <summary>
 /// Finds the first state within the closure that matches the filter critera
 /// </summary>
 /// <param name="filter">The filter predicate to use</param>
 /// <returns>The first state that matches the filter criteria, or null if not found.</returns>
-public FA FindFirst(FAFindFilter filter){_Seen.Clear();var result=_FindFirst(filter);_Seen.Clear();return result;}IList<FA>_FillEpsilonClosureImpl(IList<FA>
-result,HashSet<FA>seen){if(!seen.Add(this)){return result;}result.Add(this);if(IsCompact){return result;}for(int ic=_transitions.Count,i=0;i<ic;++i){var
- t=_transitions[i];if(t.Min==-1&&t.Max==-1){if(t.To.IsCompact){if(seen.Add(t.To)){result.Add(t.To);}}else{t.To._FillEpsilonClosureImpl(result,seen);}}
-}return result;}/// <summary>
+public FA FindFirst(FAFindFilter filter){_Seen.Clear();var result=_FindFirst(filter);return result;}IList<FA>_EpsilonClosure(IList<FA>result,HashSet<FA>
+seen){if(!seen.Add(this)){return result;}result.Add(this);if(IsCompact){return result;}for(int i=0;i<_transitions.Count;++i){var t=_transitions[i];if(t.Min
+==-1&&t.Max==-1){if(t.To.IsCompact){if(seen.Add(t.To)){result.Add(t.To);}}else{t.To._EpsilonClosure(result,seen);}}else{ break;}}return result;}/// <summary>
 /// Computes the total epsilon closure of a list of states
 /// </summary>
 /// <remarks>The epsilon closure is the list of all states reachable from these states on no input.</remarks>
@@ -1087,14 +1086,14 @@ result,HashSet<FA>seen){if(!seen.Add(this)){return result;}result.Add(this);if(I
 /// <param name="result">The result to fill, or null if a new list is to be returned. This parameter is required in order to disambiguate with the instance method of the same name.</param>
 /// <returns></returns>
 public static IList<FA>FillEpsilonClosure(IList<FA>states,IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();for(int i=0;i<states.Count;++i)
-{var fa=states[i];fa._FillEpsilonClosureImpl(result,_Seen);}return result;}/// <summary>
+{var fa=states[i];fa._EpsilonClosure(result,_Seen);}return result;}/// <summary>
 /// Computes the total epsilon closure of a list of states
 /// </summary>
 /// <remarks>The epsilon closure is the list of all states reachable from these states on no input.</remarks>
 /// <param name="state">The state to compute on</param>
 /// <param name="result">The result to fill, or null if a new list is to be returned. This parameter is required in order to disambiguate with the instance method of the same name.</param>
 /// <returns></returns>
-public static IList<FA>FillEpsilonClosure(FA state,IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();state._FillEpsilonClosureImpl(result,
+public static IList<FA>FillEpsilonClosure(FA state,IList<FA>result=null){if(null==result)result=new List<FA>();_Seen.Clear();state._EpsilonClosure(result,
 _Seen);return result;}/// <summary>
 /// Computes state indices that represent the path to a given state, excluding other states.
 /// </summary>
@@ -1145,7 +1144,7 @@ public static int GetFirstAcceptSymbol(IList<FA>states){for(int i=0;i<states.Cou
 /// <returns>The list of next states</returns>
 public static IList<FA>FillMove(IList<FA>states,int codepoint,IList<FA>result=null){_Seen.Clear();if(result==null)result=new List<FA>();for(int q=0;q<
 states.Count;++q){var state=states[q];for(int i=0;i<state._transitions.Count;++i){var fat=state._transitions[i];if(fat.Min==-1&&fat.Max==-1){continue;
-}if(codepoint<fat.Min){break;}if(codepoint<=fat.Max){fat.To._FillEpsilonClosureImpl(result,_Seen);}}}_Seen.Clear();return result;}/// <summary>
+}if(codepoint<fat.Min){break;}if(codepoint<=fat.Max){fat.To._EpsilonClosure(result,_Seen);}}}_Seen.Clear();return result;}/// <summary>
 /// Returns the next state
 /// </summary>
 /// <param name="codepoint">The codepoint to move on</param>
@@ -1235,11 +1234,11 @@ compact)},accept,compact);return result;}}}/// <summary>
 /// <param name="expr">The expression to make case insensitive</param>
 /// <returns>A case insensitive copy of the machine</returns>
 /// <exception cref="NotSupportedException">A range could not be made case insensitive because one of the codepoints was not a letter.</exception>
-public static FA CaseInsensitive(FA expr){var result=expr.Clone();var closure=new List<FA>();result.FillClosure(closure);for(int ic=closure.Count,i=0;
-i<ic;++i){var fa=closure[i];var t=new List<FATransition>(fa._transitions);fa.ClearTransitions();foreach(var trns in t){var f=char.ConvertFromUtf32(trns.Min);
-var l=char.ConvertFromUtf32(trns.Max);if(char.IsLower(f,0)){if(!char.IsLower(l,0))throw new NotSupportedException("Attempt to make an invalid range case insensitive");
-fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);f=f.ToUpperInvariant();l=l.ToUpperInvariant();fa.AddTransition(new FARange(char.ConvertToUtf32(f,
-0),char.ConvertToUtf32(l,0)),trns.To);}else if(char.IsUpper(f,0)){if(!char.IsUpper(l,0))throw new NotSupportedException("Attempt to make an invalid range case insensitive");
+public static FA CaseInsensitive(FA expr){const string emsg="Attempt to make an invalid range case insensitive";var result=expr.Clone();var closure=new
+ List<FA>();result.FillClosure(closure);for(int ic=closure.Count,i=0;i<ic;++i){var fa=closure[i];var t=new List<FATransition>(fa._transitions);fa.ClearTransitions();
+foreach(var trns in t){var f=char.ConvertFromUtf32(trns.Min);var l=char.ConvertFromUtf32(trns.Max);if(char.IsLower(f,0)){if(!char.IsLower(l,0))throw new
+ NotSupportedException(emsg);fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);f=f.ToUpperInvariant();l=l.ToUpperInvariant();fa.AddTransition(new
+ FARange(char.ConvertToUtf32(f,0),char.ConvertToUtf32(l,0)),trns.To);}else if(char.IsUpper(f,0)){if(!char.IsUpper(l,0))throw new NotSupportedException(emsg);
 fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);f=f.ToLowerInvariant();l=l.ToLowerInvariant();fa.AddTransition(new FARange(char.ConvertToUtf32(f,
 0),char.ConvertToUtf32(l,0)),trns.To);}else{fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);}}}return result;}
 #endregion // Thompson construction methods
@@ -1392,21 +1391,23 @@ public static void Compact(IList<FA>closure){var done=false;while(!done){done=tr
 public void Compact(){Compact(FillClosure());}
 #endregion // Compact()
 #region _Determinize()
-private static FA _Determinize(FA fa,IProgress<int>progress){int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();fa.FillClosure(closure);
-fa.SetIds();for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.Min==-1&&t.Max==-1){continue;}p.Add(t.Min);
-if(t.Max<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(points,0);Array.Sort(points);++prog;progress?.Report(prog);var sets=new Dictionary<_KeySet<FA>,
-_KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();var epscl=new List<FA>();
-_Seen.Clear();fa._FillEpsilonClosureImpl(epscl,_Seen);foreach(var efa in epscl){initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var
- result=new FA();result.IsDeterministic=true;result.FromStates=epscl.ToArray();foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;
-break;}}++prog;progress?.Report(prog);dfaMap.Add(initial,result);while(working.Count>0){var s=working.Dequeue();FA dfa=dfaMap[s];foreach(FA q in s){if
-(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;}}for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s)
-{_Seen.Clear();var ecs=new List<FA>();c._FillEpsilonClosureImpl(ecs,_Seen);foreach(var efa in ecs){foreach(var trns in efa._transitions){if(trns.Min==
--1&&trns.Max==-1){continue;}if(trns.Min<=pnt&&pnt<=trns.Max){_Seen.Clear();var efcs=new List<FA>();trns.To._FillEpsilonClosureImpl(efcs,_Seen);foreach
-(var eefa in efcs){set.Add(eefa);}}}}_Seen.Clear();}if(!sets.ContainsKey(set)){sets.Add(set,set);working.Enqueue(set);var newfa=new FA();newfa.IsDeterministic
-=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set);newfa.FromStates=fas.ToArray();}FA dst=dfaMap[set];int first=pnt;int last;if(i+1<points.Length)last
-=(points[i+1]-1);else last=0x10ffff;dfa._transitions.Add(new FATransition(dst,first,last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);
-} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns){var acc=trns.To.FillFind(AcceptingFilter);
-if(0==acc.Count){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;progress?.Report(prog);return result;}
+private static FA _Determinize(FA fa,IProgress<int>progress){ int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();fa.FillClosure(closure);
+fa.SetIds(); for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.Min==-1&&t.Max==-1){continue;}
+p.Add(t.Min);if(t.Max<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(points,0);Array.Sort(points);++prog;progress?.Report(prog);var
+ sets=new Dictionary<_KeySet<FA>,_KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();
+var epscl=new List<FA>();List<FA>ecs=new List<FA>();List<FA>efcs=null;_Seen.Clear();fa._EpsilonClosure(epscl,_Seen);for(int i=0;i<epscl.Count;++i){var
+ efa=epscl[i];initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var result=new FA();result.IsDeterministic=true;result.FromStates=epscl.ToArray();
+foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;break;}}++prog;progress?.Report(prog); dfaMap.Add(initial,result);
+while(working.Count>0){ var s=working.Dequeue(); FA dfa=dfaMap[s]; foreach(FA q in s){if(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;}} for(var
+ i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s){ ecs.Clear();if(!c.IsCompact){ _Seen.Clear();c._EpsilonClosure(ecs,
+_Seen);}else{ecs.Add(c);}for(int j=0;j<ecs.Count;++j){var efa=ecs[j]; for(int k=0;k<efa._transitions.Count;++k){var trns=efa._transitions[k];if(trns.Min
+==-1&&trns.Max==-1){continue;} if(trns.Min<=pnt&&pnt<=trns.Max){ if(trns.To.IsCompact){set.Add(trns.To);}else{if(efcs==null){efcs=new List<FA>();}efcs.Clear();
+_Seen.Clear();trns.To._EpsilonClosure(efcs,_Seen);for(int m=0;m<efcs.Count;++m){set.Add(efcs[m]);}}}}} _Seen.Clear();} if(!sets.ContainsKey(set)){sets.Add(set,
+set); working.Enqueue(set); var newfa=new FA();newfa.IsDeterministic=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set); newfa.FromStates=fas.ToArray();
+}FA dst=dfaMap[set]; int first=pnt;int last;if(i+1<points.Length){last=(points[i+1]-1);}else{last=0x10ffff;} dfa._transitions.Add(new FATransition(dst,first,
+last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);
+foreach(var trns in itrns){var acc=trns.To.FindFirst(AcceptingFilter);if(acc==null){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;
+progress?.Report(prog);return result;}
 #endregion // _Determinize()
 #region Totalize()
 /// <summary>
@@ -1591,16 +1592,16 @@ string pfx="";if(clusterIndex!=-1){writer.WriteLine("subgraph cluster_"+clusterI
 }if(!options.Vertical){writer.WriteLine("rankdir=LR");}writer.WriteLine("node [shape=circle]");var accepting=new List<FA>();var finals=new List<FA>();
 var neutrals=new List<FA>();foreach(var ffa in closure){if(ffa.IsAccepting){accepting.Add(ffa);}else if(ffa.IsNeutral){neutrals.Add(ffa);}else if(ffa.IsFinal)
 {finals.Add(ffa);}}IList<FA>fromStates=null;IList<FA>toStates=null;int tchar=-1;if(null!=options.DebugString){foreach(int ch in ToUtf32(options.DebugString))
-{if(fromStates==null){_Seen.Clear();fromStates=new List<FA>();closure[0]._FillEpsilonClosureImpl(fromStates,_Seen);}else{fromStates=toStates;}tchar=ch;
-System.Diagnostics.Debug.Assert(fromStates!=null);toStates=FillMove(fromStates,ch);if(0==toStates.Count)break;}}if(fromStates==null){_Seen.Clear();fromStates
-=new List<FA>();closure[0]._FillEpsilonClosureImpl(fromStates,_Seen);}if(null!=toStates){toStates=FillEpsilonClosure(toStates,null);}else{toStates=fromStates;
-}int i=0;foreach(var ffa in closure){var isfrom=null!=fromStates&&FillEpsilonClosure(fromStates,null).Contains(ffa);var rngGrps=ffa.FillInputTransitionRangesGroupedByState();
-foreach(var rngGrp in rngGrps){var istrns=isfrom&&null!=toStates&&options.DebugString!=null&&toStates.Contains(rngGrp.Key);var di=closure.IndexOf(rngGrp.Key);
-writer.Write(pfx+spfx);writer.Write(i);writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();
-_AppendRangeTo(sb,rngGrp.Value);if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));
-writer.Write(']');}else writer.Write(_EscapeLabel(sb.ToString()));if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach
-(var fat in ffa._transitions){if(fat.Min==-1&&fat.Max==-1){var istrns=null!=toStates&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);
-writer.Write(pfx+spfx);writer.Write(i);writer.Write("->");writer.Write(pfx+spfx);writer.Write(closure.IndexOf(fat.To));if(!istrns){writer.WriteLine(" [style=dashed,color=gray]");
+{if(fromStates==null){_Seen.Clear();fromStates=new List<FA>();closure[0]._EpsilonClosure(fromStates,_Seen);}else{fromStates=toStates;}tchar=ch;System.Diagnostics.Debug.Assert(fromStates
+!=null);toStates=FillMove(fromStates,ch);if(0==toStates.Count)break;}}if(fromStates==null){_Seen.Clear();fromStates=new List<FA>();closure[0]._EpsilonClosure(fromStates,
+_Seen);}if(null!=toStates){toStates=FillEpsilonClosure(toStates,null);}else{toStates=fromStates;}int i=0;foreach(var ffa in closure){var isfrom=null!=fromStates
+&&FillEpsilonClosure(fromStates,null).Contains(ffa);var rngGrps=ffa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var istrns
+=isfrom&&null!=toStates&&options.DebugString!=null&&toStates.Contains(rngGrp.Key);var di=closure.IndexOf(rngGrp.Key);writer.Write(pfx+spfx);writer.Write(i);
+writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();_AppendRangeTo(sb,rngGrp.Value);
+if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');
+}else writer.Write(_EscapeLabel(sb.ToString()));if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach(var fat in ffa._transitions)
+{if(fat.Min==-1&&fat.Max==-1){var istrns=null!=toStates&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);writer.Write(pfx
++spfx);writer.Write(i);writer.Write("->");writer.Write(pfx+spfx);writer.Write(closure.IndexOf(fat.To));if(!istrns){writer.WriteLine(" [style=dashed,color=gray]");
 }else{writer.WriteLine(" [style=dashed,color=green]");}}} if(hasBlockEnds&&ffa.IsAccepting&&options.BlockEnds?.Length>ffa.AcceptSymbol&&options.BlockEnds[ffa.AcceptSymbol]
 !=null){writer.Write(pfx+spfx+i.ToString()+"->");writer.Write(pfx+"blockEnd"+ffa.AcceptSymbol.ToString()+spfx+"0");writer.WriteLine(" [style=dashed,label=\".*?\"]");
 }++i;}string delim;if(hasBlockEnds){for(i=0;i<options.BlockEnds?.Length;i++){var bfa=options.BlockEnds[i];if(bfa!=null){var bclose=bfa.FillClosure();delim

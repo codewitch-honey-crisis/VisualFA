@@ -39,6 +39,7 @@ FA[] blockEnds = new FA[] {
 // ToLexer will minimize its tokens and create
 // a DFA lexer by default
 FA lexer = FA.ToLexer(tokens,true);
+
 //lexer = lexer.ToDfa();
 // NOTE: never call ToMinimizedDfa() on a lexer machine
 // as it will lose its distinct accept states

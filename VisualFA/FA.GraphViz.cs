@@ -147,7 +147,7 @@ namespace VisualFA
 					{
 						_Seen.Clear();
 						fromStates = new List<FA>();
-						closure[0]._FillEpsilonClosureImpl(fromStates, _Seen);
+						closure[0]._EpsilonClosure(fromStates, _Seen);
 					} else
 					{
 						fromStates = toStates;
@@ -164,7 +164,7 @@ namespace VisualFA
 			{
 				_Seen.Clear();
 				fromStates = new List<FA>();
-				closure[0]._FillEpsilonClosureImpl(fromStates, _Seen);
+				closure[0]._EpsilonClosure(fromStates, _Seen);
 			}
 			if (null != toStates)
 			{

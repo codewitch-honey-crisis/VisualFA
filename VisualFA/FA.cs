@@ -710,7 +710,6 @@ namespace VisualFA
 				result = new List<FA>();
 			_Seen.Clear();
 			_Closure(result);
-			_Seen.Clear();
 			return result;
 		}
 		void _Find(FAFindFilter filter, IList<FA> result)
@@ -723,7 +722,7 @@ namespace VisualFA
 			{
 				result.Add(this);
 			}
-			for (int ic = _transitions.Count, i = 0; i < ic; ++i)
+			for (int i = 0; i < _transitions.Count; ++i)
 			{
 				var t = _transitions[i];
 				t.To._Find(filter, result);
@@ -741,7 +740,6 @@ namespace VisualFA
 				result = new List<FA>();
 			_Seen.Clear();
 			_Find(filter, result);
-			_Seen.Clear();
 			return result;
 		}
 		FA _FindFirst(FAFindFilter filter)
@@ -774,10 +772,9 @@ namespace VisualFA
 		{
 			_Seen.Clear();
 			var result = _FindFirst(filter);
-			_Seen.Clear();
 			return result;
 		}
-		IList<FA> _FillEpsilonClosureImpl(IList<FA> result, HashSet<FA> seen)
+		IList<FA> _EpsilonClosure(IList<FA> result, HashSet<FA> seen)
 		{
 			if(!seen.Add(this))
 			{
@@ -788,10 +785,10 @@ namespace VisualFA
 			{
 				return result;
 			}
-			for (int ic = _transitions.Count, i = 0; i < ic; ++i)
+			for (int i = 0; i < _transitions.Count; ++i)
 			{
 				var t = _transitions[i];
-				if(t.Min==-1 && t.Max==-1)
+				if (t.Min == -1 && t.Max == -1)
 				{
 					if (t.To.IsCompact)
 					{
@@ -802,8 +799,13 @@ namespace VisualFA
 					}
 					else
 					{
-						t.To._FillEpsilonClosureImpl(result, seen);
+						t.To._EpsilonClosure(result, seen);
 					}
+				}
+				else
+				{
+					// end of epsilons. we're done
+					break;
 				}
 			}
 			return result;
@@ -823,7 +825,7 @@ namespace VisualFA
 			for(int i = 0;i<states.Count;++i)
 			{
 				var fa = states[i];
-				fa._FillEpsilonClosureImpl(result,_Seen);
+				fa._EpsilonClosure(result,_Seen);
 			}
 			return result;
 		}
@@ -839,7 +841,7 @@ namespace VisualFA
 			if (null == result)
 				result = new List<FA>();
 			_Seen.Clear();
-			state._FillEpsilonClosureImpl(result, _Seen);
+			state._EpsilonClosure(result, _Seen);
 			return result;
 		}
 		/// <summary>
@@ -992,6 +994,7 @@ namespace VisualFA
 				for (int i = 0; i < state._transitions.Count; ++i)
 				{
 					var fat = state._transitions[i];
+					// epsilon dsts should already be in states:
 					if (fat.Min == -1 && fat.Max == -1)
 					{
 						continue;
@@ -1002,7 +1005,7 @@ namespace VisualFA
 					}
 					if (codepoint <= fat.Max)
 					{
-						fat.To._FillEpsilonClosureImpl(result, _Seen);
+						fat.To._EpsilonClosure(result, _Seen);
 					}
 				}
 			}
@@ -1297,6 +1300,7 @@ namespace VisualFA
 		/// <exception cref="NotSupportedException">A range could not be made case insensitive because one of the codepoints was not a letter.</exception>
 		public static FA CaseInsensitive(FA expr)
 		{
+			const string emsg = "Attempt to make an invalid range case insensitive";
 			var result = expr.Clone();
 			var closure = new List<FA>();
 			result.FillClosure(closure);
@@ -1312,25 +1316,37 @@ namespace VisualFA
 					if (char.IsLower(f, 0))
 					{
 						if (!char.IsLower(l, 0))
-							throw new NotSupportedException("Attempt to make an invalid range case insensitive");
-						fa.AddTransition(new FARange(trns.Min, trns.Max), trns.To);
+							throw new NotSupportedException(emsg);
+						fa.AddTransition(new FARange(
+								trns.Min, 
+								trns.Max), 
+							trns.To);
 						f = f.ToUpperInvariant();
 						l = l.ToUpperInvariant();
-						fa.AddTransition(new FARange(char.ConvertToUtf32(f, 0), char.ConvertToUtf32(l, 0)), trns.To);
+						fa.AddTransition(new FARange(
+								char.ConvertToUtf32(f, 0), 
+								char.ConvertToUtf32(l, 0)), 
+							trns.To);
 
 					}
 					else if (char.IsUpper(f, 0))
 					{
 						if (!char.IsUpper(l, 0))
-							throw new NotSupportedException("Attempt to make an invalid range case insensitive");
+							throw new NotSupportedException(emsg);
 						fa.AddTransition(new FARange(trns.Min, trns.Max), trns.To);
 						f = f.ToLowerInvariant();
 						l = l.ToLowerInvariant();
-						fa.AddTransition(new FARange(char.ConvertToUtf32(f, 0), char.ConvertToUtf32(l, 0)), trns.To);
+						fa.AddTransition(new FARange(
+								char.ConvertToUtf32(f, 0), 
+								char.ConvertToUtf32(l, 0)), 
+							trns.To);
 					}
 					else
 					{
-						fa.AddTransition(new FARange(trns.Min, trns.Max), trns.To);
+						fa.AddTransition(new FARange(
+								trns.Min, 
+								trns.Max), 
+							trns.To);
 					}
 				}
 			}
@@ -1360,7 +1376,7 @@ namespace VisualFA
 			{
 				result.AddEpsilon(toks[i], compact);
 			}
-			if (makeDfa)
+			if (makeDfa && !result.IsDeterministic)
 			{
 				return result.ToDfa(progress);
 			}
@@ -2108,7 +2124,8 @@ namespace VisualFA
 			var closure = new List<FA>();
 			FillClosure(closure);
 			var stateIndices = new int[closure.Count];
-			for (var i = 0; i < closure.Count; ++i)
+			// fill in the state information
+			for (var i = 0; i < stateIndices.Length; ++i)
 			{
 				var cfa = closure[i];
 				stateIndices[i] = working.Count;
@@ -2131,6 +2148,7 @@ namespace VisualFA
 			}
 			var result = working.ToArray();
 			var state = 0;
+			// now fill in the state indices
 			while (state < result.Length)
 			{
 				++state;
@@ -2161,13 +2179,17 @@ namespace VisualFA
 				result.IsCompact = true;
 				return result;
 			}
+			// create the states and build a map
+			// of state indices in the array to
+			// new FA instances
 			var si = 0;
-			var states = new Dictionary<int, FA>();
+			var indexToStateMap = new Dictionary<int, FA>();
 			while (si < fa.Length)
 			{
 				var newfa = new FA();
-				states.Add(si, newfa);
+				indexToStateMap.Add(si, newfa);
 				newfa.AcceptSymbol = fa[si++];
+				// skip to the next state
 				var tlen = fa[si++];
 				for (var i = 0; i < tlen; ++i)
 				{
@@ -2176,19 +2198,27 @@ namespace VisualFA
 					si += prlen * 2;
 				}
 			}
+			// walk the array
 			si = 0;
 			var sid = 0;
 			while (si < fa.Length)
 			{
-				var newfa = states[si];
+				// get the current state
+				var newfa = indexToStateMap[si];
 				newfa.IsCompact = true;
 				newfa.IsDeterministic = true;
-				newfa.AcceptSymbol = fa[si++];
+				// already set above:
+				// newfa.AcceptSymbol = fa[si++];
+				++si;
+				// transitions length
 				var tlen = fa[si++];
 				for (var i = 0; i < tlen; ++i)
 				{
+					// destination state index
 					var tto = fa[si++];
-					var to = states[tto];
+					// destination state instance
+					var to = indexToStateMap[tto];
+					// range count
 					var prlen = fa[si++];
 					for (var j = 0; j < prlen; ++j)
 					{
@@ -2196,28 +2226,18 @@ namespace VisualFA
 						var pmax = fa[si++];
 						if (pmin == -1 && pmax == -1)
 						{
-							newfa.IsCompact = false;
-							newfa.IsDeterministic = false;
+							// epsilon
+							newfa.AddEpsilon(to, false);
 						}
 						else 
 						{
-							var newRange = new FARange(pmin, pmax);
-							for(var k = 0;k< newfa._transitions.Count;++k)
-							{
-								var fat = newfa._transitions[k];
-								if(newRange.Intersects(new FARange(fat.Min, fat.Max)))
-								{
-									newfa.IsDeterministic = false;
-									break;
-								}
-							}
+							newfa.AddTransition(new FARange(pmin, pmax), to);
 						}
-						newfa.AddTransition(new FARange(pmin, pmax), to);
 					}
 				}
 				++sid;
 			}
-			return states[0];
+			return indexToStateMap[0];
 		}
 		
 		#region Compact()
@@ -2268,12 +2288,14 @@ namespace VisualFA
 		#region _Determinize()
 		private static FA _Determinize(FA fa, IProgress<int> progress)
 		{
+			// initialize
 			int prog = 0;
 			progress?.Report(prog);
 			var p = new HashSet<int>();
 			var closure = new List<FA>();
 			fa.FillClosure(closure);
 			fa.SetIds();
+			// gather our input alphabet
 			for (int ic = closure.Count, i = 0; i < ic; ++i)
 			{
 				var ffa = closure[i];
@@ -2302,10 +2324,13 @@ namespace VisualFA
 			var dfaMap = new Dictionary<_KeySet<FA>, FA>();
 			var initial = new _KeySet<FA>();
 			var epscl = new List<FA>();
+			List<FA> ecs = new List<FA>();
+			List<FA> efcs = null; 
 			_Seen.Clear();
-			fa._FillEpsilonClosureImpl(epscl, _Seen);
-			foreach (var efa in epscl)
+			fa._EpsilonClosure(epscl, _Seen);
+			for(int i = 0; i < epscl.Count;++i)
 			{
+				var efa = epscl[i];
 				initial.Add(efa);
 			}
 			sets.Add(initial, initial);
@@ -2323,11 +2348,18 @@ namespace VisualFA
 			}
 			++prog;
 			progress?.Report(prog);
+			// powerset/subset construction
 			dfaMap.Add(initial, result);
 			while (working.Count > 0)
 			{
+				// get the next set
 				var s = working.Dequeue();
+				// get the next DFA out of the map
+				// of (NFA states)->(dfa state)
 				FA dfa = dfaMap[s];
+				// find the first accepting 
+				// state if any, and assign
+				// it to the new DFA
 				foreach (FA q in s)
 				{
 					if (q.IsAccepting)
@@ -2336,56 +2368,100 @@ namespace VisualFA
 						break;
 					}
 				}
-
+				// for each range in the input alphabet
 				for (var i = 0; i < points.Length; i++)
 				{
 					var pnt = points[i];
 					var set = new _KeySet<FA>();
 					foreach (FA c in s)
 					{
-						_Seen.Clear();
-						var ecs = new List<FA>();
-						c._FillEpsilonClosureImpl(ecs,_Seen);
-						foreach (var efa in ecs)
+						// TODO: Might be able to eliminate the
+						// epsilon closure here. Needs testing
+						ecs.Clear();
+						if (!c.IsCompact)
 						{
-							foreach (var trns in efa._transitions)
+							// use the internal _EpsilonClosure
+							// method to avoid an extra call
+							// (basically inlining it)
+							_Seen.Clear();
+
+							c._EpsilonClosure(ecs, _Seen);
+						} else
+						{
+							ecs.Add(c);
+						}
+						for (int j=0;j<ecs.Count;++j)
+						{
+							var efa = ecs[j];
+							// basically if we intersect somewhere on the input alphabet,
+							// which we should, then we add the destination state(s) to the set
+							for (int k = 0; k<efa._transitions.Count;++k)
 							{
+								var trns = efa._transitions[k];
 								if (trns.Min == -1 && trns.Max == -1)
 								{
 									continue;
 								}
+								// TODO: can probably early out here
+								// if pnt > trns.Max?
 								if (trns.Min <= pnt && pnt <= trns.Max)
 								{
-									_Seen.Clear();
-									var efcs = new List<FA>();
-									trns.To._FillEpsilonClosureImpl(efcs, _Seen);
-									foreach (var eefa in efcs) 
+									// skip the epsilon closure
+									// we don't need it
+									if (trns.To.IsCompact)
 									{
-										set.Add(eefa);
+										set.Add(trns.To);
+									}
+									else
+									{
+										if(efcs==null)
+										{
+											efcs = new List<FA>();
+										}
+										efcs.Clear();
+										_Seen.Clear();
+										trns.To._EpsilonClosure(efcs, _Seen);
+										for (int m = 0; m < efcs.Count; ++m)
+										{
+											set.Add(efcs[m]);
+										}
 									}
 								}
 							}
 						}
+						// less GC stress
 						_Seen.Clear();
 					}
+					// is this a new set or an
+					// existing one?
 					if (!sets.ContainsKey(set))
 					{
 						sets.Add(set, set);
+						// add another work item
 						working.Enqueue(set);
+						// make a new DFA state
 						var newfa = new FA();
 						newfa.IsDeterministic = true;
 						dfaMap.Add(set, newfa);
 						var fas = new List<FA>(set);
+						// TODO: we should really sort fas
 						newfa.FromStates = fas.ToArray();
 					}
 
 					FA dst = dfaMap[set];
+					// find the first and last range to insert
 					int first = pnt;
 					int last;
 					if (i + 1 < points.Length)
+					{
 						last = (points[i + 1] - 1);
+					}
 					else
+					{
 						last = 0x10ffff;
+					}
+					// this should already be in sorted order
+					// otherwise we'd use AddTransition()
 					dfa._transitions.Add(new FATransition(dst,first, last));
 					++prog;
 					progress?.Report(prog);
@@ -2394,14 +2470,14 @@ namespace VisualFA
 				progress?.Report(prog);
 
 			}
-			// remove dead transitions
+			// remove dead transitions (destinations with no accept)
 			foreach (var ffa in result.FillClosure())
 			{
 				var itrns = new List<FATransition>(ffa._transitions);
 				foreach (var trns in itrns)
 				{
-					var acc = trns.To.FillFind(AcceptingFilter);
-					if (0 == acc.Count)
+					var acc = trns.To.FindFirst(AcceptingFilter);
+					if (acc==null)
 					{
 						ffa._transitions.Remove(trns);
 					}
