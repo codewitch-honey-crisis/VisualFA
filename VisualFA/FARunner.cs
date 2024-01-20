@@ -155,9 +155,29 @@ namespace VisualFA
 		{
 			if (!first)
 			{
+				switch (ch)
+				{
+					case '\n':
+						++line;
+						column = 1;
+						break;
+					case '\r':
+						column = 1;
+						break;
+					case '\t':
+						column = ((column - 1) / tabWidth) * (tabWidth + 1);
+						break;
+					default:
+						if (ch > 31)
+						{
+							++column;
+						}
+						break;
+				}
 				++len;
 				if (ch > 65535)
 				{
+					++position;
 					++len;
 				}
 				++position;
@@ -178,28 +198,6 @@ namespace VisualFA
 				else
 				{
 					ch = ch1;
-				}
-				if (!first)
-				{
-					switch (ch)
-					{
-						case '\n':
-							++line;
-							column = 0;
-							break;
-						case '\r':
-							column = 0;
-							break;
-						case '\t':
-							column = ((column - 1) / tabWidth) * (tabWidth + 1);
-							break;
-						default:
-							if (ch > 31)
-							{
-								++column;
-							}
-							break;
-					}
 				}
 			}
 			else

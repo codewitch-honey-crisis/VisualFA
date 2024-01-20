@@ -504,6 +504,7 @@ namespace VisualFA
 		{
 			if (to == null) 
 				throw new ArgumentNullException(nameof(to));
+			if(range.Min=='/') System.Diagnostics.Debugger.Break();
 			if(range.Min==-1 && range.Max==-1)
 			{
 				AddEpsilon(to);
@@ -526,13 +527,13 @@ namespace VisualFA
 					{
 						return;
 					}
-					if (IsDeterministic)
+				}
+				if (IsDeterministic)
+				{
+					if (range.Intersects(
+						new FARange(fat.Min, fat.Max)))
 					{
-						if (range.Intersects(
-							new FARange(fat.Min, fat.Max)))
-						{
-							IsDeterministic = false;
-						}
+						IsDeterministic = false;
 					}
 				}
 				if (range.Min>fat.Min)
@@ -2294,7 +2295,6 @@ namespace VisualFA
 			var p = new HashSet<int>();
 			var closure = new List<FA>();
 			fa.FillClosure(closure);
-			fa.SetIds();
 			// gather our input alphabet
 			for (int ic = closure.Count, i = 0; i < ic; ++i)
 			{
@@ -2384,7 +2384,6 @@ namespace VisualFA
 							// method to avoid an extra call
 							// (basically inlining it)
 							_Seen.Clear();
-
 							c._EpsilonClosure(ecs, _Seen);
 						} else
 						{
@@ -2442,6 +2441,7 @@ namespace VisualFA
 						// make a new DFA state
 						var newfa = new FA();
 						newfa.IsDeterministic = true;
+						newfa.IsCompact = true;
 						dfaMap.Add(set, newfa);
 						var fas = new List<FA>(set);
 						// TODO: we should really sort fas

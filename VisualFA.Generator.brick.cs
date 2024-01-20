@@ -1372,54 +1372,59 @@ if(opts.UseSpans){tostr=new CodeMethodInvokeExpression(new CodeMethodReferenceEx
 "Slice",new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("len")),"ToString"));}
 #endif
 if(tostr==null){tostr=new CodeMethodInvokeExpression(new CodeArgumentReferenceExpression("s"),"Substring",new CodeVariableReferenceExpression("p"),new
- CodeVariableReferenceExpression("len"));}adv=new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),
+ CodeVariableReferenceExpression("len"));} adv=new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),
 "Advance"),new CodeExpression[]{new CodeArgumentReferenceExpression("s"),new CodeDirectionExpression(FieldDirection.Ref,new CodeVariableReferenceExpression("ch")),
 new CodeDirectionExpression(FieldDirection.Ref,new CodeVariableReferenceExpression("len")),new CodePrimitiveExpression(false)}));}else{tostr=lccbts;adv
-=new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"Advance")));}dest.Add(new
+=new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"Advance")));} dest.Add(new
  CodeVariableDeclarationStatement(typeof(int),"ch"));if(!textReader){dest.Add(new CodeVariableDeclarationStatement(typeof(int),"len"));}dest.Add(new CodeVariableDeclarationStatement(typeof(int),
-"p"));dest.Add(new CodeVariableDeclarationStatement(typeof(int),"l"));dest.Add(new CodeVariableDeclarationStatement(typeof(int),"c"));dest.Add(new CodeAssignStatement(new
- CodeVariableReferenceExpression("ch"),new CodePrimitiveExpression(-1)));if(textReader){dest.Add(new CodeExpressionStatement(new CodeMethodInvokeExpression(new
- CodeMethodReferenceExpression(lcapturebuffer,"Clear"))));dest.Add(new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new
- CodeThisReferenceExpression(),"current"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-2)),new CodeStatement[]{new CodeExpressionStatement(new
- CodeMethodInvokeExpression(new CodeThisReferenceExpression(),"Advance"))}));}else{dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("len"),
-new CodePrimitiveExpression(0)));dest.Add(new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
-"position"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeThisReferenceExpression(),"position"),new CodePrimitiveExpression(0))}));}dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("p"),
-new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position")));dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("l"),
-new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"line")));dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("c"),
-new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"column")));if(!textReader){dest.Add(new CodeExpressionStatement(new CodeMethodInvokeExpression(new
- CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"Advance"),new CodeExpression[]{new CodeArgumentReferenceExpression("s"),new CodeDirectionExpression(FieldDirection.Ref,
+"p"));dest.Add(new CodeVariableDeclarationStatement(typeof(int),"l"));dest.Add(new CodeVariableDeclarationStatement(typeof(int),"c")); dest.Add(new CodeAssignStatement(new
+ CodeVariableReferenceExpression("ch"),new CodePrimitiveExpression(-1)));if(textReader){ dest.Add(new CodeExpressionStatement(new CodeMethodInvokeExpression(
+new CodeMethodReferenceExpression(lcapturebuffer,"Clear")))); dest.Add(new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(
+new CodeThisReferenceExpression(),"current"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-2)),new CodeStatement[]{new CodeExpressionStatement(
+new CodeMethodInvokeExpression(new CodeThisReferenceExpression(),"Advance"))}));}else{ dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("len"),
+new CodePrimitiveExpression(0))); dest.Add(new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+"position"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(
+new CodeThisReferenceExpression(),"position"),new CodePrimitiveExpression(0))}));} dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("p"),
+new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position"))); dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("l"),
+new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"line"))); dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("c"),
+new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"column")));if(!textReader){ dest.Add(new CodeExpressionStatement(new CodeMethodInvokeExpression(
+new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"Advance"),new CodeExpression[]{new CodeArgumentReferenceExpression("s"),new CodeDirectionExpression(FieldDirection.Ref,
 new CodeVariableReferenceExpression("ch")),new CodeDirectionExpression(FieldDirection.Ref,new CodeVariableReferenceExpression("len")),new CodePrimitiveExpression(true)
-})));}CodeExpression cmp;if(textReader){cmp=new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current");}else{cmp=new CodeVariableReferenceExpression("ch");
-}var q0ranges=new List<FARange>();q0ranges.Add(new FARange(-1,-1));for(var q=0;q<closure.Count;++q){var fromState=closure[q];CodeLabeledStatement state
+})));}CodeExpression cmp; if(textReader){cmp=new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current");}else{cmp=new CodeVariableReferenceExpression("ch");
+} var q0ranges=new List<FARange>(); q0ranges.Add(new FARange(-1,-1)); for(var q=0;q<closure.Count;++q){var fromState=closure[q];CodeLabeledStatement state
 =null;if(q>0||FA.IsLoop(closure)){state=new CodeLabeledStatement("q"+q.ToString());dest.Add(state);}else if(q==0){dest.Add(new CodeCommentStatement("q0:"));
-}var trnsgrp=fromState.FillInputTransitionRangesGroupedByState();var attachedlabel=false;foreach(var trn in trnsgrp){if(q==0){q0ranges.AddRange(trn.Value);
-}var tmp=new RegexCharsetExpression();foreach(var rng in trn.Value){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));}else{tmp.Entries.Add(new
- RegexCharsetRangeEntry(rng.Min,rng.Max));}}var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel=true;if(state!=null){
-state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,trn.Value));
-dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())});}if(fromState.IsAccepting)
-{if(blockEnds!=null&&blockEnds.Count>fromState.AcceptSymbol&&blockEnds[fromState.AcceptSymbol]!=null){CodeMethodReturnStatement retbe=new CodeMethodReturnStatement();
-if(textReader){retbe.Expression=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(null,"_BlockEnd"+fromState.AcceptSymbol.ToString()),new
- CodeExpression[]{new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("l"),new CodeVariableReferenceExpression("c")});}else{retbe.Expression
-=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(null,"_BlockEnd"+fromState.AcceptSymbol.ToString()),new CodeExpression[]{new CodeArgumentReferenceExpression("s"),
-new CodeVariableReferenceExpression("ch"),new CodeVariableReferenceExpression("len"),new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("l"),
-new CodeVariableReferenceExpression("c")});}if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=retbe;}else{dest.Add(retbe);}}else{dest.Add(retbe);
-}}else{var retmatch=new CodeMethodReturnStatement();retmatch.Expression=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),
+} bool attachedlabel=_GenerateTransitions(closure,dest,adv,cmp,q0ranges,q,fromState,state);if(fromState.IsAccepting){ if(blockEnds!=null&&blockEnds.Count
+>fromState.AcceptSymbol&&blockEnds[fromState.AcceptSymbol]!=null){attachedlabel=_GenerateBlockEndCall(textReader,dest,fromState,state,attachedlabel);}
+else{ attachedlabel=_GenerateMatchAccept(dest,tostr,fromState,state,attachedlabel);}}else{ var gerror=new CodeGotoStatement("errorout");if(!attachedlabel)
+{attachedlabel=true;if(state!=null){state.Statement=gerror;}else{dest.Add(gerror);}}else{dest.Add(gerror);}}}var error=new CodeLabeledStatement("errorout");
+ var ifq0match=new CodeConditionStatement(_GenerateRangesExpression(cmp,q0ranges.ToArray()));dest.Add(error); error.Statement=ifq0match;CodeExpression
+ isEmpty;if(textReader){ isEmpty=new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+"capture"),"Length"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(0));}else{ isEmpty=new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("len"),
+CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(0));}var checkIfEnd=new CodeConditionStatement(isEmpty); checkIfEnd.TrueStatements.Add(
+new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),"Create"),new
+ CodeExpression[]{new CodePrimitiveExpression(-2),new CodePrimitiveExpression(null),new CodePrimitiveExpression(0),new CodePrimitiveExpression(0),new CodePrimitiveExpression(0)
+}))); ifq0match.TrueStatements.AddRange(new CodeStatement[]{checkIfEnd,new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(
+new CodeTypeReferenceExpression("FAMatch"),"Create"),new CodeExpression[]{new CodePrimitiveExpression(-1),tostr,new CodeVariableReferenceExpression("p"),
+new CodeVariableReferenceExpression("l"),new CodeVariableReferenceExpression("c")}))}); dest.Add(adv); dest.Add(new CodeGotoStatement(error.Label));}private
+ static bool _GenerateMatchAccept(CodeStatementCollection dest,CodeExpression tostr,FA fromState,CodeLabeledStatement state,bool attachedlabel){var retmatch
+=new CodeMethodReturnStatement();retmatch.Expression=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),
 "Create"),new CodeExpression[]{new CodePrimitiveExpression(fromState.AcceptSymbol),tostr,new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("l"),
 new CodeVariableReferenceExpression("c")});if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=retmatch;}else{dest.Add(retmatch);}}else
-{dest.Add(retmatch);}}}else{var gerror=new CodeGotoStatement("errorout");if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=gerror;
-}else{dest.Add(gerror);}}else{dest.Add(gerror);}}}var error=new CodeLabeledStatement("errorout");var ifq0match=new CodeConditionStatement(_GenerateRangesExpression(cmp,
-q0ranges.ToArray()));dest.Add(error);error.Statement=ifq0match;CodeExpression isEmpty;if(textReader){isEmpty=new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture"),"Length"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(0));
-}else{isEmpty=new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("len"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(0));
-}var checkIfEnd=new CodeConditionStatement(isEmpty);checkIfEnd.TrueStatements.Add(new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
- CodeTypeReferenceExpression("FAMatch"),"Create"),new CodeExpression[]{new CodePrimitiveExpression(-2),new CodePrimitiveExpression(null),new CodePrimitiveExpression(0),
-new CodePrimitiveExpression(0),new CodePrimitiveExpression(0)})));ifq0match.TrueStatements.AddRange(new CodeStatement[]{checkIfEnd,new CodeMethodReturnStatement(new
- CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),"Create"),new CodeExpression[]{new CodePrimitiveExpression(-1),
-tostr,new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("l"),new CodeVariableReferenceExpression("c")}))});dest.Add(adv);if(textReader)
-{dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("ch"),new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current")));
-}dest.Add(new CodeGotoStatement(error.Label));}private static void _GenerateBlockEnds(bool textReader,CodeTypeDeclaration type,IList<FA>blockEnds,FAGeneratorOptions
- opts){if(blockEnds==null){return;}CodeStatement adv;CodeExpression tostr=null;if(!textReader){
+{dest.Add(retmatch);}return attachedlabel;}private static bool _GenerateBlockEndCall(bool textReader,CodeStatementCollection dest,FA fromState,CodeLabeledStatement
+ state,bool attachedlabel){CodeMethodReturnStatement retbe=new CodeMethodReturnStatement();if(textReader){retbe.Expression=new CodeMethodInvokeExpression(
+new CodeMethodReferenceExpression(null,"_BlockEnd"+fromState.AcceptSymbol.ToString()),new CodeExpression[]{new CodeVariableReferenceExpression("p"),new
+ CodeVariableReferenceExpression("l"),new CodeVariableReferenceExpression("c")});}else{retbe.Expression=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(
+null,"_BlockEnd"+fromState.AcceptSymbol.ToString()),new CodeExpression[]{new CodeArgumentReferenceExpression("s"),new CodeVariableReferenceExpression("ch"),
+new CodeVariableReferenceExpression("len"),new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("l"),new CodeVariableReferenceExpression("c")});
+}if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=retbe;}else{dest.Add(retbe);}}else{dest.Add(retbe);}return attachedlabel;}private
+ static bool _GenerateTransitions(IList<FA>closure,CodeStatementCollection dest,CodeStatement adv,CodeExpression cmp,List<FARange>q0ranges,int q,FA fromState,
+CodeLabeledStatement state){var trnsgrp=fromState.FillInputTransitionRangesGroupedByState();var attachedlabel=false;foreach(var trn in trnsgrp){if(q==
+0){q0ranges.AddRange(trn.Value);}var tmp=new RegexCharsetExpression();foreach(var rng in trn.Value){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
+}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,rng.Max));}}var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel
+=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,
+trn.Value));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())});
+}return attachedlabel;}private static void _GenerateBlockEnds(bool textReader,CodeTypeDeclaration type,IList<FA>blockEnds,FAGeneratorOptions opts){if(blockEnds
+==null){return;}CodeStatement adv;CodeExpression tostr=null;if(!textReader){
 #if FALIB_SPANS
 if(opts.UseSpans){tostr=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeArgumentReferenceExpression("s"),
 "Slice",new CodeArgumentReferenceExpression("position"),new CodeArgumentReferenceExpression("len")),"ToString"));}

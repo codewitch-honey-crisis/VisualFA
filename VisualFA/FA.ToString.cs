@@ -31,7 +31,7 @@ using System.Text;
 
 namespace VisualFA
 {
-	partial class FA
+	partial class FA : IFormattable
 	{
 		private struct _ExpEdge
 		{
@@ -206,7 +206,7 @@ namespace VisualFA
 			return _ToExpressionOrJoin(result);
 
 		}
-
+		
 
 		static string _ToExpressionOrJoin(IList<string> strings)
 		{
@@ -238,7 +238,10 @@ namespace VisualFA
 				result.Add(edge);
 			}
 		}
-
+		public string ToString(string format, IFormatProvider provider)
+		{
+			return ToString(format);
+		}
 		public string ToString(string format)
 		{
 			if (string.IsNullOrEmpty(format))

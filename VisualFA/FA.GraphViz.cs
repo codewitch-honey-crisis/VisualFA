@@ -496,19 +496,29 @@ namespace VisualFA
 				options = new FADotGraphOptions();
 			string args = "-T";
 			string ext = Path.GetExtension(filename);
-			if(0==string.Compare(".dot", ext,StringComparison.InvariantCultureIgnoreCase)) {
+			if(0==string.Compare(".dot", 
+				ext,
+				StringComparison.InvariantCultureIgnoreCase)) {
 				using (var writer = new StreamWriter(filename, false))
 				{
 					WriteDotTo(writer, options);
 					return;
 				}
-			} else if (0 == string.Compare(".png", ext, StringComparison.InvariantCultureIgnoreCase))
+			} else if (0 == string.Compare(".png", 
+				ext, 
+				StringComparison.InvariantCultureIgnoreCase))
 				args += "png";
-			else if (0 == string.Compare(".jpg", ext, StringComparison.InvariantCultureIgnoreCase))
+			else if (0 == string.Compare(".jpg", 
+				ext, 
+				StringComparison.InvariantCultureIgnoreCase))
 				args += "jpg";
-			else if (0 == string.Compare(".bmp", ext, StringComparison.InvariantCultureIgnoreCase))
+			else if (0 == string.Compare(".bmp", 
+				ext, 
+				StringComparison.InvariantCultureIgnoreCase))
 				args += "bmp";
-			else if (0 == string.Compare(".svg", ext, StringComparison.InvariantCultureIgnoreCase))
+			else if (0 == string.Compare(".svg", 
+				ext, 
+				StringComparison.InvariantCultureIgnoreCase))
 				args += "svg";
 			if (0 < options.Dpi)
 				args += " -Gdpi=" + options.Dpi.ToString();
@@ -525,13 +535,13 @@ namespace VisualFA
 			{
 				if (proc == null)
 				{
-					throw new NotSupportedException("Graphviz \"dot\" application is either not installed or not in the system PATH");
+					throw new NotSupportedException(
+						"Graphviz \"dot\" application is either not installed or not in the system PATH");
 				}
 				WriteDotTo(proc.StandardInput, options);
 				proc.StandardInput.Close();
 				proc.WaitForExit();
 			}
-
 		}
 		/// <summary>
 		/// Writes the generated dot content to the specified <see cref="TextWriter"/>
@@ -556,11 +566,15 @@ namespace VisualFA
 		/// <param name="copy">True to copy the stream, otherwise false</param>
 		/// <param name="options">A <see cref="FADotGraphOptions"/> instance with any options, or null to use the defaults</param>
 		/// <returns>A stream containing the output. The caller is expected to close the stream when finished.</returns>
-		public Stream RenderToStream(string format, bool copy = false, FADotGraphOptions options = null)
+		public Stream RenderToStream(string format, 
+			bool copy = false, 
+			FADotGraphOptions options = null)
 		{
 			if (null == options)
 				options = new FADotGraphOptions();
-			if(0==string.Compare(format,"dot",StringComparison.InvariantCultureIgnoreCase))
+			if(0==string.Compare(format,
+				"dot",
+				StringComparison.InvariantCultureIgnoreCase))
 			{
 				var stm = new MemoryStream();
 				using(var writer = new StreamWriter(stm)) { 
@@ -585,7 +599,8 @@ namespace VisualFA
 			{
 				if(proc==null)
 				{
-					throw new NotSupportedException("Graphviz \"dot\" application is either not installed or not in the system PATH");
+					throw new NotSupportedException(
+						"Graphviz \"dot\" application is either not installed or not in the system PATH");
 				}
 				WriteDotTo(proc.StandardInput, options);
 				proc.StandardInput.Close();
