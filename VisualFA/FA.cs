@@ -456,8 +456,9 @@ namespace VisualFA
 			}
 			else
 			{
-				var found = false;
-				for(int i = 0;i<_transitions.Count;++i)
+				var found =false;
+				int i;
+				for (i = 0;i<_transitions.Count;++i)
 				{
 					var fat = _transitions[i];
 					// this is why we don't use List.Contains:
@@ -470,11 +471,28 @@ namespace VisualFA
 				}
 				if (!found)
 				{
-					_transitions.Insert(0,new FATransition(to));
+					_transitions.Insert(i,new FATransition(to));
 					IsCompact = false;
 					IsDeterministic = false;
 				}
 			}
+		}
+		/// <summary>
+		/// Converts the state machine to a regular expression.
+		/// </summary>
+		/// <returns>The expression</returns>
+		public override string ToString()
+		{
+			if (Id > -1)
+			{
+				return String.Concat("q", Id.ToString());
+			}
+			else
+			{
+				return base.ToString();
+			}
+			//var mach = _RxMachine.FromFA(this, null);
+			//return mach.Convert();
 		}
 		/// <summary>
 		/// Adds an input transition

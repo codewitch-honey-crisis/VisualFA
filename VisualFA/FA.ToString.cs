@@ -30,14 +30,11 @@ namespace VisualFA
 {
 	partial class FA
 	{
-		private class _ExpEdge
+		private struct _ExpEdge
 		{
 			public string Exp;
 			public FA From;
 			public FA To;
-		}
-		private class _ExpMachine
-		{
 		}
 		static void _ToExpressionFillEdgesIn(IList<_ExpEdge> edges, FA node,IList<_ExpEdge> result)
 		{
@@ -62,8 +59,8 @@ namespace VisualFA
 		}
 		static string _ToExpression(FA fa)
 		{
-			List<FA> Closure = new List<FA>();
-			List<_ExpEdge> Edges = new List<_ExpEdge>();
+			List<FA> closure = new List<FA>();
+			List<_ExpEdge> fsmEdges = new List<_ExpEdge>();
 			FA first, final = null;
 
 			first = fa;
@@ -85,14 +82,14 @@ namespace VisualFA
 					a.AcceptSymbol = -1;
 				}
 			}
-			Closure.Clear();
-			first.FillClosure(Closure);
+			closure.Clear();
+			first.FillClosure(closure);
 			var sb = new StringBuilder();
 			// build the machine from the FA
-			var trnsgrp = new Dictionary<FA, IList<FARange>>(Closure.Count);
-			for (int q = 0; q < Closure.Count; ++q)
+			var trnsgrp = new Dictionary<FA, IList<FARange>>(closure.Count);
+			for (int q = 0; q < closure.Count; ++q)
 			{
-				var cfa = Closure[q];
+				var cfa = closure[q];
 				trnsgrp.Clear();
 				foreach (var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp))
 				{
@@ -106,7 +103,7 @@ namespace VisualFA
 							eedge.Exp = string.Empty;
 							eedge.From = cfa;
 							eedge.To = trns.Key;
-							Edges.Add(eedge);
+							fsmEdges.Add(eedge);
 							continue;
 						}
 						_AppendRangeCharTo(sb, range.Min);
@@ -121,7 +118,7 @@ namespace VisualFA
 					edge.Exp = sb.ToString();
 					edge.From = cfa;
 					edge.To = trns.Key;
-					Edges.Add(edge);
+					fsmEdges.Add(edge);
 				}
 			}
 			var tmp = new FA();
@@ -138,24 +135,24 @@ namespace VisualFA
 			newEdge.Exp = string.Empty;
 			newEdge.From = first;
 			newEdge.To = q0;
-			Edges.Add(newEdge);
+			fsmEdges.Add(newEdge);
 			newEdge = new _ExpEdge();
 			newEdge.Exp = string.Empty;
 			newEdge.From = qLast;
-			newEdge.To = final; ;
-			Edges.Add(newEdge);
-			Closure.Insert(0, first);
-			Closure.Add(final);
+			newEdge.To = final;
+			fsmEdges.Add(newEdge);
+			closure.Insert(0, first);
+			closure.Add(final);
 			var inEdges = new List<_ExpEdge>();
 			var outEdges = new List<_ExpEdge>();
-			while (Closure.Count > 2)
+			while (closure.Count > 2)
 			{
-				for (int q = 1; q < Closure.Count - 1; ++q)
+				for (int q = 1; q < closure.Count - 1; ++q)
 				{
-					var node = Closure[q];
+					var node = closure[q];
 					var loops = new List<string>();
 					inEdges.Clear();
-					_ToExpressionFillEdgesIn(Edges, node, inEdges);
+					_ToExpressionFillEdgesIn(fsmEdges, node, inEdges);
 					for (int i = 0; i < inEdges.Count; ++i)
 					{
 						var edge = inEdges[i];
@@ -173,7 +170,7 @@ namespace VisualFA
 							continue;
 						}
 						outEdges.Clear();
-						_ToExpressionFillEdgesOut(Edges, node, outEdges);
+						_ToExpressionFillEdgesOut(fsmEdges, node, outEdges);
 						for (int j = 0; j < outEdges.Count; ++j)
 						{
 							var outEdge = outEdges[j];
@@ -185,21 +182,21 @@ namespace VisualFA
 							expEdge.From = inEdge.From;
 							expEdge.To = outEdge.To;
 							expEdge.Exp = string.Concat(inEdge.Exp, middle, outEdge.Exp);
-							Edges.Add(expEdge);
+							fsmEdges.Add(expEdge);
 						}
 					}
 					// reuse inedges since we're not using it
 					inEdges.Clear();
-					_ToExpressionFillEdgesOrphanState(Edges, node,inEdges);
-					Edges.Clear();
-					Edges.AddRange(inEdges);
-					Closure.Remove(node);
+					_ToExpressionFillEdgesOrphanState(fsmEdges, node,inEdges);
+					fsmEdges.Clear();
+					fsmEdges.AddRange(inEdges);
+					closure.Remove(node);
 				}
 			}
-			var result = new List<string>(Edges.Count);
-			for (int i = 0; i < Edges.Count; ++i)
+			var result = new List<string>(fsmEdges.Count);
+			for (int i = 0; i < fsmEdges.Count; ++i)
 			{
-				var edge = Edges[i];
+				var edge = fsmEdges[i];
 				result.Add(edge.Exp.ToString());
 			}
 
@@ -212,7 +209,7 @@ namespace VisualFA
 		{
 			if (strings.Count == 0) return string.Empty;
 			if (strings.Count == 1) return strings[0];
-			return string.Concat("(", string.Join("|", strings), ")");
+			return string.Concat("(", string.Join("|",strings), ")");
 		}
 		static string _ToExpressionKleeneStar(string s, bool noWrap)
 		{
@@ -248,26 +245,12 @@ namespace VisualFA
 			if (format == "e")
 			{
 				return _ToExpression(this);
-				
+			} else if(format=="r")
+			{
+				return RegexExpression.FromFA(this).Reduce().ToString();
 			}
 			throw new FormatException("Invalid format specifier");
 		}
-		/// <summary>
-		/// Converts the state machine to a regular expression.
-		/// </summary>
-		/// <returns>The expression</returns>
-		public override string ToString()
-		{
-			if (Id > -1)
-			{
-				return String.Concat("q", Id.ToString());
-			}
-			else
-			{
-				return base.ToString();
-			}
-			//var mach = _RxMachine.FromFA(this, null);
-			//return mach.Convert();
-		}
+		
 	}
 }

@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq.Expressions;
 namespace VisualFA{partial class FA{public partial class CharacterClasses{public static int[][]UnicodeCategories=new int[][]{new int[]{65,90,192,214,216,
 222,256,256,258,258,260,260,262,262,264,264,266,266,268,268,270,270,272,272,274,274,276,276,278,278,280,280,282,282,284,284,286,286,288,288,290,290,292,
 292,294,294,296,296,298,298,300,300,302,302,304,304,306,306,308,308,310,310,313,313,315,315,317,317,319,319,321,321,323,323,325,325,327,327,330,330,332,
@@ -1003,9 +1004,13 @@ public bool IsNeutral{get{return!IsAccepting&&_transitions.Count==1&&_transition
 /// <param name="compact">True to collapse epsilon transitions onto this state, otherwise false</param>
 public void AddEpsilon(FA to,bool compact=true){if(to==null)throw new ArgumentNullException(nameof(to));if(compact){for(int i=0;i<to._transitions.Count;
 ++i){var fat=to._transitions[i];if(fat.Min!=-1||fat.Max!=-1){AddTransition(new FARange(fat.Min,fat.Max),fat.To);}else{AddEpsilon(fat.To,true);}}if(AcceptSymbol
-<0&&to.AcceptSymbol>-1){AcceptSymbol=to.AcceptSymbol;}}else{var found=false;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i]; if(fat.Min!=
--1||fat.Max!=-1)break;if(fat.To==to){found=true;break;}}if(!found){_transitions.Insert(0,new FATransition(to));IsCompact=false;IsDeterministic=false;}
-}}/// <summary>
+<0&&to.AcceptSymbol>-1){AcceptSymbol=to.AcceptSymbol;}}else{var found=false;int i;for(i=0;i<_transitions.Count;++i){var fat=_transitions[i]; if(fat.Min
+!=-1||fat.Max!=-1)break;if(fat.To==to){found=true;break;}}if(!found){_transitions.Insert(i,new FATransition(to));IsCompact=false;IsDeterministic=false;
+}}}/// <summary>
+/// Converts the state machine to a regular expression.
+/// </summary>
+/// <returns>The expression</returns>
+public override string ToString(){if(Id>-1){return String.Concat("q",Id.ToString());}else{return base.ToString();}}/// <summary>
 /// Adds an input transition
 /// </summary>
 /// <param name="range">The range of input codepoints to transition on</param>
@@ -1669,35 +1674,31 @@ return;default:var s=char.ConvertFromUtf32(rangeChar);if(!char.IsLetterOrDigit(s
 }}else builder.Append(s);break;}}static string _EscapeLabel(string label){if(string.IsNullOrEmpty(label))return label;string result=label.Replace("\\",
 @"\\");result=result.Replace("\"","\\\"");result=result.Replace("\n","\\n");result=result.Replace("\r","\\r");result=result.Replace("\0","\\0");result
 =result.Replace("\v","\\v");result=result.Replace("\t","\\t");result=result.Replace("\f","\\f");return result;}}}namespace VisualFA{partial class FA{private
- class _ExpEdge{public string Exp;public FA From;public FA To;}private class _ExpMachine{}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA
- node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){if(edges[i].To==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>
-edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpression(FA
- fa){List<FA>Closure=new List<FA>();List<_ExpEdge>Edges=new List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count
-==1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;
-++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}Closure.Clear();first.FillClosure(Closure);var sb=new StringBuilder(); var trnsgrp=new
- Dictionary<FA,IList<FARange>>(Closure.Count);for(int q=0;q<Closure.Count;++q){var cfa=Closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp))
-{sb.Clear();if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();
-eedge.Exp=string.Empty;eedge.From=cfa;eedge.To=trns.Key;Edges.Add(eedge);continue;}_AppendRangeCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,
-trns.Value);sb.Append("]");}var edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;Edges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,
+ struct _ExpEdge{public string Exp;public FA From;public FA To;}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result)
+{for(int i=0;i<edges.Count;++i){if(edges[i].To==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>
+result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpression(FA fa){List<FA>closure=new
+ List<FA>();List<_ExpEdge>fsmEdges=new List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count==1){final=acc[0];
+}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;++i){var a=acc[i];
+a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}closure.Clear();first.FillClosure(closure);var sb=new StringBuilder(); var trnsgrp=new Dictionary<FA,IList<FARange>>(closure.Count);
+for(int q=0;q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp)){sb.Clear();
+if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();eedge.Exp
+=string.Empty;eedge.From=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}_AppendRangeCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,trns.Value);
+sb.Append("]");}var edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,
 false);var q0=first;first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,false);final=tmp; var newEdge=
-new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=first;newEdge.To=q0;Edges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From
-=qLast;newEdge.To=final;;Edges.Add(newEdge);Closure.Insert(0,first);Closure.Add(final);var inEdges=new List<_ExpEdge>();var outEdges=new List<_ExpEdge>();
-while(Closure.Count>2){for(int q=1;q<Closure.Count-1;++q){var node=Closure[q];var loops=new List<string>();inEdges.Clear();_ToExpressionFillEdgesIn(Edges,
+new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=first;newEdge.To=q0;fsmEdges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From
+=qLast;newEdge.To=final;fsmEdges.Add(newEdge);closure.Insert(0,first);closure.Add(final);var inEdges=new List<_ExpEdge>();var outEdges=new List<_ExpEdge>();
+while(closure.Count>2){for(int q=1;q<closure.Count-1;++q){var node=closure[q];var loops=new List<string>();inEdges.Clear();_ToExpressionFillEdgesIn(fsmEdges,
 node,inEdges);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);}}var middle=_ToExpressionKleeneStar(_ToExpressionOrJoin(loops),
-loops.Count>1);for(int i=0;i<inEdges.Count;++i){var inEdge=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();_ToExpressionFillEdgesOut(Edges,
+loops.Count>1);for(int i=0;i<inEdges.Count;++i){var inEdge=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();_ToExpressionFillEdgesOut(fsmEdges,
 node,outEdges);for(int j=0;j<outEdges.Count;++j){var outEdge=outEdges[j];if(outEdge.From==outEdge.To){continue;}var expEdge=new _ExpEdge();expEdge.From
-=inEdge.From;expEdge.To=outEdge.To;expEdge.Exp=string.Concat(inEdge.Exp,middle,outEdge.Exp);Edges.Add(expEdge);}} inEdges.Clear();_ToExpressionFillEdgesOrphanState(Edges,
-node,inEdges);Edges.Clear();Edges.AddRange(inEdges);Closure.Remove(node);}}var result=new List<string>(Edges.Count);for(int i=0;i<Edges.Count;++i){var
- edge=Edges[i];result.Add(edge.Exp.ToString());}return _ToExpressionOrJoin(result);}static string _ToExpressionOrJoin(IList<string>strings){if(strings.Count
-==0)return string.Empty;if(strings.Count==1)return strings[0];return string.Concat("(",string.Join("|",strings),")");}static string _ToExpressionKleeneStar(string
+=inEdge.From;expEdge.To=outEdge.To;expEdge.Exp=string.Concat(inEdge.Exp,middle,outEdge.Exp);fsmEdges.Add(expEdge);}} inEdges.Clear();_ToExpressionFillEdgesOrphanState(fsmEdges,
+node,inEdges);fsmEdges.Clear();fsmEdges.AddRange(inEdges);closure.Remove(node);}}var result=new List<string>(fsmEdges.Count);for(int i=0;i<fsmEdges.Count;
+++i){var edge=fsmEdges[i];result.Add(edge.Exp.ToString());}return _ToExpressionOrJoin(result);}static string _ToExpressionOrJoin(IList<string>strings)
+{if(strings.Count==0)return string.Empty;if(strings.Count==1)return strings[0];return string.Concat("(",string.Join("|",strings),")");}static string _ToExpressionKleeneStar(string
  s,bool noWrap){if(string.IsNullOrEmpty(s))return"";if(noWrap||s.Length==1){return s+"*";}return string.Concat("(",s,")*");}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>
 edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node||edge.To==node){continue;}result.Add(edge);}}
-public string ToString(string format){if(string.IsNullOrEmpty(format)){return ToString();}if(format=="e"){return _ToExpression(this);}throw new FormatException("Invalid format specifier");
-}/// <summary>
-/// Converts the state machine to a regular expression.
-/// </summary>
-/// <returns>The expression</returns>
-public override string ToString(){if(Id>-1){return String.Concat("q",Id.ToString());}else{return base.ToString();}}}}namespace VisualFA{
+public string ToString(string format){if(string.IsNullOrEmpty(format)){return ToString();}if(format=="e"){return _ToExpression(this);}else if(format=="r")
+{return RegexExpression.FromFA(this).Reduce().ToString();}throw new FormatException("Invalid format specifier");}}}namespace VisualFA{
 #region FARunner
 #if FALIB
 public
@@ -1918,6 +1919,9 @@ public long Position{get;set;}=0L;/// <summary>
 /// A user defined, application specific value to associate with this expression
 /// </summary>
 public object Tag{get;set;}=null;/// <summary>
+/// Indicates whether or not this statement is a empty element or not
+/// </summary>
+public abstract bool IsEmptyElement{get;}/// <summary>
 /// Indicates whether or not this statement is a single element or not
 /// </summary>
 /// <remarks>If false, this statement will be wrapped in parentheses if necessary</remarks>
@@ -1926,17 +1930,26 @@ public abstract bool IsSingleElement{get;}/// <summary>
 /// </summary>
 /// <param name="position">The 0 based position where the expression appears</param>
 public void SetLocation(long position){Position=position;}bool _Visit(RegexExpression parent,RegexVisitAction action){if(action(parent,this)){var unary
-=this as RegexUnaryExpression;if(unary!=null&&unary.Expression!=null){return unary.Expression._Visit(this,action);}var binary=this as RegexBinaryExpression;
-if(binary!=null){if(binary.Left!=null){if(!binary.Left._Visit(this,action)){return false;}}if(binary.Right!=null){return binary.Right._Visit(this,action);
-}}return true;}return false;}/// <summary>
+=this as RegexUnaryExpression;if(unary!=null&&unary.Expression!=null){return unary.Expression._Visit(this,action);}var multi=this as RegexMultiExpression;
+if(multi!=null){for(int i=0;i<multi.Expressions.Count;++i){var e=multi.Expressions[i];if(e!=null){e._Visit(this,action);}}}return true;}return false;}
+/// <summary>
 /// Visits each element in the AST
 /// </summary>
 /// <param name="action">The anonymous method to call for each element</param>
 public void Visit(RegexVisitAction action){_Visit(null,action);}/// <summary>
+/// Attempts to reduce the expression to a simpler form
+/// </summary>
+/// <param name="reduced">The reduced expression</param>
+/// <returns>True if a reduction occurred, otherwise false</returns>
+public abstract bool TryReduce(out RegexExpression reduced);/// <summary>
+/// Reduces an expression to a simpler form, if possible
+/// </summary>
+/// <returns>The new reduced expression</returns>
+public RegexExpression Reduce(){RegexExpression result=this;while(result.TryReduce(out result));return result;}/// <summary>
 /// Creates a copy of the expression
 /// </summary>
 /// <returns>A copy of the expression</returns>
-protected abstract RegexExpression CloneImpl();object ICloneable.Clone()=>CloneImpl();/// <summary>
+protected abstract RegexExpression CloneImpl();object ICloneable.Clone()=>CloneImpl();public RegexExpression Clone(){return CloneImpl();}/// <summary>
 /// Creates a state machine representing this expression
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
@@ -1959,9 +1972,9 @@ public override string ToString(){var result=new StringBuilder();AppendTo(result
 public static RegexExpression Parse(string expression){FA.StringCursor pc=new FA.StringCursor();pc.Input=expression;return _Parse(pc);}private static RegexExpression
  _Parse(FA.StringCursor pc){RegexExpression result=null,next=null;int ich;pc.EnsureStarted();var position=pc.Position;while(true){switch(pc.Codepoint)
 {case-1:return result;case'.':var nset=new RegexCharsetExpression(new RegexCharsetEntry[]{new RegexCharsetRangeEntry(0,0x10ffff)},false);nset.SetLocation(position);
-if(null==result)result=nset;else{result=new RegexConcatExpression(result,nset);result.SetLocation(position);}pc.Advance();result=_ParseModifier(result,
-pc);position=pc.Position;break;case'\\':pc.Advance();pc.Expecting();switch(pc.Codepoint){case'd':next=new RegexCharsetExpression(new RegexCharsetEntry[]
-{new RegexCharsetClassEntry("digit")});pc.Advance();break;case'D':next=new RegexCharsetExpression(new RegexCharsetEntry[]{new RegexCharsetClassEntry("digit")
+if(null==result)result=nset;else{result=new RegexConcatExpression(new RegexExpression[]{result,nset});result.SetLocation(position);}pc.Advance();result
+=_ParseModifier(result,pc);position=pc.Position;break;case'\\':pc.Advance();pc.Expecting();switch(pc.Codepoint){case'd':next=new RegexCharsetExpression(new
+ RegexCharsetEntry[]{new RegexCharsetClassEntry("digit")});pc.Advance();break;case'D':next=new RegexCharsetExpression(new RegexCharsetEntry[]{new RegexCharsetClassEntry("digit")
 },true);pc.Advance();break;case'h':next=new RegexCharsetExpression(new RegexCharsetEntry[]{new RegexCharsetClassEntry("blank")});pc.Advance();break;case
 'l':next=new RegexCharsetExpression(new RegexCharsetEntry[]{new RegexCharsetClassEntry("lower")});pc.Advance();break;case's':next=new RegexCharsetExpression(new
  RegexCharsetEntry[]{new RegexCharsetClassEntry("space")});pc.Advance();break;case'S':next=new RegexCharsetExpression(new RegexCharsetEntry[]{new RegexCharsetClassEntry("space")
@@ -1970,17 +1983,18 @@ pc);position=pc.Position;break;case'\\':pc.Advance();pc.Expecting();switch(pc.Co
  RegexCharsetEntry[]{new RegexCharsetClassEntry("word")},true);pc.Advance();break;default:if(-1!=(ich=_ParseEscapePart(pc))){if(result is RegexLiteralExpression)
 {var cptmp=new int[((RegexLiteralExpression)result).Codepoints.Length+1];cptmp[cptmp.Length-1]=ich;Array.Copy(((RegexLiteralExpression)result).Codepoints,
 cptmp,cptmp.Length-1);((RegexLiteralExpression)result).Codepoints=cptmp;next=null;}else{next=new RegexLiteralExpression(new int[]{ich});}}else{pc.Expecting();
- return null;}break;}if(next!=null){next.SetLocation(position);next=_ParseModifier(next,pc);}if(null!=result){result=new RegexConcatExpression(result,
-next);result.SetLocation(position);}else result=next;position=pc.Position;break;case')':return result;case'(':pc.Advance();pc.Expecting();next=_Parse(pc);
-pc.Expecting(')');pc.Advance();next=_ParseModifier(next,pc);if(null==result)result=next;else{result=new RegexConcatExpression(result,next);result.SetLocation(position);
-}position=pc.Position;break;case'|':if(-1!=pc.Advance()){next=_Parse(pc);result=new RegexOrExpression(result,next);result.SetLocation(position);}else{
-result=new RegexOrExpression(result,null);result.SetLocation(position);}position=pc.Position;break;case'[':pc.CaptureBuffer.Clear();pc.Advance();pc.Expecting();
-bool not=false;if('^'==pc.Codepoint){not=true;pc.Advance();pc.Expecting();}var ranges=_ParseRanges(pc);pc.Expecting(']');pc.Advance();next=new RegexCharsetExpression(ranges,
-not);next.SetLocation(position);next=_ParseModifier(next,pc);if(null==result)result=next;else{result=new RegexConcatExpression(result,next);result.SetLocation(pc.Position);
-}position=pc.Position;break;default:ich=pc.Codepoint;if(result is RegexLiteralExpression){var cptmp=new int[((RegexLiteralExpression)result).Codepoints.Length
-+1];cptmp[cptmp.Length-1]=ich;Array.Copy(((RegexLiteralExpression)result).Codepoints,cptmp,cptmp.Length-1);((RegexLiteralExpression)result).Codepoints
-=cptmp;next=null;}else{next=new RegexLiteralExpression(new int[]{ich});next.SetLocation(position);}pc.Advance();if(next!=null){next=_ParseModifier(next,
-pc);}if(null==result)result=next;else{if(next!=null){result=new RegexConcatExpression(result,next);}result.SetLocation(position);}position=pc.Position;
+ return null;}break;}if(next!=null){next.SetLocation(position);next=_ParseModifier(next,pc);}if(null!=result){result=new RegexConcatExpression(new RegexExpression[]
+{result,next});result.SetLocation(position);}else result=next;position=pc.Position;break;case')':return result;case'(':pc.Advance();pc.Expecting();next
+=_Parse(pc);pc.Expecting(')');pc.Advance();next=_ParseModifier(next,pc);if(null==result)result=next;else{result=new RegexConcatExpression(new RegexExpression[]
+{result,next});result.SetLocation(position);}position=pc.Position;break;case'|':if(-1!=pc.Advance()){next=_Parse(pc);result=new RegexOrExpression(new RegexExpression[]
+{result,next});result.SetLocation(position);}else{result=new RegexOrExpression(new RegexExpression[]{result,null});result.SetLocation(position);}position
+=pc.Position;break;case'[':pc.CaptureBuffer.Clear();pc.Advance();pc.Expecting();bool not=false;if('^'==pc.Codepoint){not=true;pc.Advance();pc.Expecting();
+}var ranges=_ParseRanges(pc);pc.Expecting(']');pc.Advance();next=new RegexCharsetExpression(ranges,not);next.SetLocation(position);next=_ParseModifier(next,
+pc);if(null==result)result=next;else{result=new RegexConcatExpression(new RegexExpression[]{result,next});result.SetLocation(pc.Position);}position=pc.Position;
+break;default:ich=pc.Codepoint;if(result is RegexLiteralExpression){var cptmp=new int[((RegexLiteralExpression)result).Codepoints.Length+1];cptmp[cptmp.Length
+-1]=ich;Array.Copy(((RegexLiteralExpression)result).Codepoints,cptmp,cptmp.Length-1);((RegexLiteralExpression)result).Codepoints=cptmp;next=null;}else
+{next=new RegexLiteralExpression(new int[]{ich});next.SetLocation(position);}pc.Advance();if(next!=null){next=_ParseModifier(next,pc);}if(null==result)
+result=next;else{if(next!=null){result=new RegexConcatExpression(new RegexExpression[]{result,next});}result.SetLocation(position);}position=pc.Position;
 break;}}}static IList<RegexCharsetEntry>_ParseRanges(FA.StringCursor pc){pc.EnsureStarted();var result=new List<RegexCharsetEntry>();RegexCharsetEntry
  next=null;bool readDash=false;while(-1!=pc.Codepoint&&']'!=pc.Codepoint){switch(pc.Codepoint){case'[': if(null!=next){result.Add(next);if(readDash)result.Add(new
  RegexCharsetCharEntry('-'));result.Add(new RegexCharsetCharEntry('-'));}pc.Advance();pc.Expecting(':');pc.Advance();var l=pc.CaptureBuffer.Length;pc.TryReadUntil(':',
@@ -1999,7 +2013,7 @@ readDash=false;}else{if(readDash)result.Add(next);readDash=true;}break;default:i
 {if(null!=next){result.Add(next);if(readDash)result.Add(new RegexCharsetCharEntry('-'));result.Add(new RegexCharsetCharEntry('-'));}pc.Advance();result.Add(new
  RegexCharsetClassEntry(cls));next=null;readDash=false;}static RegexExpression _ParseModifier(RegexExpression expr,FA.StringCursor pc){var position=pc.Position;
 switch(pc.Codepoint){case'*':expr=new RegexRepeatExpression(expr);expr.SetLocation(position);pc.Advance();break;case'+':expr=new RegexRepeatExpression(expr,
-1);expr.SetLocation(position);pc.Advance();break;case'?':expr=new RegexOptionalExpression(expr);expr.SetLocation(position);pc.Advance();break;case'{':
+1);expr.SetLocation(position);pc.Advance();break;case'?':expr=new RegexRepeatExpression(expr,0,1);expr.SetLocation(position);pc.Advance();break;case'{':
 pc.Advance();pc.TrySkipWhiteSpace();pc.Expecting('0','1','2','3','4','5','6','7','8','9',',','}');var min=-1;var max=-1;if(','!=pc.Codepoint&&'}'!=pc.Codepoint)
 {var l=pc.CaptureBuffer.Length;pc.TryReadDigits();min=int.Parse(pc.GetCapture(l),CultureInfo.InvariantCulture.NumberFormat);pc.TrySkipWhiteSpace();}if
 (','==pc.Codepoint){pc.Advance();pc.TrySkipWhiteSpace();pc.Expecting('0','1','2','3','4','5','6','7','8','9','}');if('}'!=pc.Codepoint){var l=pc.CaptureBuffer.Length;
@@ -2065,23 +2079,42 @@ if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-
  new Exception("Expecting input for escape \\x");ch=e.Current;byte x=_FromHexChar(ch);if(!e.MoveNext()){ch=unchecked(x);return ch;}x*=0x10;x+=_FromHexChar(e.Current);
 ch=unchecked(x);break;case'u':if(!e.MoveNext())throw new Exception("Expecting input for escape \\u");ch=e.Current;ushort u=_FromHexChar(ch);if(!e.MoveNext())
 {ch=unchecked(u);return ch;}u*=0x10;u+=_FromHexChar(e.Current);if(!e.MoveNext()){ch=unchecked(u);return ch;}u*=0x10;u+=_FromHexChar(e.Current);if(!e.MoveNext())
-{ch=unchecked(u);return ch;}u*=0x10;u+=_FromHexChar(e.Current);ch=unchecked(u);break;default: break;}return ch;}static IEnumerable<KeyValuePair<int,int>>
-_ParseRanges(IEnumerable<int>charRanges){using(var e=charRanges.GetEnumerator()){var skipRead=false;while(skipRead||e.MoveNext()){skipRead=false;int first
-=_ReadRangeChar(e);if(e.MoveNext()){if('-'==e.Current){if(e.MoveNext())yield return new KeyValuePair<int,int>(first,_ReadRangeChar(e));else yield return
- new KeyValuePair<int,int>('-','-');}else{yield return new KeyValuePair<int,int>(first,first);skipRead=true;continue;}}else{yield return new KeyValuePair<int,
-int>(first,first);yield break;}}}yield break;}}/// <summary>
+{ch=unchecked(u);return ch;}u*=0x10;u+=_FromHexChar(e.Current);ch=unchecked(u);break;default: break;}return ch;}private struct _ExpEdge{public RegexExpression
+ Exp;public FA From;public FA To;}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i)
+{if(edges[i].To==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i
+<edges.Count;++i){var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static RegexExpression _ToExpressionOrJoin(IList<RegexExpression>exps){if(exps.Count
+==0)return null;if(exps.Count==1)return exps[0];return new RegexOrExpression(exps);}public static RegexExpression FromFA(FA fa){if(fa==null){return null;
+}List<FA>closure=new List<FA>();List<_ExpEdge>fsmEdges=new List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(FA.AcceptingFilter);if
+(acc.Count==1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(FA.AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int
+ i=0;i<acc.Count;++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}closure.Clear();first.FillClosure(closure); var trnsgrp=new Dictionary<FA,
+IList<FARange>>(closure.Count);for(int q=0;q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp);
+foreach(var trns in trnsgrp){RegexExpression rx;if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1
+&&range.Max==-1){var eedge=new _ExpEdge();eedge.Exp=null;eedge.From=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}var rxl=new RegexLiteralExpression(new
+ int[]{range.Min});rx=rxl;}else{var rxcs=new RegexCharsetExpression();rx=rxcs;for(int rr=0;rr<trns.Value.Count;++rr){var range=trns.Value[rr];if(range.Min
+!=range.Max){rxcs.Entries.Add(new RegexCharsetRangeEntry(range.Min,range.Max));}else{if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();eedge.Exp
+=null;eedge.From=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}else{if(range.Min==range.Max){rxcs.Entries.Add(new RegexCharsetCharEntry(range.Min));
+}else{rxcs.Entries.Add(new RegexCharsetRangeEntry(range.Min,range.Max));}}}}}var edge=new _ExpEdge();edge.Exp=rx;edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);
+}}var tmp=new FA();tmp.AddEpsilon(first,false);var q0=first;first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,
+false);final=tmp; var newEdge=new _ExpEdge();newEdge.Exp=null;newEdge.From=first;newEdge.To=q0;fsmEdges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp
+=null;newEdge.From=qLast;newEdge.To=final;fsmEdges.Add(newEdge);closure.Insert(0,first);closure.Add(final);var inEdges=new List<_ExpEdge>();var outEdges
+=new List<_ExpEdge>();while(closure.Count>2){for(int q=1;q<closure.Count-1;++q){var node=closure[q];var loops=new List<RegexExpression>();inEdges.Clear();
+_ToExpressionFillEdgesIn(fsmEdges,node,inEdges);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(new RegexRepeatExpression(edge.Exp,0,0));
+}}RegexExpression middleExp=_ToExpressionOrJoin(loops);for(int i=0;i<inEdges.Count;++i){var inEdge=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();
+_ToExpressionFillEdgesOut(fsmEdges,node,outEdges);for(int j=0;j<outEdges.Count;++j){var outEdge=outEdges[j];if(outEdge.From==outEdge.To){continue;}var
+ expEdge=new _ExpEdge();expEdge.From=inEdge.From;expEdge.To=outEdge.To;expEdge.Exp=new RegexConcatExpression(new RegexExpression[]{inEdge.Exp,middleExp,
+outEdge.Exp});fsmEdges.Add(expEdge);}} inEdges.Clear();_ToExpressionFillEdgesOrphanState(fsmEdges,node,inEdges);fsmEdges.Clear();fsmEdges.AddRange(inEdges);
+closure.Remove(node);}}var result=new List<RegexExpression>(fsmEdges.Count);for(int i=0;i<fsmEdges.Count;++i){var edge=fsmEdges[i];result.Add(edge.Exp);
+}return _ToExpressionOrJoin(result);}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;
+++i){var edge=edges[i];if(edge.From==node||edge.To==node){continue;}result.Add(edge);}}}/// <summary>
 /// Represents a binary expression
 /// </summary>
 #if FALIB
 public
 #endif
-abstract partial class RegexBinaryExpression:RegexExpression{/// <summary>
-/// Indicates the left hand expression
+abstract partial class RegexMultiExpression:RegexExpression{/// <summary>
+/// Indicates the expressions
 /// </summary>
-public RegexExpression Left{get;set;}/// <summary>
-/// Indicates the right hand expression
-/// </summary>
-public RegexExpression Right{get;set;}}/// <summary>
+public List<RegexExpression>Expressions{get;}=new List<RegexExpression>();}/// <summary>
 /// Represents an expression with a single target expression
 /// </summary>
 #if FALIB
@@ -2090,7 +2123,7 @@ public
 abstract partial class RegexUnaryExpression:RegexExpression{/// <summary>
 /// Indicates the target expression
 /// </summary>
-public RegexExpression Expression{get;set;}}/// <summary>
+public RegexExpression Expression{get;set;}=null;}/// <summary>
 /// Represents a single character literal
 /// </summary>
 #if FALIB
@@ -2100,7 +2133,10 @@ partial class RegexLiteralExpression:RegexExpression,IEquatable<RegexLiteralExpr
 /// Indicates whether or not this statement is a single element or not
 /// </summary>
 /// <remarks>If false, this statement will be wrapped in parentheses if necessary</remarks>
-public override bool IsSingleElement=>Codepoints==null||Codepoints.Length<2;/// <summary>
+public override bool IsSingleElement=>Codepoints!=null&&Codepoints.Length<2;/// <summary>
+/// Indicates whether or not this statement is a empty element or not
+/// </summary>
+public override bool IsEmptyElement=>Codepoints==null||Codepoints.Length==0;/// <summary>
 /// Indicates the codepoints in this expression
 /// </summary>
 public int[]Codepoints{get;set;}=null;/// <summary>
@@ -2109,7 +2145,7 @@ public int[]Codepoints{get;set;}=null;/// <summary>
 public string Value{get{if(Codepoints==null){return null;}if(Codepoints.Length==0){return"";}var sb=new StringBuilder();for(int i=0;i<Codepoints.Length;i++)
 {sb.Append(char.ConvertFromUtf32(Codepoints[i]));}return sb.ToString();}set{if(value==null)throw new NullReferenceException();if(value.Length==0||value.Length
 >2)throw new InvalidOperationException();if(value==null){Codepoints=null;}else if(value.Length==0){Codepoints=new int[0];}else{var list=new List<int>(FA.ToUtf32(value));
-Codepoints=list.ToArray();}}}/// <summary>
+Codepoints=list.ToArray();}}}public override bool TryReduce(out RegexExpression reduced){reduced=this;return false;}/// <summary>
 /// Creates a literal expression with the specified codepoints
 /// </summary>
 /// <param name="codepoints">The characters to represent</param>
@@ -2138,7 +2174,7 @@ protected override RegexExpression CloneImpl()=>Clone();/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
-public RegexLiteralExpression Clone(){return new RegexLiteralExpression(Value);}
+public new RegexLiteralExpression Clone(){return new RegexLiteralExpression(Value);}
 #region Value semantics
 /// <summary>
 /// Indicates whether this expression is the same as the right hand expression
@@ -2405,6 +2441,9 @@ return true;return!lhs.Equals(rhs);}
 public
 #endif
 partial class RegexCharsetExpression:RegexExpression,IEquatable<RegexCharsetExpression>{/// <summary>
+/// Indicates whether or not this statement is a empty element or not
+/// </summary>
+public override bool IsEmptyElement=>Entries.Count==0;/// <summary>
 /// Indicates the <see cref="RegexCharsetEntry"/> entries in the character set
 /// </summary>
 public IList<RegexCharsetEntry>Entries{get;}=new List<RegexCharsetEntry>();/// <summary>
@@ -2421,11 +2460,15 @@ public RegexCharsetExpression(){}/// <summary>
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept=0,bool compact=true){var ranges=new List<FARange>();for(int ic=Entries.Count,i=0;i<ic;++i){var entry=Entries[i];var
- crc=entry as RegexCharsetCharEntry;if(null!=crc)ranges.Add(new FARange(crc.Codepoint,crc.Codepoint));var crr=entry as RegexCharsetRangeEntry;if(null!=
-crr)ranges.Add(new FARange(crr.FirstCodepoint,crr.LastCodepoint));var crcl=entry as RegexCharsetClassEntry;if(null!=crcl){var known=FA.CharacterClasses.Known[crcl.Name];
-for(int j=0;j<known.Length;j+=2){ranges.Add(new FARange(known[j],known[j+1]));}}}if(HasNegatedRanges)return FA.Set(FARange.ToNotRanges(ranges),accept,compact);
-return FA.Set(ranges,accept,compact);}/// <summary>
+public override FA ToFA(int accept=0,bool compact=true){var ranges=GetRanges();return FA.Set(ranges,accept,compact);}public IList<FARange>GetRanges(){
+var result=new List<FARange>();for(int ic=Entries.Count,i=0;i<ic;++i){var entry=Entries[i];var crc=entry as RegexCharsetCharEntry;if(null!=crc)result.Add(new
+ FARange(crc.Codepoint,crc.Codepoint));var crr=entry as RegexCharsetRangeEntry;if(null!=crr)result.Add(new FARange(crr.FirstCodepoint,crr.LastCodepoint));
+var crcl=entry as RegexCharsetClassEntry;if(null!=crcl){var known=FA.CharacterClasses.Known[crcl.Name];for(int j=0;j<known.Length;j+=2){result.Add(new
+ FARange(known[j],known[j+1]));}}}if(HasNegatedRanges){return new List<FARange>(FARange.ToNotRanges(result));}return result;}public override bool TryReduce(out
+ RegexExpression reduced){if(Entries.Count==0){reduced=null;return true;}var c=Entries.Count;var rngs=GetRanges();if(rngs.Count==1){if(rngs[0].Min==rngs[0].Max)
+{reduced=new RegexLiteralExpression(new int[]{rngs[0].Min});return true;}}if(c<=rngs.Count){reduced=this;return false;}var sx=new RegexCharsetExpression();
+for(var i=0;i<rngs.Count;++i){var rng=rngs[i];var r=new RegexCharsetRangeEntry();r.FirstCodepoint=rng.Min;r.LastCodepoint=rng.Max;sx.Entries.Add(r);}reduced
+=sx;return true;}/// <summary>
 /// Indicates whether the range is a "not range"
 /// </summary>
 /// <remarks>This is represented by the [^] regular expression syntax</remarks>
@@ -2451,7 +2494,7 @@ protected override RegexExpression CloneImpl()=>Clone();/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
-public RegexCharsetExpression Clone(){return new RegexCharsetExpression(Entries,HasNegatedRanges);}
+public new RegexCharsetExpression Clone(){return new RegexCharsetExpression(Entries,HasNegatedRanges);}
 #region Value semantics
 /// <summary>
 /// Indicates whether this expression is the same as the right hand expression
@@ -2492,27 +2535,40 @@ return true;return!lhs.Equals(rhs);}
 #if FALIB
 public
 #endif
-partial class RegexConcatExpression:RegexBinaryExpression,IEquatable<RegexConcatExpression>{/// <summary>
+partial class RegexConcatExpression:RegexMultiExpression,IEquatable<RegexConcatExpression>{/// <summary>
 /// Indicates whether or not this statement is a single element or not
 /// </summary>
 /// <remarks>If false, this statement will be wrapped in parentheses if necessary</remarks>
-public override bool IsSingleElement{get{if(null==Left)return null==Right?false:Right.IsSingleElement;else if(null==Right)return Left.IsSingleElement;
-return false;}}/// <summary>
+public override bool IsSingleElement{get{return Expressions.Count==1&&Expressions[0]!=null&&Expressions[0].IsSingleElement;}}/// <summary>
+/// Indicates whether or not this statement is a empty element or not
+/// </summary>
+public override bool IsEmptyElement=>Expressions.Count==0||(Expressions.Count==1&&Expressions[0].IsEmptyElement);/// <summary>
 /// Creates a new expression with the specified left and right hand sides
 /// </summary>
 /// <param name="left">The left expression</param>
-/// <param name="right">The right expressions</param>
-public RegexConcatExpression(RegexExpression left,params RegexExpression[]right){Left=left;for(int i=0;i<right.Length;i++){var r=right[i];if(null==Right)
-Right=r;if(i!=right.Length-1){var c=new RegexConcatExpression();c.Left=Left;c.Right=Right;Right=null;Left=c;}}}/// <summary>
+/// <param name="expressions">The right expressions</param>
+public RegexConcatExpression(IList<RegexExpression>expressions){for(int i=0;i<expressions.Count;++i){var e=expressions[i];if(e!=null&&!e.IsEmptyElement)
+{Expressions.Add(e);}}}/// <summary>
 /// Creates a default instance of the expression
 /// </summary>
-public RegexConcatExpression(){}/// <summary>
+public RegexConcatExpression(){}private bool _AddReduced(RegexExpression e){if(e==null)return true;var r=false;var oe=e;while(e!=null&&e.TryReduce(out
+ oe)){r=true;e=oe;}if(e!=null){var c=e as RegexConcatExpression;if(null!=c){for(var i=0;i<c.Expressions.Count;++i){var ce=c.Expressions[i];if(ce!=null)
+{_AddReduced(ce);}}return true;}Expressions.Add(e);}else{if(!Expressions.Contains(null)){Expressions.Add(null);}}return r;}public override bool TryReduce(out
+ RegexExpression reduced){var result=false;var cat=new RegexConcatExpression();for(var i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e==null){result
+=true;continue;}if(cat._AddReduced(e)){result=true;}}switch(cat.Expressions.Count){case 0:reduced=null;return true;case 1:if(cat.Expressions[0]!=null)
+{reduced=cat.Expressions[0].Reduce();}else{reduced=null;}return true;default: for(var i=1;i<cat.Expressions.Count;++i){var e=cat.Expressions[i]!=null?cat.Expressions[i].Reduce():(RegexExpression)null;
+var rep=e as RegexRepeatExpression;if(rep!=null){var ee=rep.Expression;var cc=ee as RegexConcatExpression;if(cc!=null&&i>=cc.Expressions.Count){var k=
+0;for(var j=i-cc.Expressions.Count;j<i;++j){if(!cc.Expressions[k].Equals(cat.Expressions[j])){reduced=result?cat:this;return result;}++k;}cat.Expressions[i]
+=new RegexRepeatExpression(cc,rep.MinOccurs+1,rep.MaxOccurs>0?rep.MaxOccurs+1:0).Reduce();cat.Expressions.RemoveRange(i-cc.Expressions.Count,cc.Expressions.Count);
+result=true;}else{if(cat.Expressions[i-1].Equals(ee)){cat.Expressions[i]=new RegexRepeatExpression(ee,rep.MinOccurs+1,rep.MaxOccurs>0?rep.MaxOccurs+1:
+0).Reduce();cat.Expressions.RemoveAt(i-1);result=true;}}}}reduced=result?cat:this;return result;}}/// <summary>
 /// Creates a state machine representing this expression
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept=0,bool compact=true){if(null==Left)return(null!=Right)?Right.ToFA(accept):null;else if(null==Right)return Left.ToFA(accept);
-return FA.Concat(new FA[]{Left.ToFA(accept),Right.ToFA(accept)},accept,compact);}/// <summary>
+public override FA ToFA(int accept=0,bool compact=true){FA current=null;for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];var fa=e.ToFA(accept,
+compact);if(current==null){current=fa;}else{var newFA=new FA(accept);var acc=fa.FillFind(FA.AcceptingFilter);for(int j=0;j<acc.Count;++j){var afa=acc[j];
+afa.AcceptSymbol=-1;afa.AddEpsilon(newFA,compact);}current=newFA;}}if(Expressions.Count==0){return new FA(accept);}return current;}/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
@@ -2520,15 +2576,17 @@ protected override RegexExpression CloneImpl()=>Clone();/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
-public RegexConcatExpression Clone(){return new RegexConcatExpression(Left,Right);}
+public new RegexConcatExpression Clone(){var result=new RegexConcatExpression();for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];result.Expressions.Add(e.Clone());
+}return result;}
 #region Value semantics
 /// <summary>
 /// Indicates whether this expression is the same as the right hand expression
 /// </summary>
 /// <param name="rhs">The expression to compare</param>
 /// <returns>True if the expressions are the same, otherwise false</returns>
-public bool Equals(RegexConcatExpression rhs){if(ReferenceEquals(rhs,this))return true;if(ReferenceEquals(rhs,null))return false;return Left==rhs.Left
-&&Right==rhs.Right;}/// <summary>
+public bool Equals(RegexConcatExpression rhs){if(ReferenceEquals(rhs,this))return true;if(ReferenceEquals(rhs,null))return false;int i=0,j=0;while(i<Expressions.Count
+&&j<rhs.Expressions.Count){var l=Expressions[i];var r=Expressions[j];if(l==null){++i;continue;}if(r==null){++j;continue;}if(!l.Equals(r)){return false;
+}}return(i==j);}/// <summary>
 /// Indicates whether this expression is the same as the right hand expression
 /// </summary>
 /// <param name="rhs">The expression to compare</param>
@@ -2537,7 +2595,8 @@ public override bool Equals(object rhs)=>Equals(rhs as RegexConcatExpression);//
 /// Computes a hash code for this expression
 /// </summary>
 /// <returns>A hash code for this expression</returns>
-public override int GetHashCode(){var result=0;if(null!=Left)result^=Left.GetHashCode();if(null!=Right)result^=Right.GetHashCode();return result;}/// <summary>
+public override int GetHashCode(){var result=0;for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e!=null){result^=e.GetHashCode();}}return result;
+}/// <summary>
 /// Indicates whether or not two expression are the same
 /// </summary>
 /// <param name="lhs">The left hand expression to compare</param>
@@ -2558,39 +2617,55 @@ return true;return!lhs.Equals(rhs);}
 /// </summary>
 /// <param name="sb">The string builder to use</param>
 /// <remarks>Used by ToString()</remarks>
-protected internal override void AppendTo(StringBuilder sb){if(null!=Left){var oe=Left as RegexOrExpression;if(null!=oe)sb.Append('(');Left.AppendTo(sb);
-if(null!=oe)sb.Append(')');}if(null!=Right){var oe=Right as RegexOrExpression;if(null!=oe)sb.Append('(');Right.AppendTo(sb);if(null!=oe)sb.Append(')');
-}}}/// <summary>
+protected internal override void AppendTo(StringBuilder sb){for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e!=null){var oe=e as RegexOrExpression;
+if(null!=oe)sb.Append('(');e.AppendTo(sb);if(null!=oe)sb.Append(')');}}}}/// <summary>
 /// Represents an "or" regular expression as indicated by |
 /// </summary>
 #if FALIB
 public
 #endif
-partial class RegexOrExpression:RegexBinaryExpression,IEquatable<RegexOrExpression>{/// <summary>
+partial class RegexOrExpression:RegexMultiExpression,IEquatable<RegexOrExpression>{/// <summary>
 /// Indicates whether or not this statement is a single element or not
 /// </summary>
 /// <remarks>If false, this statement will be wrapped in parentheses if necessary</remarks>
-public override bool IsSingleElement=>false;/// <summary>
-/// Creates a new expression with the specified left and right hand sides
+public override bool IsSingleElement=>Expressions.Count==1&&Expressions[0]!=null&&Expressions[0].IsSingleElement;/// <summary>
+/// Indicates whether or not this statement is a empty element or not
 /// </summary>
-/// <param name="left">The left expression</param>
-/// <param name="right">The right expressions</param>
-public RegexOrExpression(RegexExpression left,params RegexExpression[]right){Left=left;for(int i=0;i<right.Length;i++){var r=right[i];if(null==Right)Right
-=r;if(i!=right.Length-1){var c=new RegexOrExpression();c.Left=Left;c.Right=Right;Right=null;Left=c;}}}/// <summary>
+public override bool IsEmptyElement=>Expressions.Count==0||(Expressions.Count==1&&Expressions[0].IsEmptyElement);/// <summary>
+/// Creates a new instance from a list of expressions
+/// </summary>
+/// <param name="expressions">The expressions</param>
+/// <exception cref="ArgumentNullException"><paramref name="expressions"/> was null</exception>
+/// <exception cref="ArgumentException"><paramref name="expressions"/> was empty</exception>
+public RegexOrExpression(IList<RegexExpression>expressions){if(expressions==null)throw new ArgumentNullException(nameof(expressions));Expressions.AddRange(expressions);
+}private bool _AddReduced(RegexExpression e,ref bool hasnull){if(e==null)return hasnull;var r=false;while(e!=null&&e.TryReduce(out e))r=true;if(e==null)
+return true;var o=e as RegexOrExpression;if(null!=o){for(var i=0;i<o.Expressions.Count;++i){var oe=o.Expressions[i];if(oe!=null){_AddReduced(oe,ref hasnull);
+}else hasnull=true;}return true;}Expressions.Add(e);return r;}/// <summary>
 /// Creates a default instance of the expression
 /// </summary>
-public RegexOrExpression(){}/// <summary>
+public RegexOrExpression(){}public override bool TryReduce(out RegexExpression reduced){var result=false;var or=new RegexOrExpression();var hasnull=false;
+for(var i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e==null||e.IsEmptyElement){if(hasnull){result=true;}hasnull=true;}else{if(or._AddReduced(e,
+ref hasnull)){result=true;}}}if(!result){if(hasnull){or.Expressions.Add(null);}reduced=this;return false;}switch(or.Expressions.Count){case 0:reduced=
+null;return true;case 1:if(!hasnull){reduced=or.Expressions[0];return true;}reduced=new RegexRepeatExpression(or.Expressions[0],0,1);while(reduced!=null
+&&reduced.TryReduce(out reduced));return true;default:RegexCharsetExpression s=null;RegexCharsetEntry c=null;for(var i=0;i<or.Expressions.Count;++i){var
+ e=or.Expressions[i];var lit=e as RegexLiteralExpression;var st=e as RegexCharsetExpression;if(lit!=null&&lit.Codepoints.Length==1){var r=new RegexCharsetCharEntry();
+r.Codepoint=lit.Codepoints[0];if(c==null){c=r;if(s==null){s=new RegexCharsetExpression();}s.Entries.Add(c);}else{s.Entries.Add(r);c=r;}or.Expressions.RemoveAt(i);
+--i;}else if(st!=null){if(st.HasNegatedRanges){foreach(var range in st.GetRanges()){var r=new RegexCharsetRangeEntry();r.FirstCodepoint=range.Min;r.LastCodepoint
+=range.Max;if(c==null){c=r;if(s==null){s=new RegexCharsetExpression();}s.Entries.Add(c);}else{s.Entries.Add(r);c=r;}}or.Expressions.RemoveAt(i);--i;}}
+}if(s!=null&&!s.IsEmptyElement){RegexExpression se=s;while(se!=null&&se.TryReduce(out se));or.Expressions.Add(se);}if(hasnull){or.Expressions.Add(null);
+}reduced=or;return true;}}/// <summary>
 /// Creates a state machine representing this expression
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
 /// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept=0,bool compact=true){var left=(null!=Left)?Left.ToFA(accept,compact):null;var right=(null!=Right)?Right.ToFA(accept,compact)
-:null;return FA.Or(new FA[]{left,right},accept,compact);}/// <summary>
+public override FA ToFA(int accept=0,bool compact=true){var hasNull=false;var result=new FA();for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];
+if(e==null){hasNull=true;continue;}result.AddEpsilon(e.ToFA(accept,compact),compact);}if(hasNull){result.AcceptSymbol=accept;}return result;}/// <summary>
 /// Appends the textual representation to a <see cref="StringBuilder"/>
 /// </summary>
 /// <param name="sb">The string builder to use</param>
 /// <remarks>Used by ToString()</remarks>
-protected internal override void AppendTo(StringBuilder sb){if(null!=Left)Left.AppendTo(sb);sb.Append('|');if(null!=Right)Right.AppendTo(sb);}/// <summary>
+protected internal override void AppendTo(StringBuilder sb){bool hasNull=false;for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e==null){hasNull
+=true;continue;}if(i>0){sb.Append("|");}e.AppendTo(sb);}if(hasNull){sb.Append("|");}}/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
@@ -2598,15 +2673,16 @@ protected override RegexExpression CloneImpl()=>Clone();/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
-public RegexOrExpression Clone(){return new RegexOrExpression(Left,Right);}
+public new RegexOrExpression Clone(){var result=new RegexOrExpression();bool hasNull=false;for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];if
+(e!=null){result.Expressions.Add(e.Clone());}else hasNull=true;}if(hasNull){result.Expressions.Add(null);}return result;}
 #region Value semantics
 /// <summary>
 /// Indicates whether this expression is the same as the right hand expression
 /// </summary>
 /// <param name="rhs">The expression to compare</param>
 /// <returns>True if the expressions are the same, otherwise false</returns>
-public bool Equals(RegexOrExpression rhs){if(ReferenceEquals(rhs,this))return true;if(ReferenceEquals(rhs,null))return false;return(Left==rhs.Left&&Right
-==rhs.Right)||(Left==rhs.Right&&Right==rhs.Left);}/// <summary>
+public bool Equals(RegexOrExpression rhs){if(ReferenceEquals(rhs,this))return true;if(ReferenceEquals(rhs,null))return false;var hl=new HashSet<RegexExpression>(Expressions);
+var hr=new HashSet<RegexExpression>(rhs.Expressions);return hl.SetEquals(hr);}/// <summary>
 /// Indicates whether this expression is the same as the right hand expression
 /// </summary>
 /// <param name="rhs">The expression to compare</param>
@@ -2615,7 +2691,8 @@ public override bool Equals(object rhs)=>Equals(rhs as RegexOrExpression);/// <s
 /// Computes a hash code for this expression
 /// </summary>
 /// <returns>A hash code for this expression</returns>
-public override int GetHashCode(){var result=0;if(null!=Left)result^=Left.GetHashCode();if(null!=Right)result^=Right.GetHashCode();return result;}/// <summary>
+public override int GetHashCode(){var result=0;for(int i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e!=null){result^=e.GetHashCode();}}return result;
+}/// <summary>
 /// Indicates whether or not two expression are the same
 /// </summary>
 /// <param name="lhs">The left hand expression to compare</param>
@@ -2632,75 +2709,6 @@ public static bool operator!=(RegexOrExpression lhs,RegexOrExpression rhs){if(Re
  true;return!lhs.Equals(rhs);}
 #endregion
 }/// <summary>
-/// Represents an optional expression, as indicated by ?
-/// </summary>
-#if FALIB
-public
-#endif
-partial class RegexOptionalExpression:RegexUnaryExpression,IEquatable<RegexOptionalExpression>{/// <summary>
-/// Indicates whether or not this statement is a single element or not
-/// </summary>
-/// <remarks>If false, this statement will be wrapped in parentheses if necessary</remarks>
-public override bool IsSingleElement=>true;/// <summary>
-/// Creates an optional expression using the specified target expression
-/// </summary>
-/// <param name="expression">The target expression to make optional</param>
-public RegexOptionalExpression(RegexExpression expression){Expression=expression;}/// <summary>
-/// Creates a default instance of the expression
-/// </summary>
-public RegexOptionalExpression(){}/// <summary>
-/// Creates a state machine representing this expression
-/// </summary>
-/// <param name="accept">The accept symbol to use for this expression</param>
-/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
-public override FA ToFA(int accept=0,bool compact=true)=>null!=Expression?FA.Optional(Expression.ToFA(accept,compact),accept,compact):null;/// <summary>
-/// Appends the textual representation to a <see cref="StringBuilder"/>
-/// </summary>
-/// <param name="sb">The string builder to use</param>
-/// <remarks>Used by ToString()</remarks>
-protected internal override void AppendTo(StringBuilder sb){if(null==Expression)sb.Append("()?");else{var ise=Expression.IsSingleElement;if(!ise)sb.Append('(');
-Expression.AppendTo(sb);if(!ise)sb.Append(")?");else sb.Append('?');}}/// <summary>
-/// Creates a new copy of this expression
-/// </summary>
-/// <returns>A new copy of this expression</returns>
-protected override RegexExpression CloneImpl()=>Clone();/// <summary>
-/// Creates a new copy of this expression
-/// </summary>
-/// <returns>A new copy of this expression</returns>
-public RegexOptionalExpression Clone(){return new RegexOptionalExpression(Expression);}
-#region Value semantics
-/// <summary>
-/// Indicates whether this expression is the same as the right hand expression
-/// </summary>
-/// <param name="rhs">The expression to compare</param>
-/// <returns>True if the expressions are the same, otherwise false</returns>
-public bool Equals(RegexOptionalExpression rhs){if(ReferenceEquals(rhs,this))return true;if(ReferenceEquals(rhs,null))return false;return Equals(Expression,
-rhs.Expression);}/// <summary>
-/// Indicates whether this expression is the same as the right hand expression
-/// </summary>
-/// <param name="rhs">The expression to compare</param>
-/// <returns>True if the expressions are the same, otherwise false</returns>
-public override bool Equals(object rhs)=>Equals(rhs as RegexOptionalExpression);/// <summary>
-/// Computes a hash code for this expression
-/// </summary>
-/// <returns>A hash code for this expression</returns>
-public override int GetHashCode(){if(null!=Expression)return Expression.GetHashCode();return 0;}/// <summary>
-/// Indicates whether or not two expression are the same
-/// </summary>
-/// <param name="lhs">The left hand expression to compare</param>
-/// <param name="rhs">The right hand expression to compare</param>
-/// <returns>True if the expressions are the same, otherwise false</returns>
-public static bool operator==(RegexOptionalExpression lhs,RegexOptionalExpression rhs){if(ReferenceEquals(lhs,rhs))return true;if(ReferenceEquals(lhs,
-null))return false;return lhs.Equals(rhs);}/// <summary>
-/// Indicates whether or not two expression are different
-/// </summary>
-/// <param name="lhs">The left hand expression to compare</param>
-/// <param name="rhs">The right hand expression to compare</param>
-/// <returns>True if the expressions are different, otherwise false</returns>
-public static bool operator!=(RegexOptionalExpression lhs,RegexOptionalExpression rhs){if(ReferenceEquals(lhs,rhs))return false;if(ReferenceEquals(lhs,
-null))return true;return!lhs.Equals(rhs);}
-#endregion
-}/// <summary>
 /// Represents a repeat regular expression as indicated by *, +, or {min,max}
 /// </summary>
 #if FALIB
@@ -2711,6 +2719,9 @@ partial class RegexRepeatExpression:RegexUnaryExpression,IEquatable<RegexRepeatE
 /// </summary>
 /// <remarks>If false, this statement will be wrapped in parentheses if necessary</remarks>
 public override bool IsSingleElement=>true;/// <summary>
+/// Indicates whether or not this statement is a empty element or not
+/// </summary>
+public override bool IsEmptyElement=>Expression==null||Expression.IsEmptyElement;/// <summary>
 /// Creates a repeat expression with the specifed target expression, and minimum and maximum occurances
 /// </summary>
 /// <param name="expression">The target expression</param>
@@ -2738,10 +2749,12 @@ public override FA ToFA(int accept=0,bool compact=true)=>null!=Expression?FA.Rep
 /// <param name="sb">The string builder to use</param>
 /// <remarks>Used by ToString()</remarks>
 protected internal override void AppendTo(StringBuilder sb){var ise=null!=Expression&&Expression.IsSingleElement;if(!ise)sb.Append('(');if(null!=Expression)
-Expression.AppendTo(sb);if(!ise)sb.Append(')');switch(MinOccurs){case-1:case 0:switch(MaxOccurs){case-1:case 0:sb.Append('*');break;default:sb.Append('{');
-if(-1!=MinOccurs)sb.Append(MinOccurs);sb.Append(',');sb.Append(MaxOccurs);sb.Append('}');break;}break;case 1:switch(MaxOccurs){case-1:case 0:sb.Append('+');
-break;default:sb.Append("{1,");sb.Append(MaxOccurs);sb.Append('}');break;}break;default:sb.Append('{');if(-1!=MinOccurs)sb.Append(MinOccurs);sb.Append(',');
-if(-1!=MaxOccurs)sb.Append(MaxOccurs);sb.Append('}');break;}}/// <summary>
+Expression.AppendTo(sb);if(!ise)sb.Append(')');switch(MinOccurs){case-1:case 0:switch(MaxOccurs){case-1:case 0:sb.Append('*');break;case 1:sb.Append('?');
+break;default:sb.Append('{');if(-1!=MinOccurs)sb.Append(MinOccurs);sb.Append(',');sb.Append(MaxOccurs);sb.Append('}');break;}break;case 1:switch(MaxOccurs)
+{case-1:case 0:sb.Append('+');break;default:sb.Append("{1,");sb.Append(MaxOccurs);sb.Append('}');break;}break;default:sb.Append('{');if(-1!=MinOccurs)
+sb.Append(MinOccurs);sb.Append(',');if(-1!=MaxOccurs)sb.Append(MaxOccurs);sb.Append('}');break;}}public override bool TryReduce(out RegexExpression reduced)
+{if(Expression==null){reduced=null;return true;}if(MinOccurs==1&&MaxOccurs==1){reduced=Expression;return true;}RegexExpression rexp;reduced=this;if(Expression.TryReduce(out
+ rexp)){Expression=rexp;return true;}return false;}/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
@@ -2749,7 +2762,7 @@ protected override RegexExpression CloneImpl()=>Clone();/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>
-public RegexRepeatExpression Clone(){return new RegexRepeatExpression(Expression,MinOccurs,MaxOccurs);}
+public new RegexRepeatExpression Clone(){return new RegexRepeatExpression(Expression,MinOccurs,MaxOccurs);}
 #region Value semantics
 /// <summary>
 /// Indicates whether this expression is the same as the right hand expression

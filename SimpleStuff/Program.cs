@@ -3,6 +3,7 @@
 using System.Runtime.CompilerServices;
 using System.CodeDom;
 using VisualFA;
+using System.Security.Cryptography.X509Certificates;
 
 var opts = new FADotGraphOptions();
 
@@ -47,11 +48,12 @@ FA lexer = FA.ToLexer(tokens,true);
 // create an expanded NFA
 // small bug in rendering the movement through
 // this expression (NFA) w/ Graphviz. Not easy to fix
-var sexp = "(ba[rz])+|foo(bar)?";
-FA testFa = FA.Parse(sexp, 0,false);
+var sexp = "(ba[rz])*";
+FA testFa = FA.Parse(sexp, 0) ;
 testFa.RenderToFile(@"..\..\..\testFa.png");
 Console.WriteLine("var nfa = FA.Parse(@\"{0}\");",sexp);
 Console.WriteLine("nfa.ToString(\"e\") = @\"{0}\"", testFa.ToString("e"));
+Console.WriteLine("nfa.ToString(\"r\") = @\"{0}\"", testFa.ToString("r"));
 return;
 var mdfa = testFa.ToMinimizedDfa();
 mdfa.RenderToFile(@"..\..\..\mdfa.png");
