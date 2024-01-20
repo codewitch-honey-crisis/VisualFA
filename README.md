@@ -169,3 +169,4 @@ using(var sw = new StreamWriter(file, false))
 - GeneratorDemoVB - Same as above but for VB.NET instead of C#
 - SimpleStuff - Various demonstrations
 - ArticleImages - Code I used to generate codeproject.com content
+- MinimizationStress - Just testing large state machine minimization
