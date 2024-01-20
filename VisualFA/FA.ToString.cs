@@ -2,7 +2,7 @@
 
 Code for ToString originally adapted from
 https://github.com/wolever/nfa2regex
-By honey the codewitch.
+Adaptation by honey the codewitch.
 
 Original license for derivative work follows:
 MIT License
