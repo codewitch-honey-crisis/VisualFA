@@ -129,6 +129,24 @@ internal abstract partial class FAStringRunner : FARunner
 	{
 		if (!first)
 		{
+			if (ch == 10)
+			{
+				++line;
+				column = 0;
+			}
+			else if (ch == 13)
+			{
+				column = 0;
+			}
+			else if (ch == 9)
+			{
+
+				column = ((column - 1) / TabWidth) * (TabWidth + 1);
+			}
+			else if (ch > 31)
+			{
+				++column;
+			}
 			++len;
 			if (ch > 65535)
 			{
@@ -153,27 +171,6 @@ internal abstract partial class FAStringRunner : FARunner
 			{
 				ch = System.Convert.ToInt32(ch1);
 			}
-			if (!first)
-			{
-				if (ch == 10)
-				{
-					++line;
-					column = 0;
-				}
-				else if (ch == 13)
-				{
-					column = 0;
-				}
-				else if (ch == 9)
-				{
-
-					column = ((column - 1) / TabWidth) * (TabWidth + 1);
-				}
-				else if (ch > 31)
-				{
-					++column;
-				}
-			}
 		}
 		else
 		{
@@ -196,7 +193,7 @@ internal abstract partial class FATextReaderRunner : FARunner
 		current = -2;
 		position = -1;
 		line = 1;
-		column = 0;
+		column = 1;
 	}
 	public override void Reset()
 	{
@@ -204,6 +201,24 @@ internal abstract partial class FATextReaderRunner : FARunner
 	}
 	protected void Advance()
 	{
+		if (current == 10)
+		{
+			++line;
+			column = 1;
+		}
+		else if (current == 13)
+		{
+			column = 1;
+		}
+		else if (current == 9)
+		{
+
+			column = ((column - 1) / TabWidth) * (TabWidth + 1);
+		}
+		else if (current > 31)
+		{
+			++column;
+		}
 		if (current > -1)
 		{
 			capture.Append(char.ConvertFromUtf32(current));
@@ -226,23 +241,6 @@ internal abstract partial class FATextReaderRunner : FARunner
 			current = char.ConvertToUtf32(ch1, ch2);
 			++position;
 		}
-		if (current == 10)
-		{
-			++line;
-			column = 0;
-		}
-		else if (current == 13)
-		{
-			column = 0;
-		}
-		else if (current == 9)
-		{
-
-			column = ((column - 1) / TabWidth) * (TabWidth + 1);
-		}
-		else if (current > 31)
-		{
-			++column;
-		}
+		
 	}
 }
