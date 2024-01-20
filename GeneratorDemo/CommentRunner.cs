@@ -71,6 +71,14 @@ internal sealed partial class CommentRunner : FAStringRunner {
         }
         goto errorout;
     q1:
+        // [\t-\n\r ]
+        if (((((ch >= 9) 
+                    && (ch <= 10)) 
+                    || (ch == 13)) 
+                    || (ch == 32))) {
+            this.Advance(s, ref ch, ref len, false);
+            goto q1;
+        }
         return FAMatch.Create(2, s.Slice(p, len).ToString(), p, l, c);
     q2:
         // [\*]

@@ -504,7 +504,7 @@ namespace VisualFA
 		{
 			if (to == null) 
 				throw new ArgumentNullException(nameof(to));
-			if(range.Min=='/') System.Diagnostics.Debugger.Break();
+			
 			if(range.Min==-1 && range.Max==-1)
 			{
 				AddEpsilon(to);

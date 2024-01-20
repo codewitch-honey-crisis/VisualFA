@@ -222,7 +222,7 @@ namespace VisualFA
 			current = -2;
 			position = -1;
 			line = 1;
-			column = 0;
+			column = 1;
 		}
 		public override void Reset()
 		{
@@ -230,6 +230,25 @@ namespace VisualFA
 		}
 		protected void Advance()
 		{
+			switch (this.current)
+			{
+				case '\n':
+					++line;
+					column = 1;
+					break;
+				case '\r':
+					column = 1;
+					break;
+				case '\t':
+					column = ((column - 1) / tabWidth) * (tabWidth + 1);
+					break;
+				default:
+					if (this.current > 31)
+					{
+						++column;
+					}
+					break;
+			}
 			if (current > -1)
 			{
 				capture.Append(char.ConvertFromUtf32(current));
@@ -251,25 +270,6 @@ namespace VisualFA
 				char ch2 = unchecked((char)current);
 				current = char.ConvertToUtf32(ch1, ch2);
 				++position;
-			}
-			switch (this.current)
-			{
-				case '\n':
-					++line;
-					column = 0;
-					break;
-				case '\r':
-					column = 0;
-					break;
-				case '\t':
-					column = ((column - 1) / tabWidth) * (tabWidth + 1);
-					break;
-				default:
-					if (this.current > 31)
-					{
-						++column;
-					}
-					break;
 			}
 		}
 	}
@@ -1148,6 +1148,7 @@ namespace VisualFA
 										{
 											FA.FillEpsilonClosure(dfaNext, _states);
 										}
+										dfaState = null;
 									}
 									dfaNext = null;
 
@@ -1175,6 +1176,7 @@ namespace VisualFA
 											{
 												_states.Add(ffa);
 											}
+											dfaState = null;
 										}
 									}
 									else

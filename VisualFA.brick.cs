@@ -1016,11 +1016,11 @@ public override string ToString(){if(Id>-1){return String.Concat("q",Id.ToString
 /// <param name="range">The range of input codepoints to transition on</param>
 /// <param name="to">The state to transition to</param>
 /// <exception cref="ArgumentNullException"><paramref name="to"/> was null</exception>
-public void AddTransition(FARange range,FA to){if(to==null)throw new ArgumentNullException(nameof(to));if(range.Min=='/')System.Diagnostics.Debugger.Break();
-if(range.Min==-1&&range.Max==-1){AddEpsilon(to);return;}if(range.Min>range.Max){int tmp=range.Min;range.Min=range.Max;range.Max=tmp;}var insert=-1;for
-(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];if(to==fat.To){if(range.Min==fat.Min&&range.Max==fat.Max){return;}}if(IsDeterministic){if(range.Intersects(
-new FARange(fat.Min,fat.Max))){IsDeterministic=false;}}if(range.Min>fat.Min){insert=i;}if(!IsDeterministic&&range.Max<fat.Min){break;}}_transitions.Insert(insert+1,
-new FATransition(to,range.Min,range.Max));}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;IsCompact=true;}/// <summary>
+public void AddTransition(FARange range,FA to){if(to==null)throw new ArgumentNullException(nameof(to));if(range.Min==-1&&range.Max==-1){AddEpsilon(to);
+return;}if(range.Min>range.Max){int tmp=range.Min;range.Min=range.Max;range.Max=tmp;}var insert=-1;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];
+if(to==fat.To){if(range.Min==fat.Min&&range.Max==fat.Max){return;}}if(IsDeterministic){if(range.Intersects(new FARange(fat.Min,fat.Max))){IsDeterministic
+=false;}}if(range.Min>fat.Min){insert=i;}if(!IsDeterministic&&range.Max<fat.Min){break;}}_transitions.Insert(insert+1,new FATransition(to,range.Min,range.Max));
+}public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;IsCompact=true;}/// <summary>
 /// Ensures that the machine has no incoming transitions to the starting state, as well as only one final state.
 /// </summary>
 /// <param name="start">The start state, in case a new one needs to be created.</param>
@@ -1746,11 +1746,11 @@ string s
 public
 #endif
 abstract partial class FATextReaderRunner:FARunner{protected TextReader reader;protected StringBuilder capture=new StringBuilder();protected int current;
-public void Set(TextReader reader){this.reader=reader;current=-2;position=-1;line=1;column=0;}public override void Reset(){throw new NotSupportedException();
-}protected void Advance(){if(current>-1){capture.Append(char.ConvertFromUtf32(current));}current=reader.Read();if(current==-1){return;}++position;char
- ch1=unchecked((char)current);if(char.IsHighSurrogate(ch1)){current=reader.Read();if(current==-1){ThrowUnicode(position);}char ch2=unchecked((char)current);
-current=char.ConvertToUtf32(ch1,ch2);++position;}switch(this.current){case'\n':++line;column=0;break;case'\r':column=0;break;case'\t':column=((column-
-1)/tabWidth)*(tabWidth+1);break;default:if(this.current>31){++column;}break;}}}
+public void Set(TextReader reader){this.reader=reader;current=-2;position=-1;line=1;column=1;}public override void Reset(){throw new NotSupportedException();
+}protected void Advance(){switch(this.current){case'\n':++line;column=1;break;case'\r':column=1;break;case'\t':column=((column-1)/tabWidth)*(tabWidth+
+1);break;default:if(this.current>31){++column;}break;}if(current>-1){capture.Append(char.ConvertFromUtf32(current));}current=reader.Read();if(current==
+-1){return;}++position;char ch1=unchecked((char)current);if(char.IsHighSurrogate(ch1)){current=reader.Read();if(current==-1){ThrowUnicode(position);}char
+ ch2=unchecked((char)current);current=char.ConvertToUtf32(ch1,ch2);++position;}}}
 #endregion // FATextReaderRunner
 #region FAStringDfaTableRunner
 #if FALIB
@@ -1892,11 +1892,11 @@ _states.Clear();if(!ffa.IsCompact){FA.FillEpsilonClosure(ffa,_states);}else{_sta
 _blockEnds.Length>acc&&_blockEnds[acc]!=null){var be=_blockEnds[acc];if(be.IsDeterministic){dfaState=be;dfaInitial=be;}else{_initial.Clear();if(be.IsCompact)
 {_initial.Add(be);}else{FA.FillEpsilonClosure(be,_initial);}_states.Clear();_states.AddRange(_initial);}while(true){if(dfaState!=null){dfaNext=dfaState.Move(current);
 }else{dfaNext=null;_nexts.Clear();FA.FillMove(_states,current,_nexts);}if(dfaNext!=null){Advance();if(dfaNext.IsDeterministic){dfaState=dfaNext;}else{
-_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{FA.FillEpsilonClosure(dfaNext,_states);}}dfaNext=null;}else if(_nexts.Count>0){Advance();
-if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact){FA.FillEpsilonClosure(ffa,
-_states);}else{_states.Add(ffa);}}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{if(dfaState!=null){if(dfaState.IsAccepting)
-{return FAMatch.Create(acc,capture.ToString(),cursor_pos,line,column);}}else{if(-1<FA.GetFirstAcceptSymbol(_states)){return FAMatch.Create(acc,capture.ToString(),
-cursor_pos,line,column);}}Advance();if(dfaInitial!=null){_states.Clear();dfaState=dfaInitial;}else{dfaState=null;_states.Clear();_states.AddRange(_initial);
+_states.Clear();if(dfaNext.IsCompact){_states.Add(dfaNext);}else{FA.FillEpsilonClosure(dfaNext,_states);}dfaState=null;}dfaNext=null;}else if(_nexts.Count
+>0){Advance();if(_nexts.Count==1){var ffa=_nexts[0]; if(ffa.IsDeterministic){dfaState=ffa;}else{dfaNext=null;_states.Clear();if(!ffa.IsCompact){FA.FillEpsilonClosure(ffa,
+_states);}else{_states.Add(ffa);}dfaState=null;}}else{_states.Clear();FA.FillEpsilonClosure(_nexts,_states);}_nexts.Clear();}else{if(dfaState!=null){if
+(dfaState.IsAccepting){return FAMatch.Create(acc,capture.ToString(),cursor_pos,line,column);}}else{if(-1<FA.GetFirstAcceptSymbol(_states)){return FAMatch.Create(acc,
+capture.ToString(),cursor_pos,line,column);}}Advance();if(dfaInitial!=null){_states.Clear();dfaState=dfaInitial;}else{dfaState=null;_states.Clear();_states.AddRange(_initial);
 }if(current==-1){return FAMatch.Create(-1,capture.ToString(),cursor_pos,line,column);}}}}else{return FAMatch.Create(acc,capture.ToString(),cursor_pos,
 line,column);}}else{if(dfaInitial!=null){while(current!=-1&&dfaInitial.Move(current)==null){Advance();}}else{_states.Clear();while(current!=-1&&FA.FillMove(_initial,
 current,_states).Count==0){Advance();}}if(capture.Length==0){return FAMatch.Create(-2,null,0,0,0);}return FAMatch.Create(-1,capture.ToString(),cursor_pos,
