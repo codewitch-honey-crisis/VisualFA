@@ -1476,7 +1476,10 @@ namespace VisualFA
 					if (',' != pc.Codepoint && '}' != pc.Codepoint)
 					{
 						var l = pc.CaptureBuffer.Length;
-						pc.TryReadDigits();
+						if(!pc.TryReadDigits())
+						{
+							pc.Expecting('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+						}
 						min = int.Parse(pc.GetCapture(l), CultureInfo.InvariantCulture.NumberFormat);
 						pc.TrySkipWhiteSpace();
 					}
@@ -3152,12 +3155,11 @@ namespace VisualFA
 				if(Input==null || Position>=Input.Length) return false;
 				if (!char.IsWhiteSpace(Input,Position))
 					return false;
-				++Position;
+				Advance();
 				if (Position<Input.Length && char.IsLowSurrogate(Input, Position)) ++Position;
 				while (Position < Input.Length && char.IsWhiteSpace(Input,Position))
 				{
-					++Position;
-					if (Position < Input.Length && char.IsLowSurrogate(Input, Position)) ++Position;
+					Advance();
 				}
 				return true;
 			}
@@ -3168,13 +3170,11 @@ namespace VisualFA
 				if (!char.IsDigit(Input, Position))
 					return false;
 				Capture();
-				++Position;
-				if (Position < Input.Length && char.IsLowSurrogate(Input, Position)) ++Position;
+				Advance();
 				while (Position < Input.Length && char.IsDigit(Input, Position))
 				{
 					Capture();
-					++Position;
-					if (Position < Input.Length && char.IsLowSurrogate(Input, Position)) ++Position;
+					Advance();
 				}
 				return true;
 			}

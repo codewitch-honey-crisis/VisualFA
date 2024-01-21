@@ -49,12 +49,14 @@ FA lexer = FA.ToLexer(tokens,true);
 // create an expanded NFA
 // small bug in rendering the movement through
 // this expression (NFA) w/ Graphviz. Not easy to fix
-var sexp = "(ba[rz])*foofoofoo";
+var sexp = "(ba[rz])*(foo){3}f";
 FA testFa = FA.Parse(sexp, 0) ;
 testFa.RenderToFile(@"..\..\..\testFa.png");
 Console.WriteLine("var nfa = FA.Parse(@\"{0}\");",sexp);
 Console.WriteLine("nfa.ToString(\"e\") = @\"{0}\"", testFa.ToString("e"));
 Console.WriteLine("nfa.ToString(\"r\") = @\"{0}\"", testFa.ToString("r"));
+var regex = RegexExpression.FromFA(testFa);
+regex.Visit((parent, me, level) => { Console.WriteLine("{0}{1}: {2}", new string(' ', level * 4), me.GetType().Name,me); return true; });
 return;
 var mdfa = testFa.ToMinimizedDfa();
 mdfa.RenderToFile(@"..\..\..\mdfa.png");

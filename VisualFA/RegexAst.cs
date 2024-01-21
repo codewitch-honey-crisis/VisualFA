@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq.Expressions;
 using System.Text;
 
 
@@ -10,7 +9,7 @@ namespace VisualFA
 #if FALIB
 	public
 #endif
-	delegate bool RegexVisitAction(RegexExpression parent, RegexExpression expression);
+	delegate bool RegexVisitAction(RegexExpression parent, RegexExpression expression, int level);
 
 	/// <summary>
 	/// Represents the common functionality of all regular expression elements
@@ -44,13 +43,13 @@ namespace VisualFA
 		{
 			Position = position;
 		}
-		bool _Visit(RegexExpression parent, RegexVisitAction action) {
-			if (action(parent,this))
+		bool _Visit(RegexExpression parent, RegexVisitAction action, int level) {
+			if (action(parent,this, level))
 			{
 				var unary = this as RegexUnaryExpression;
 				if (unary != null && unary.Expression != null)
 				{
-					return unary.Expression._Visit(this,action);
+					return unary.Expression._Visit(this,action,level+1);
 				}
 				var multi = this as RegexMultiExpression;
 				if (multi != null)
@@ -60,7 +59,7 @@ namespace VisualFA
 						var e = multi.Expressions[i];
 						if(e!=null)
 						{
-							e._Visit(this, action);
+							e._Visit(this, action, level + 1);
 						}
 					}
 				}
@@ -74,7 +73,7 @@ namespace VisualFA
 		/// <param name="action">The anonymous method to call for each element</param>
 		public void Visit(RegexVisitAction action)
 		{
-			_Visit(null, action);
+			_Visit(null, action,0);
 		}
 		/// <summary>
 		/// Attempts to reduce the expression to a simpler form
@@ -1051,6 +1050,7 @@ namespace VisualFA
 			{
 				return null;
 			}
+			List<RegexExpression> tocat = new List<RegexExpression>();
 			List<FA> closure = new List<FA>();
 			List<_ExpEdge> fsmEdges = new List<_ExpEdge>();
 			FA first, final = null;
@@ -1202,7 +1202,59 @@ namespace VisualFA
 							var expEdge = new _ExpEdge();
 							expEdge.From = inEdge.From;
 							expEdge.To = outEdge.To;
-							expEdge.Exp = new RegexConcatExpression(new RegexExpression[] { inEdge.Exp, middleExp, outEdge.Exp });
+							tocat.Clear();
+							var cat = inEdge.Exp as RegexConcatExpression;
+							if (cat != null)
+							{
+								tocat.AddRange(cat.Expressions);
+							} else
+							{
+								if (inEdge.Exp != null)
+									tocat.Add(inEdge.Exp);
+							}
+							cat = middleExp as RegexConcatExpression;
+							if(cat!=null)
+							{
+								tocat.AddRange(cat.Expressions);
+							} else
+							{
+								if(middleExp!=null)
+									tocat.Add(middleExp);
+							}
+							cat = outEdge.Exp as RegexConcatExpression;
+							if (cat != null)
+							{
+								tocat.AddRange(cat.Expressions);
+							}
+							else
+							{
+								if (outEdge.Exp!= null)
+									tocat.Add(outEdge.Exp);
+							}
+							for(int k = 1;k<tocat.Count;++k)
+							{
+								var lit1 = tocat[k - 1] as RegexLiteralExpression;
+								if(lit1 != null)
+								{
+									var lit2 = tocat[k] as RegexLiteralExpression;
+									if(lit2 != null)
+									{
+										lit1.Value += lit2.Value;
+										tocat.RemoveAt(k);
+										--k;
+									}
+								}
+							}
+							if (tocat.Count > 1)
+							{
+								expEdge.Exp = new RegexConcatExpression(tocat);
+							} else if(tocat.Count > 0)
+							{
+								expEdge.Exp = tocat[0];
+							} else
+							{
+								expEdge.Exp = null;
+							}
 							fsmEdges.Add(expEdge);
 						}
 					}
@@ -1308,7 +1360,7 @@ namespace VisualFA
 			}
 			set {
 				if (value == null) throw new NullReferenceException();
-				if (value.Length == 0 || value.Length > 2) throw new InvalidOperationException();
+				if (value.Length == 0) throw new InvalidOperationException();
 				if (value == null)
 				{
 					Codepoints = null;
@@ -1321,6 +1373,7 @@ namespace VisualFA
 				}
 			}
 		}
+		
 		public override bool TryReduce(out RegexExpression reduced)
 		{
 			reduced = this;
@@ -2226,6 +2279,17 @@ namespace VisualFA
 								}
 							}
 						}
+						var lit = e as RegexLiteralExpression;
+						if(lit!=null)
+						{
+							var litp = cat.Expressions[i - 1] as RegexLiteralExpression;
+							if(litp!=null)
+							{
+								cat.Expressions[i] = new RegexLiteralExpression(litp.Value + lit.Value);
+								cat.Expressions.RemoveAt(i - 1);
+								result = true;
+							}
+						}
 					}
 					
 					reduced = result ? cat : this;
@@ -2803,11 +2867,17 @@ namespace VisualFA
 					break;
 				default:
 					sb.Append('{');
-					if (-1 != MinOccurs)
+					if (MaxOccurs != MinOccurs)
+					{
+						if (-1 != MinOccurs)
+							sb.Append(MinOccurs);
+						sb.Append(',');
+						if (-1 != MaxOccurs)
+							sb.Append(MaxOccurs);
+					} else
+					{
 						sb.Append(MinOccurs);
-					sb.Append(',');
-					if (-1 != MaxOccurs)
-						sb.Append(MaxOccurs);
+					}
 					sb.Append('}');
 					break;
 			}
