@@ -1213,21 +1213,23 @@ namespace VisualFA
 		/// <param name="compact">True to collapse epsilons, false to generate expanded epsilons</param>
 		/// <returns>A new machine representing the repeated expression</returns>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="minOccurs"/> or <paramref name="maxOccurs"/> is an invalid value</exception>
-		public static FA Repeat(FA expr, int minOccurs = -1, int maxOccurs = -1, int accept = 0, bool compact = true)
+		public static FA Repeat(FA expr, 
+			int minOccurs = 0, 
+			int maxOccurs = 0, 
+			int accept = 0, 
+			bool compact = true)
 		{
-			if (minOccurs < -1) throw new ArgumentOutOfRangeException(nameof(minOccurs));
-			if (maxOccurs < -1) throw new ArgumentOutOfRangeException(nameof(maxOccurs));
+			if (minOccurs < 0) minOccurs = 0;
+			if (maxOccurs < 0) maxOccurs = 0;
 			expr = expr.Clone();
 			if (minOccurs > 0 && maxOccurs > 0 && minOccurs > maxOccurs)
 				throw new ArgumentOutOfRangeException(nameof(maxOccurs));
 			FA result;
 			switch (minOccurs)
 			{
-				case -1:
 				case 0: // lower bound unbounded. whole expression is optional
 					switch (maxOccurs)
 					{
-						case -1:
 						case 0:
 							result = new FA(accept);
 							result.AddEpsilon(expr, compact);
@@ -1253,25 +1255,42 @@ namespace VisualFA
 				case 1:
 					switch (maxOccurs)
 					{
-						case -1:
 						case 0:
-							// thought below might be safer but nah.
-							//result = Concat(new FA[] { expr, Repeat(expr, 0, 0, accept, compact) }, accept, compact);
 							result = Repeat(expr, 0, 0, accept, compact);
 							result.AcceptSymbol = -1;
 							return result;
 						case 1:
 							return expr;
 						default:
-							result = Concat(new FA[] { expr, Repeat(expr, 0, maxOccurs - 1, accept, compact) }, accept, compact);
+							result = Concat(
+								new FA[] { expr, 
+									Repeat(expr, 
+									0, 
+									maxOccurs - 1, 
+									accept, 
+									compact) }, 
+								accept, 
+								compact);
 							return result;
 					}
 				default:
 					switch (maxOccurs)
 					{
-						case -1:
 						case 0:
-							result = Concat(new FA[] { Repeat(expr, minOccurs, minOccurs, accept, compact), Repeat(expr, 0, 0, accept, compact) }, accept, compact);
+							result = Concat(
+								new FA[] { 
+									Repeat(expr, 
+										minOccurs, 
+										minOccurs, 
+										accept, 
+										compact), 
+									Repeat(expr, 
+										0, 
+										0, 
+										accept, 
+										compact) }, 
+								accept, 
+								compact);
 							return result;
 						case 1:
 							throw new ArgumentOutOfRangeException(nameof(maxOccurs));
@@ -1288,7 +1307,24 @@ namespace VisualFA
 								result = Concat(l, accept);
 								return result;
 							}
-							result = Concat(new FA[] { Repeat(expr, minOccurs, minOccurs, accept, compact), Repeat(Optional(expr, accept, compact), maxOccurs - minOccurs, maxOccurs - minOccurs, accept, compact) }, accept, compact);
+							result = Concat(new FA[] { 
+								Repeat(
+									expr, 
+									minOccurs, 
+									minOccurs, 
+									accept, 
+									compact), 
+								Repeat(
+									Optional(
+										expr, 
+										accept, 
+										compact), 
+									maxOccurs - minOccurs, 
+									maxOccurs - minOccurs, 
+									accept, 
+									compact) }, 
+								accept, 
+								compact);
 							return result;
 					}
 			}
