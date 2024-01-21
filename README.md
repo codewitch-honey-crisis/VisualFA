@@ -6,9 +6,10 @@ https://www.codeproject.com/Articles/5375797/Visual-FA-Part-1-Understanding-Fini
 
 ### License Notice
 
-Portions of this code in the file FA.cs were derived from code created by other authors, and similarly licensed under MIT
+Portions of this code in the file FA.cs and FA.ToString.cs were derived from code created by other authors, and similarly licensed under MIT
 - Fare, Copyright (C) 2013 Nikos Baxevanis http://github.com/moodmosaic/Fare/ itself ported from 
 - dk.brics.automaton, Copyright (c) 2001-2011 Anders Moeller http://www.brics.dk/automaton/
+- nfa2regex, Copyright (c) 2021 David Wolever https://github.com/wolever/nfa2regex
 
 ### Build Tools Notice
 
