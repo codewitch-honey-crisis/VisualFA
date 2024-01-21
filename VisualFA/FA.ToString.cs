@@ -146,14 +146,14 @@ namespace VisualFA
 			fsmEdges.Add(newEdge);
 			closure.Insert(0, first);
 			closure.Add(final);
-			var inEdges = new List<_ExpEdge>();
-			var outEdges = new List<_ExpEdge>();
+			var inEdges = new List<_ExpEdge>(fsmEdges.Count);
+			var outEdges = new List<_ExpEdge>(fsmEdges.Count);
 			while (closure.Count > 2)
 			{
 				for (int q = 1; q < closure.Count - 1; ++q)
 				{
 					var node = closure[q];
-					var loops = new List<string>();
+					var loops = new List<string>(inEdges.Count);
 					inEdges.Clear();
 					_ToExpressionFillEdgesIn(fsmEdges, node, inEdges);
 					for (int i = 0; i < inEdges.Count; ++i)
@@ -164,7 +164,9 @@ namespace VisualFA
 							loops.Add(edge.Exp);
 						}
 					}
-					var middle = _ToExpressionKleeneStar(_ToExpressionOrJoin(loops), loops.Count > 1);
+					sb.Clear();
+					_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops), loops.Count > 1);
+					var middle = sb.ToString();
 					for (int i = 0; i < inEdges.Count; ++i)
 					{
 						var inEdge = inEdges[i];
@@ -184,7 +186,11 @@ namespace VisualFA
 							var expEdge = new _ExpEdge();
 							expEdge.From = inEdge.From;
 							expEdge.To = outEdge.To;
-							expEdge.Exp = string.Concat(inEdge.Exp, middle, outEdge.Exp);
+							sb.Clear();
+							sb.Append(inEdge.Exp);
+							sb.Append(middle);
+							sb.Append(outEdge.Exp);
+							expEdge.Exp = sb.ToString();
 							fsmEdges.Add(expEdge);
 						}
 					}
@@ -196,14 +202,24 @@ namespace VisualFA
 					closure.Remove(node);
 				}
 			}
-			var result = new List<string>(fsmEdges.Count);
-			for (int i = 0; i < fsmEdges.Count; ++i)
+			sb.Clear();
+			if(fsmEdges.Count==1)
 			{
-				var edge = fsmEdges[i];
-				result.Add(edge.Exp.ToString());
+				return fsmEdges[0].Exp;
 			}
-
-			return _ToExpressionOrJoin(result);
+			if (fsmEdges.Count > 1)
+			{
+				sb.Append("(");
+				sb.Append(fsmEdges[0].Exp);
+				for (int i = 1; i < fsmEdges.Count; ++i)
+				{
+					sb.Append("|");
+					var edge = fsmEdges[i];
+					sb.Append(edge.Exp);
+				}
+				sb.Append(")");
+			}
+			return sb.ToString();
 
 		}
 		
@@ -214,16 +230,20 @@ namespace VisualFA
 			if (strings.Count == 1) return strings[0];
 			return string.Concat("(", string.Join("|",strings), ")");
 		}
-		static string _ToExpressionKleeneStar(string s, bool noWrap)
+
+		static void _ToExpressionKleeneStar(StringBuilder sb,string s, bool noWrap)
 		{
-			if (string.IsNullOrEmpty(s)) return "";
+			if (string.IsNullOrEmpty(s)) return;
 			if (noWrap || s.Length == 1)
 			{
-				return s + "*";
+				sb.Append(s);
+				sb.Append("*");
+				return;
 			}
-			return string.Concat("(", s, ")*");
+			sb.Append("(");
+			sb.Append(s);
+			sb.Append(")*");
 		}
-
 
 
 		static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge> edges, FA node, IList<_ExpEdge> result)

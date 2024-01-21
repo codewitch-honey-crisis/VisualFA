@@ -55,7 +55,7 @@ testFa.RenderToFile(@"..\..\..\testFa.png");
 Console.WriteLine("var nfa = FA.Parse(@\"{0}\");",sexp);
 Console.WriteLine("nfa.ToString(\"e\") = @\"{0}\"", testFa.ToString("e"));
 Console.WriteLine("nfa.ToString(\"r\") = @\"{0}\"", testFa.ToString("r"));
-
+return;
 var mdfa = testFa.ToMinimizedDfa();
 mdfa.RenderToFile(@"..\..\..\mdfa.png");
 testFa.SetIds();
