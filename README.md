@@ -146,6 +146,7 @@ using(var sw = new StreamWriter(file, false))
 	opts.ClassName = "MyLexer";
 	opts.Dependencies = FAGeneratorDependencies.GenerateSharedCode;
 	opts.GenerateTables = true;
+	opts.Symbols = new string[] { "ident","num","ws","comment" };
 	var runner = lexer.Generate(new FA[] { null, null, null, commentEnd }, opts);
 	var cprov = new CSharpCodeProvider();
 	var copt = new CodeGeneratorOptions();
