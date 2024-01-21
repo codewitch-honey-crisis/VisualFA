@@ -103,18 +103,47 @@ MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeState
  CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates whether the text matched the expression",
 true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <remarks>Non matches are returned with negative accept symbols. You can use this"
 +" property to determine if the text therein was part of a match.</remarks>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
-null),DeslangedSpan._MemberMethod(new CodeTypeReference("FAMatch"),"Create",(MemberAttributes.Static|MemberAttributes.Public),new CodeParameterDeclarationExpression[]
-{new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"symbolId"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)),
-"value"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(long)),"position"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),
-"line"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"column")},new CodeStatement[]{new CodeVariableDeclarationStatement(new
- CodeTypeReference("FAMatch"),"result",new CodeDefaultValueExpression(new CodeTypeReference("FAMatch"))),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_symbolId"),new CodeArgumentReferenceExpression("symbolId")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_value"),new CodeArgumentReferenceExpression("value")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_position"),new CodeArgumentReferenceExpression("position")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_line"),new CodeArgumentReferenceExpression("line")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_column"),new CodeArgumentReferenceExpression("column")),new CodeMethodReturnStatement(new CodeVariableReferenceExpression("result"))},
-new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Constructs a new instance",
-true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <param name=\"symbolId\">The symbol id</param>",true),new CodeCommentStatement(" <param name=\"value\">The matched value</param>",
+null),DeslangedSpan._MemberMethod(new CodeTypeReference(typeof(string)),"ToString",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],
+new CodeStatement[]{new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(System.Text.StringBuilder)),"sb",new CodeObjectCreateExpression(new
+ CodeTypeReference(typeof(System.Text.StringBuilder)),new CodeExpression[0])),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
+ CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression("[SymbolId: ")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),
+"SymbolId")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePrimitiveExpression(", Value: ")})),new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(new
+ CodeThisReferenceExpression(),"Value"),CodeBinaryOperatorType.IdentityInequality,new CodePrimitiveExpression(null)),new CodeStatement[]{new CodeExpressionStatement(new
+ CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression("\"")})),
+new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]
+{new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),
+"Value"),"Replace"),new CodeExpression[]{new CodePrimitiveExpression("\r"),new CodePrimitiveExpression("\\r")}),"Replace"),new CodeExpression[]{new CodePrimitiveExpression("\t"),
+new CodePrimitiveExpression("\\t")}),"Replace"),new CodeExpression[]{new CodePrimitiveExpression("\n"),new CodePrimitiveExpression("\\n")}),"Replace"),
+new CodeExpression[]{new CodePrimitiveExpression(""),new CodePrimitiveExpression("\\v")})})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression("\", Position: ")}))},
+new CodeStatement[]{new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePrimitiveExpression("null, Position: ")}))}),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
+ CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),"Position")})),
+new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]
+{new CodePrimitiveExpression(" (")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),"Line")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression(", ")})),new CodeExpressionStatement(new
+ CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new
+ CodeThisReferenceExpression(),"Column")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePrimitiveExpression(")]")})),new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
+ CodeVariableReferenceExpression("sb"),"ToString"),new CodeExpression[0]))},new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
+true),new CodeCommentStatement(" Provides a string representation of the match",true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <returns>A string containing match information</returns>",
+true)},new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberMethod(new
+ CodeTypeReference("FAMatch"),"Create",(MemberAttributes.Static|MemberAttributes.Public),new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new
+ CodeTypeReference(typeof(int)),"symbolId"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)),"value"),new CodeParameterDeclarationExpression(new
+ CodeTypeReference(typeof(long)),"position"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"line"),new CodeParameterDeclarationExpression(new
+ CodeTypeReference(typeof(int)),"column")},new CodeStatement[]{new CodeVariableDeclarationStatement(new CodeTypeReference("FAMatch"),"result",new CodeDefaultValueExpression(new
+ CodeTypeReference("FAMatch"))),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),"_symbolId"),new
+ CodeArgumentReferenceExpression("symbolId")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),"_value"),
+new CodeArgumentReferenceExpression("value")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),"_position"),
+new CodeArgumentReferenceExpression("position")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),
+"_line"),new CodeArgumentReferenceExpression("line")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),
+"_column"),new CodeArgumentReferenceExpression("column")),new CodeMethodReturnStatement(new CodeVariableReferenceExpression("result"))},new CodeTypeReference[0],
+null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Constructs a new instance",true),new CodeCommentStatement(" </summary>",
+true),new CodeCommentStatement(" <param name=\"symbolId\">The symbol id</param>",true),new CodeCommentStatement(" <param name=\"value\">The matched value</param>",
 true),new CodeCommentStatement(" <param name=\"position\">The match position</param>",true),new CodeCommentStatement(" <param name=\"line\">The line</param>",
 true),new CodeCommentStatement(" <param name=\"column\">The column</param>",true)},new CodeAttributeDeclaration[]{new CodeAttributeDeclaration(new CodeTypeReference(typeof(System.Runtime.CompilerServices.MethodImplAttribute)),
 new CodeAttributeArgument[]{new CodeAttributeArgument(new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference(typeof(System.Runtime.CompilerServices.MethodImplOptions))),
@@ -754,18 +783,47 @@ new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodRetu
 null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates whether the text matched the expression",
 true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <remarks>Non matches are returned with negative accept symbols. You can use this"
 +" property to determine if the text therein was part of a match.</remarks>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
-null),DeslangedString._MemberMethod(new CodeTypeReference("FAMatch"),"Create",(MemberAttributes.Static|MemberAttributes.Public),new CodeParameterDeclarationExpression[]
-{new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"symbolId"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)),
-"value"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(long)),"position"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),
-"line"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"column")},new CodeStatement[]{new CodeVariableDeclarationStatement(new
- CodeTypeReference("FAMatch"),"result",new CodeDefaultValueExpression(new CodeTypeReference("FAMatch"))),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_symbolId"),new CodeArgumentReferenceExpression("symbolId")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_value"),new CodeArgumentReferenceExpression("value")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_position"),new CodeArgumentReferenceExpression("position")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_line"),new CodeArgumentReferenceExpression("line")),new CodeAssignStatement(new CodeFieldReferenceExpression(new
- CodeVariableReferenceExpression("result"),"_column"),new CodeArgumentReferenceExpression("column")),new CodeMethodReturnStatement(new CodeVariableReferenceExpression("result"))},
-new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Constructs a new instance",
-true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <param name=\"symbolId\">The symbol id</param>",true),new CodeCommentStatement(" <param name=\"value\">The matched value</param>",
+null),DeslangedString._MemberMethod(new CodeTypeReference(typeof(string)),"ToString",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],
+new CodeStatement[]{new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(System.Text.StringBuilder)),"sb",new CodeObjectCreateExpression(new
+ CodeTypeReference(typeof(System.Text.StringBuilder)),new CodeExpression[0])),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
+ CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression("[SymbolId: ")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),
+"SymbolId")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePrimitiveExpression(", Value: ")})),new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(new
+ CodeThisReferenceExpression(),"Value"),CodeBinaryOperatorType.IdentityInequality,new CodePrimitiveExpression(null)),new CodeStatement[]{new CodeExpressionStatement(new
+ CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression("\"")})),
+new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]
+{new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),
+"Value"),"Replace"),new CodeExpression[]{new CodePrimitiveExpression("\r"),new CodePrimitiveExpression("\\r")}),"Replace"),new CodeExpression[]{new CodePrimitiveExpression("\t"),
+new CodePrimitiveExpression("\\t")}),"Replace"),new CodeExpression[]{new CodePrimitiveExpression("\n"),new CodePrimitiveExpression("\\n")}),"Replace"),
+new CodeExpression[]{new CodePrimitiveExpression(""),new CodePrimitiveExpression("\\v")})})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression("\", Position: ")}))},
+new CodeStatement[]{new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePrimitiveExpression("null, Position: ")}))}),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
+ CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),"Position")})),
+new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]
+{new CodePrimitiveExpression(" (")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new CodeThisReferenceExpression(),"Line")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new
+ CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePrimitiveExpression(", ")})),new CodeExpressionStatement(new
+ CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),"Append"),new CodeExpression[]{new CodePropertyReferenceExpression(new
+ CodeThisReferenceExpression(),"Column")})),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeVariableReferenceExpression("sb"),
+"Append"),new CodeExpression[]{new CodePrimitiveExpression(")]")})),new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
+ CodeVariableReferenceExpression("sb"),"ToString"),new CodeExpression[0]))},new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
+true),new CodeCommentStatement(" Provides a string representation of the match",true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <returns>A string containing match information</returns>",
+true)},new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberMethod(new
+ CodeTypeReference("FAMatch"),"Create",(MemberAttributes.Static|MemberAttributes.Public),new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new
+ CodeTypeReference(typeof(int)),"symbolId"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)),"value"),new CodeParameterDeclarationExpression(new
+ CodeTypeReference(typeof(long)),"position"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"line"),new CodeParameterDeclarationExpression(new
+ CodeTypeReference(typeof(int)),"column")},new CodeStatement[]{new CodeVariableDeclarationStatement(new CodeTypeReference("FAMatch"),"result",new CodeDefaultValueExpression(new
+ CodeTypeReference("FAMatch"))),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),"_symbolId"),new
+ CodeArgumentReferenceExpression("symbolId")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),"_value"),
+new CodeArgumentReferenceExpression("value")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),"_position"),
+new CodeArgumentReferenceExpression("position")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),
+"_line"),new CodeArgumentReferenceExpression("line")),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("result"),
+"_column"),new CodeArgumentReferenceExpression("column")),new CodeMethodReturnStatement(new CodeVariableReferenceExpression("result"))},new CodeTypeReference[0],
+null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Constructs a new instance",true),new CodeCommentStatement(" </summary>",
+true),new CodeCommentStatement(" <param name=\"symbolId\">The symbol id</param>",true),new CodeCommentStatement(" <param name=\"value\">The matched value</param>",
 true),new CodeCommentStatement(" <param name=\"position\">The match position</param>",true),new CodeCommentStatement(" <param name=\"line\">The line</param>",
 true),new CodeCommentStatement(" <param name=\"column\">The column</param>",true)},new CodeAttributeDeclaration[]{new CodeAttributeDeclaration(new CodeTypeReference(typeof(System.Runtime.CompilerServices.MethodImplAttribute)),
 new CodeAttributeArgument[]{new CodeAttributeArgument(new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference(typeof(System.Runtime.CompilerServices.MethodImplOptions))),

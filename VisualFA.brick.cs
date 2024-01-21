@@ -824,6 +824,13 @@ public int Column;/// <summary>
 /// </summary>
 /// <remarks>Non matches are returned with negative accept symbols. You can use this property to determine if the text therein was part of a match.</remarks>
 public bool IsSuccess{get{return SymbolId>-1;}}/// <summary>
+/// Provides a string representation of the match
+/// </summary>
+/// <returns>A string containing match information</returns>
+public override string ToString(){var sb=new System.Text.StringBuilder();sb.Append("[SymbolId: ");sb.Append(SymbolId);sb.Append(", Value: ");if(Value!=
+null){sb.Append("\"");sb.Append(Value.Replace("\r","\\r").Replace("\t","\\t").Replace("\n","\\n").Replace("\v","\\v"));sb.Append("\", Position: ");}else
+{sb.Append("null, Position: ");}sb.Append(Position);sb.Append(" (");sb.Append(Line);sb.Append(", ");sb.Append(Column);sb.Append(")]");return sb.ToString();
+}/// <summary>
 /// Constructs a new instance
 /// </summary>
 /// <param name="symbolId">The symbol id</param>

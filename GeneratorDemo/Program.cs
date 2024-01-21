@@ -37,14 +37,16 @@ Console.WriteLine("Hello, World!");
 var stringRunner = lexer.Run(exp,new FA[] {commentEnd}) ;
 foreach (var m in stringRunner)
 {
-	Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n","\\n"), m.Position, m.Line, m.Column);
+	Console.WriteLine(m);
+	//Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n","\\n"), m.Position, m.Line, m.Column);
 
 }
 Console.WriteLine("---------------------");
 var textRunner = lexer.Run(new StringReader(exp), new FA[] { commentEnd });
 foreach (var m in textRunner)
 {
-	Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
+	Console.WriteLine(m);
+	//Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
 
 }
 Console.WriteLine("---------------------");
@@ -53,6 +55,6 @@ var genRunner = new CommentRunner();
 genRunner.Set(exp);
 foreach (var m in genRunner)
 {
-	Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
+	Console.WriteLine(m);
+	//Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
 }
-

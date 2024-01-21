@@ -32,13 +32,13 @@ Module Program
         ' there are some conflicts due to shared code generation so we have to fully qualify here
         Dim stringRunner As VisualFA.FARunner = lexer.Run(exp, New FA() {commentEnd})
         For Each m As VisualFA.FAMatch In stringRunner
-            Console.WriteLine("{0}:{1} at {2}", m.SymbolId, m.Value, m.Position)
+            Console.WriteLine(m)
         Next
         Console.WriteLine("---------------------")
         Dim genRunner As New CommentRunner()
         genRunner.Set(exp)
         For Each m As FAMatch In genRunner
-            Console.WriteLine("{0}:{1} at {2}", m.SymbolId, m.Value, m.Position)
+            Console.WriteLine(m)
         Next
     End Sub
 End Module

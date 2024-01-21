@@ -15,7 +15,7 @@ Imports System.Collections.Generic
 Imports System.IO
 Imports System.Text
 
-<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>
+<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>  _
 Partial Friend Structure FAMatch
     Private _symbolId As Integer
     Private _value As String
@@ -72,6 +72,30 @@ Partial Friend Structure FAMatch
         End Get
     End Property
     ''' <summary>
+    ''' Provides a string representation of the match
+    ''' </summary>
+    ''' <returns>A string containing match information</returns>
+    Public Overrides Function ToString() As String
+        Dim sb As System.Text.StringBuilder = New System.Text.StringBuilder()
+        sb.Append("[SymbolId: ")
+        sb.Append(Me.SymbolId)
+        sb.Append(", Value: ")
+        If (Not (Me.Value) Is Nothing) Then
+            sb.Append("""")
+            sb.Append(Me.Value.Replace(""&Global.Microsoft.VisualBasic.ChrW(13), "\r").Replace(""&Global.Microsoft.VisualBasic.ChrW(9), "\t").Replace(""&Global.Microsoft.VisualBasic.ChrW(10), "\n").Replace("", "\v"))
+            sb.Append(""", Position: ")
+        Else
+            sb.Append("null, Position: ")
+        End If
+        sb.Append(Me.Position)
+        sb.Append(" (")
+        sb.Append(Me.Line)
+        sb.Append(", ")
+        sb.Append(Me.Column)
+        sb.Append(")]")
+        Return sb.ToString
+    End Function
+    ''' <summary>
     ''' Constructs a new instance
     ''' </summary>
     ''' <param name="symbolId">The symbol id</param>
@@ -79,7 +103,7 @@ Partial Friend Structure FAMatch
     ''' <param name="position">The match position</param>
     ''' <param name="line">The line</param>
     ''' <param name="column">The column</param>
-    <System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>
+    <System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>  _
     Public Shared Function Create(ByVal symbolId As Integer, ByVal value As String, ByVal position As Long, ByVal line As Integer, ByVal column As Integer) As FAMatch
         Dim result As FAMatch = CType(Nothing, FAMatch)
         result._symbolId = symbolId
@@ -90,7 +114,7 @@ Partial Friend Structure FAMatch
         Return result
     End Function
 End Structure
-<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>
+<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>  _
 Partial Friend MustInherit Class FARunner
     Inherits [Object]
     Implements IEnumerable(Of FAMatch)
@@ -132,7 +156,7 @@ Partial Friend MustInherit Class FARunner
             End Get
         End Property
         Sub System_Collections_IEnumerator_Reset() Implements System.Collections.IEnumerator.Reset
-            Me.Reset()
+            Me.Reset
         End Sub
         Sub IDisposable_Dispose() Implements IDisposable.Dispose
             Me._state = -3
@@ -142,29 +166,29 @@ Partial Friend MustInherit Class FARunner
                 Throw New ObjectDisposedException("Enumerator")
             End If
             If (Me._state = -1) Then
-                Return False
+                Return false
             End If
             Me._state = 0
             Dim parent As FARunner
-            If (False = Me._parent.TryGetTarget(parent)) Then
+            If (false = Me._parent.TryGetTarget(parent)) Then
                 Throw New InvalidOperationException("The parent was destroyed")
             End If
             Me._current = parent.NextMatch
             If (Me._current.SymbolId = -2) Then
                 Me._state = -2
-                Return False
+                Return false
             End If
-            Return True
+            Return true
         End Function
         Public Sub Reset()
             If (Me._state = -3) Then
                 Throw New ObjectDisposedException("Enumerator")
             End If
             Dim parent As FARunner
-            If (False = Me._parent.TryGetTarget(parent)) Then
+            If (false = Me._parent.TryGetTarget(parent)) Then
                 Throw New InvalidOperationException("The parent was destroyed")
             End If
-            parent.Reset()
+            parent.Reset
             Me._state = -2
         End Sub
     End Class
@@ -176,10 +200,10 @@ Partial Friend MustInherit Class FARunner
             Return Me._tabWidth
         End Get
         Set
-            If (Value < 1) Then
+            If (value < 1) Then
                 Throw New ArgumentOutOfRangeException()
             End If
-            Me._tabWidth = Value
+            Me._tabWidth = value
         End Set
     End Property
     Private _tabWidth As Integer
@@ -198,12 +222,12 @@ Partial Friend MustInherit Class FARunner
         Return New Enumerator(Me)
     End Function
 End Class
-<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>
+<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>  _
 Partial Friend MustInherit Class FAStringRunner
     Inherits FARunner
     Public Shared ReadOnly Property UsingSpans() As Boolean
         Get
-            Return False
+            Return false
         End Get
     End Property
     Protected [string] As String
@@ -211,17 +235,35 @@ Partial Friend MustInherit Class FAStringRunner
         Me.[string] = [string]
         Me.position = -1
         Me.line = 1
-        Me.column = 0
+        Me.column = 1
     End Sub
     Public Overrides Sub Reset()
         Me.position = -1
         Me.line = 1
-        Me.column = 0
+        Me.column = 1
     End Sub
     ' much bigger, but faster code
-    <System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>
+    <System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)>  _
     Protected Overridable Sub Advance(ByVal str As String, ByRef ch As Integer, ByRef len As Integer, ByVal first As Boolean)
-        If (False = first) Then
+        If (false = first) Then
+            If (ch = 10) Then
+                Me.line = (Me.line + 1)
+                Me.column = 1
+            Else
+                If (ch = 13) Then
+                    Me.column = 1
+                Else
+                    If (ch = 9) Then
+                        Me.column = (((Me.column - 1)  _
+                                    / Me.TabWidth)  _
+                                    * (Me.TabWidth + 1))
+                    Else
+                        If (ch > 31) Then
+                            Me.column = (Me.column + 1)
+                        End If
+                    End If
+                End If
+            End If
             len = (len + 1)
             If (ch > 65535) Then
                 len = (len + 1)
@@ -240,32 +282,12 @@ Partial Friend MustInherit Class FAStringRunner
             Else
                 ch = System.Convert.ToInt32(ch1)
             End If
-            If (False = first) Then
-                If (ch = 10) Then
-                    Me.line = (Me.line + 1)
-                    Me.column = 0
-                Else
-                    If (ch = 13) Then
-                        Me.column = 0
-                    Else
-                        If (ch = 9) Then
-                            Me.column = (((Me.column - 1) _
-                                        / Me.TabWidth) _
-                                        * (Me.TabWidth + 1))
-                        Else
-                            If (ch > 31) Then
-                                Me.column = (Me.column + 1)
-                            End If
-                        End If
-                    End If
-                End If
-            End If
         Else
             ch = -1
         End If
     End Sub
 End Class
-<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>
+<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>  _
 Partial Friend MustInherit Class FATextReaderRunner
     Inherits FARunner
     Protected reader As TextReader
@@ -280,12 +302,30 @@ Partial Friend MustInherit Class FATextReaderRunner
         Me.current = -2
         Me.position = -1
         Me.line = 1
-        Me.column = 0
+        Me.column = 1
     End Sub
     Public Overrides Sub Reset()
         Throw New NotSupportedException()
     End Sub
     Protected Overridable Sub Advance()
+        If (Me.current = 10) Then
+            Me.line = (Me.line + 1)
+            Me.column = 1
+        Else
+            If (Me.current = 13) Then
+                Me.column = 1
+            Else
+                If (Me.current = 9) Then
+                    Me.column = (((Me.column - 1)  _
+                                / Me.TabWidth)  _
+                                * (Me.TabWidth + 1))
+                Else
+                    If (Me.current > 31) Then
+                        Me.column = (Me.column + 1)
+                    End If
+                End If
+            End If
+        End If
         If (Me.current > -1) Then
             Me.capture.Append(Char.ConvertFromUtf32(Me.current))
         End If
@@ -304,52 +344,34 @@ Partial Friend MustInherit Class FATextReaderRunner
             Me.current = Char.ConvertToUtf32(ch1, ch2)
             Me.position = (Me.position + 1)
         End If
-        If (Me.current = 10) Then
-            Me.line = (Me.line + 1)
-            Me.column = 0
-        Else
-            If (Me.current = 13) Then
-                Me.column = 0
-            Else
-                If (Me.current = 9) Then
-                    Me.column = (((Me.column - 1) _
-                                / Me.TabWidth) _
-                                * (Me.TabWidth + 1))
-                Else
-                    If (Me.current > 31) Then
-                        Me.column = (Me.column + 1)
-                    End If
-                End If
-            End If
-        End If
     End Sub
 End Class
-<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>
+<System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")>  _
 Partial Friend NotInheritable Class CommentRunner
     Inherits FAStringRunner
     Private Function _BlockEnd0(ByVal s As String, ByVal cp As Integer, ByVal len As Integer, ByVal position As Integer, ByVal line As Integer, ByVal column As Integer) As FAMatch
-q0:
+    q0:
         '[\*]
         If (cp = 42) Then
-            Me.Advance(s, cp, len, False)
-            GoTo q1
+            Me.Advance(s, cp, len, false)
+            goto q1
         End If
-        GoTo errorout
-q1:
+        goto errorout
+    q1:
         '[\/]
         If (cp = 47) Then
-            Me.Advance(s, cp, len, False)
-            GoTo q2
+            Me.Advance(s, cp, len, false)
+            goto q2
         End If
-        GoTo errorout
-q2:
+        goto errorout
+    q2:
         Return FAMatch.Create(0, s.Substring(position, len), position, line, column)
-errorout:
+    errorout:
         If (cp = -1) Then
             Return FAMatch.Create(-1, s.Substring(position, len), position, line, column)
         End If
-        Me.Advance(s, cp, len, False)
-        GoTo q0
+        Me.Advance(s, cp, len, false)
+        goto q0
     End Function
     Private Function NextMatchImpl(ByVal s As String) As FAMatch
         Dim ch As Integer
@@ -365,48 +387,48 @@ errorout:
         p = Me.position
         l = Me.line
         c = Me.column
-        Me.Advance(s, ch, len, True)
+        Me.Advance(s, ch, len, true)
         'q0:
         '[\/]
         If (ch = 47) Then
-            Me.Advance(s, ch, len, False)
-            GoTo q1
+            Me.Advance(s, ch, len, false)
+            goto q1
         End If
-        GoTo errorout
-q1:
+        goto errorout
+    q1:
         '[\*]
         If (ch = 42) Then
-            Me.Advance(s, ch, len, False)
-            GoTo q2
+            Me.Advance(s, ch, len, false)
+            goto q2
         End If
         '[\/]
         If (ch = 47) Then
-            Me.Advance(s, ch, len, False)
-            GoTo q3
+            Me.Advance(s, ch, len, false)
+            goto q3
         End If
-        GoTo errorout
-q2:
+        goto errorout
+    q2:
         Return _BlockEnd0(s, ch, len, p, l, c)
-q3:
+    q3:
         '[\0-\t\v-\x10ffff]
-        If (((ch >= 0) _
-                    AndAlso (ch <= 9)) _
-                    OrElse ((ch >= 11) _
+        If (((ch >= 0)  _
+                    AndAlso (ch <= 9))  _
+                    OrElse ((ch >= 11)  _
                     AndAlso (ch <= 1114111))) Then
-            Me.Advance(s, ch, len, False)
-            GoTo q3
+            Me.Advance(s, ch, len, false)
+            goto q3
         End If
         Return FAMatch.Create(1, s.Substring(p, len), p, l, c)
-errorout:
-        If ((ch = -1) _
+    errorout:
+        If ((ch = -1)  _
                     OrElse (ch = 47)) Then
             If (len = 0) Then
                 Return FAMatch.Create(-2, Nothing, 0, 0, 0)
             End If
             Return FAMatch.Create(-1, s.Substring(p, len), p, l, c)
         End If
-        Me.Advance(s, ch, len, False)
-        GoTo errorout
+        Me.Advance(s, ch, len, false)
+        goto errorout
     End Function
     Public Overrides Function NextMatch() As FAMatch
         Return Me.NextMatchImpl(Me.[string])
