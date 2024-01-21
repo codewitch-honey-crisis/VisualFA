@@ -2502,7 +2502,7 @@ namespace VisualFA
 
 		static int _TransitionComparison(FATransition x, FATransition y)
 		{
-			var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max);
+			var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min);
 		}
 		/// <summary>
 		/// For this closure, fills and sorts transitions such that any missing range now points to an empty non-accepting state
