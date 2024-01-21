@@ -536,7 +536,7 @@ namespace VisualFA
 						IsDeterministic = false;
 					}
 				}
-				if (range.Min>fat.Min)
+				if (range.Max>fat.Max)
 				{
 					insert = i;
 				}
@@ -2463,6 +2463,7 @@ namespace VisualFA
 					// this should already be in sorted order
 					// otherwise we'd use AddTransition()
 					dfa._transitions.Add(new FATransition(dst,first, last));
+					
 					++prog;
 					progress?.Report(prog);
 				}

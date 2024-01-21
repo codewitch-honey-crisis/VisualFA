@@ -1019,7 +1019,7 @@ public override string ToString(){if(Id>-1){return String.Concat("q",Id.ToString
 public void AddTransition(FARange range,FA to){if(to==null)throw new ArgumentNullException(nameof(to));if(range.Min==-1&&range.Max==-1){AddEpsilon(to);
 return;}if(range.Min>range.Max){int tmp=range.Min;range.Min=range.Max;range.Max=tmp;}var insert=-1;for(int i=0;i<_transitions.Count;++i){var fat=_transitions[i];
 if(to==fat.To){if(range.Min==fat.Min&&range.Max==fat.Max){return;}}if(IsDeterministic){if(range.Intersects(new FARange(fat.Min,fat.Max))){IsDeterministic
-=false;}}if(range.Min>fat.Min){insert=i;}if(!IsDeterministic&&range.Max<fat.Min){break;}}_transitions.Insert(insert+1,new FATransition(to,range.Min,range.Max));
+=false;}}if(range.Max>fat.Max){insert=i;}if(!IsDeterministic&&range.Max<fat.Min){break;}}_transitions.Insert(insert+1,new FATransition(to,range.Min,range.Max));
 }public void ClearTransitions(){_transitions.Clear();IsDeterministic=true;IsCompact=true;}/// <summary>
 /// Ensures that the machine has no incoming transitions to the starting state, as well as only one final state.
 /// </summary>

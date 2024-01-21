@@ -18,6 +18,7 @@ sw.Stop();
 Console.WriteLine("done in {0} seconds", sw.Elapsed.TotalSeconds.ToString());
 Console.WriteLine("final: " + dfa.ToString("e"));
 Console.WriteLine("NFA has {0} states. DFA has {1} states", nfa.FillClosure().Count, dfa.FillClosure().Count);
+dfa.RenderToFile(@"..\..\..\dfa.jpg");
 var genopts = new FAGeneratorOptions()
 {
 	ClassName = "TestRunner",
@@ -29,7 +30,8 @@ var genopts = new FAGeneratorOptions()
 };
 var ccu = dfa.Generate(null, genopts);
 var csharp = new CSharpCodeProvider();
-using (var writer = new StreamWriter(@"..\..\..\TestRunner.cs")) {
+using (var writer = new StreamWriter(@"..\..\..\TestRunner.cs"))
+{
 	var opts = new System.CodeDom.Compiler.CodeGeneratorOptions()
 	{
 		BlankLinesBetweenMembers = false,
@@ -38,11 +40,42 @@ using (var writer = new StreamWriter(@"..\..\..\TestRunner.cs")) {
 		IndentString = "    ",
 		VerbatimOrder = true
 	};
-	csharp.GenerateCodeFromCompileUnit(ccu,writer,opts);
+	csharp.GenerateCodeFromCompileUnit(ccu, writer, opts);
 }
 var testRunner = new TestRunner();
-testRunner.Set("foo bar baz as case base");
-foreach(var m in testRunner)
+testRunner.Set("as case base");
+
+foreach (var m in testRunner)
+{
+	Console.WriteLine("{0}:{1} at {2}", m.SymbolId, m.Value, m.Position);
+}
+genopts = new FAGeneratorOptions()
+{
+	ClassName = "TestTextRunner",
+	Dependencies = FAGeneratorDependencies.UseRuntime,
+	GenerateTables = false,
+	Namespace = "",
+	GenerateTextReaderRunner = true,
+	UseSpans = true
+};
+ccu = dfa.Generate(null, genopts);
+
+using (var writer = new StreamWriter(@"..\..\..\TestTextRunner.cs"))
+{
+	var opts = new System.CodeDom.Compiler.CodeGeneratorOptions()
+	{
+		BlankLinesBetweenMembers = false,
+		BracingStyle = "BLOCK",
+		ElseOnClosing = true,
+		IndentString = "    ",
+		VerbatimOrder = true
+	};
+	csharp.GenerateCodeFromCompileUnit(ccu, writer, opts);
+}
+
+var testTextRunner = new TestTextRunner();
+testTextRunner.Set(new StringReader("as case base"));
+foreach (var m in testTextRunner)
 {
 	Console.WriteLine("{0}:{1} at {2}", m.SymbolId, m.Value, m.Position);
 }

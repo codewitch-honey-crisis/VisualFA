@@ -336,7 +336,7 @@ internal sealed partial class TestRunner : FAStringRunner {
             this.Advance(s, ref ch, ref len, false);
             goto q2;
         }
-        return FAMatch.Create(0, s.Slice(p, len).ToString(), p, l, c);
+        return FAMatch.Create(1, s.Slice(p, len).ToString(), p, l, c);
     q11:
         // [0-9A-Z_a-bd-xz]
         if ((((((((ch >= 48) 
@@ -1436,7 +1436,7 @@ internal sealed partial class TestRunner : FAStringRunner {
             this.Advance(s, ref ch, ref len, false);
             goto q62;
         }
-        return FAMatch.Create(0, s.Slice(p, len).ToString(), p, l, c);
+        return FAMatch.Create(1, s.Slice(p, len).ToString(), p, l, c);
     q62:
         // [0-9A-Z_ac-z]
         if (((((((ch >= 48) 
@@ -2125,7 +2125,7 @@ internal sealed partial class TestRunner : FAStringRunner {
             this.Advance(s, ref ch, ref len, false);
             goto q94;
         }
-        return FAMatch.Create(0, s.Slice(p, len).ToString(), p, l, c);
+        return FAMatch.Create(1, s.Slice(p, len).ToString(), p, l, c);
     q94:
         // [0-9A-Z_b-z]
         if ((((((ch >= 48) 
@@ -2351,7 +2351,7 @@ internal sealed partial class TestRunner : FAStringRunner {
             this.Advance(s, ref ch, ref len, false);
             goto q104;
         }
-        return FAMatch.Create(0, s.Slice(p, len).ToString(), p, l, c);
+        return FAMatch.Create(1, s.Slice(p, len).ToString(), p, l, c);
     q104:
         // [0-9A-Z_a-qs-z]
         if (((((((ch >= 48) 
