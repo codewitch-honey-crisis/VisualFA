@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 
 namespace VisualFA
 {
@@ -40,6 +41,7 @@ namespace VisualFA
 #endif
 		public string ClassName { get; set; } = "GeneratedRunner";
 		public string Namespace { get; set; } = "";
+		public string[] Symbols { get; set; } = null;
 	}
 #if FALIB
 	public
@@ -85,6 +87,77 @@ namespace VisualFA
 				}
 			}
 			return result;
+		}
+		static string _MakeSafeName(string name)
+		{
+			StringBuilder sb;
+			if (char.IsDigit(name[0]))
+			{
+				sb = new StringBuilder(name.Length + 1);
+				sb.Append('_');
+			}
+			else
+			{
+				sb = new StringBuilder(name.Length);
+			}
+			for (var i = 0; i < name.Length; ++i)
+			{
+				var ch = name[i];
+				if ('_' == ch || char.IsLetterOrDigit(ch))
+					sb.Append(ch);
+				else
+					sb.Append('_');
+			}
+			return sb.ToString();
+		}
+		static bool _HasMember(CodeTypeDeclaration decl,string name)
+		{
+			for(int i = 0;i<decl.Members.Count; ++i)
+			{
+				var member = decl.Members[i];
+				if(member.Name == name)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		static string _MakeUniqueName(CodeTypeDeclaration decl,string name)
+		{
+			string result = name;
+			int i = 1;
+			while(_HasMember(decl,result))
+			{
+				++i;
+				result = name + i.ToString();
+			}
+			return result;
+		}
+		static void _GenerateSymbols(CodeTypeDeclaration decl, FAGeneratorOptions opts)
+		{
+			if(opts.Symbols == null)
+			{
+				return;
+			}
+			var tint = new CodeTypeReference(typeof(int));
+			for (int i = 0;i< opts.Symbols.Length; i++)
+			{
+				var org = opts.Symbols[i];
+				var sym = org;
+				if(!string.IsNullOrEmpty(sym))
+				{
+					sym = _MakeUniqueName(decl,_MakeSafeName(sym));
+					var field = new CodeMemberField();
+					field.Name = sym;
+					field.Type = tint;
+					field.Attributes = MemberAttributes.Public | MemberAttributes.Const;
+					field.InitExpression = new CodePrimitiveExpression(i);
+					if (org != sym) {
+						field.Comments.Add(new CodeCommentStatement(org));
+					}
+					decl.Members.Add(field);
+				}
+			}	
 		}
 		static void _GenerateMatchImplBody(bool textReader, IList<FA> closure, IList<FA> blockEnds, CodeStatementCollection dest, FAGeneratorOptions opts)
 		{
@@ -930,34 +1003,22 @@ namespace VisualFA
 					break;
 			}			
 			result.Namespaces.Add(ns);
+			CodeTypeDeclaration type;
 			if (options.GenerateTables)
 			{
-				if (options.GenerateTextReaderRunner)
-				{
-					ns.Types.Add(_GenerateTableRunner(true, closure, blockEnds, options));
-				}
-				else
-				{
-					ns.Types.Add(_GenerateTableRunner(false, closure, blockEnds, options));
-				}
-				
+				type = _GenerateTableRunner(options.GenerateTextReaderRunner, closure, blockEnds, options);
 			}
 			else
 			{
-				if (options.GenerateTextReaderRunner)
-				{
-					ns.Types.Add(_GenerateRunner(true, closure, blockEnds, options));
-				}
-				else
-				{
-					ns.Types.Add(_GenerateRunner(false, closure, blockEnds, options));
-				}	
+				type = _GenerateRunner(options.GenerateTextReaderRunner, closure, blockEnds, options);
 			}
+			_GenerateSymbols(type, options);
+			ns.Types.Add(type);
 			var ver = typeof(FA).Assembly.GetName().Version.ToString();
 			var gendecl = new CodeAttributeDeclaration(new CodeTypeReference(typeof(GeneratedCodeAttribute)), new CodeAttributeArgument(new CodePrimitiveExpression("Visual FA")), new CodeAttributeArgument(new CodePrimitiveExpression(ver)));
-			foreach (CodeTypeDeclaration type in ns.Types)
+			foreach (CodeTypeDeclaration t in ns.Types)
 			{
-				type.CustomAttributes.Add(gendecl);
+				t.CustomAttributes.Add(gendecl);
 			}
 			return result;
 		}

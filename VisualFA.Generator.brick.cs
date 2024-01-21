@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 namespace VisualFA{static partial class Deslanged{public static CodeCompileUnit GetFAMatch(bool spans){if(spans){
 #if FALIB_SPANS
 return DeslangedSpan.FAMatch;
@@ -1350,7 +1351,7 @@ partial class FAGeneratorOptions{public FAGeneratorDependencies Dependencies{get
 #if FALIB_SPANS
 public bool UseSpans{get;set;}=FAStringRunner.UsingSpans;
 #endif
-public string ClassName{get;set;}="GeneratedRunner";public string Namespace{get;set;}="";}
+public string ClassName{get;set;}="GeneratedRunner";public string Namespace{get;set;}="";public string[]Symbols{get;set;}=null;}
 #if FALIB
 public
 #endif
@@ -1359,10 +1360,18 @@ static partial class FAGenerator{static CodeBinaryOperatorExpression _GenerateRa
 var lp=new CodePrimitiveExpression(last);var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.GreaterThanOrEqual,fp);exp=new CodeBinaryOperatorExpression(exp,
 CodeBinaryOperatorType.BooleanAnd,new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.LessThanOrEqual,lp));if(result==null){result=exp;}
 else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,exp);}}else{var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,
-fp);if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,exp);}}}return result;}static void
- _GenerateMatchImplBody(bool textReader,IList<FA>closure,IList<FA>blockEnds,CodeStatementCollection dest,FAGeneratorOptions opts){var lcapturebuffer=new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture");var lccbts=new CodeMethodInvokeExpression(lcapturebuffer,"ToString");var crm
-=new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),"Create");CodeStatement adv;CodeExpression tostr=null;if(!textReader){
+fp);if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,exp);}}}return result;}static string
+ _MakeSafeName(string name){StringBuilder sb;if(char.IsDigit(name[0])){sb=new StringBuilder(name.Length+1);sb.Append('_');}else{sb=new StringBuilder(name.Length);
+}for(var i=0;i<name.Length;++i){var ch=name[i];if('_'==ch||char.IsLetterOrDigit(ch))sb.Append(ch);else sb.Append('_');}return sb.ToString();}static bool
+ _HasMember(CodeTypeDeclaration decl,string name){for(int i=0;i<decl.Members.Count;++i){var member=decl.Members[i];if(member.Name==name){return true;}
+}return false;}static string _MakeUniqueName(CodeTypeDeclaration decl,string name){string result=name;int i=1;while(_HasMember(decl,result)){++i;result
+=name+i.ToString();}return result;}static void _GenerateSymbols(CodeTypeDeclaration decl,FAGeneratorOptions opts){if(opts.Symbols==null){return;}var tint
+=new CodeTypeReference(typeof(int));for(int i=0;i<opts.Symbols.Length;i++){var org=opts.Symbols[i];var sym=org;if(!string.IsNullOrEmpty(sym)){sym=_MakeUniqueName(decl,_MakeSafeName(sym));
+var field=new CodeMemberField();field.Name=sym;field.Type=tint;field.Attributes=MemberAttributes.Public|MemberAttributes.Const;field.InitExpression=new
+ CodePrimitiveExpression(i);if(org!=sym){field.Comments.Add(new CodeCommentStatement(org));}decl.Members.Add(field);}}}static void _GenerateMatchImplBody(bool
+ textReader,IList<FA>closure,IList<FA>blockEnds,CodeStatementCollection dest,FAGeneratorOptions opts){var lcapturebuffer=new CodeFieldReferenceExpression(
+new CodeThisReferenceExpression(),"capture");var lccbts=new CodeMethodInvokeExpression(lcapturebuffer,"ToString");var crm=new CodeMethodReferenceExpression(
+new CodeTypeReferenceExpression("FAMatch"),"Create");CodeStatement adv;CodeExpression tostr=null;if(!textReader){
 #if FALIB_SPANS
 if(opts.UseSpans){tostr=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeArgumentReferenceExpression("s"),
 "Slice",new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("len")),"ToString"));}
@@ -1505,9 +1514,8 @@ ns.Types.AddRange(Deslanged.GetFADfaTableRunner(options.UseSpans).Namespaces[0].
 #else
 ns.Types.AddRange(Deslanged.GetFADfaTableRunner(false).Namespaces[0].Types);
 #endif
-}break;}result.Namespaces.Add(ns);if(options.GenerateTables){if(options.GenerateTextReaderRunner){ns.Types.Add(_GenerateTableRunner(true,closure,blockEnds,
-options));}else{ns.Types.Add(_GenerateTableRunner(false,closure,blockEnds,options));}}else{if(options.GenerateTextReaderRunner){ns.Types.Add(_GenerateRunner(true,
-closure,blockEnds,options));}else{ns.Types.Add(_GenerateRunner(false,closure,blockEnds,options));}}var ver=typeof(FA).Assembly.GetName().Version.ToString();
-var gendecl=new CodeAttributeDeclaration(new CodeTypeReference(typeof(GeneratedCodeAttribute)),new CodeAttributeArgument(new CodePrimitiveExpression("Visual FA")),
-new CodeAttributeArgument(new CodePrimitiveExpression(ver)));foreach(CodeTypeDeclaration type in ns.Types){type.CustomAttributes.Add(gendecl);}return result;
-}}}
+}break;}result.Namespaces.Add(ns);CodeTypeDeclaration type;if(options.GenerateTables){type=_GenerateTableRunner(options.GenerateTextReaderRunner,closure,
+blockEnds,options);}else{type=_GenerateRunner(options.GenerateTextReaderRunner,closure,blockEnds,options);}_GenerateSymbols(type,options);ns.Types.Add(type);
+var ver=typeof(FA).Assembly.GetName().Version.ToString();var gendecl=new CodeAttributeDeclaration(new CodeTypeReference(typeof(GeneratedCodeAttribute)),
+new CodeAttributeArgument(new CodePrimitiveExpression("Visual FA")),new CodeAttributeArgument(new CodePrimitiveExpression(ver)));foreach(CodeTypeDeclaration
+ t in ns.Types){t.CustomAttributes.Add(gendecl);}return result;}}}

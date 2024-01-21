@@ -120,4 +120,7 @@ internal sealed partial class CommentRunner : FAStringRunner {
     public override FAMatch NextMatch() {
         return this.NextMatchImpl(this.@string);
     }
+    public const int commentBlock = 0;
+    public const int commentLine = 1;
+    public const int whitespace = 2;
 }

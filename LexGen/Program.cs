@@ -313,6 +313,7 @@ namespace LexGen
 							dfaLexer.RenderToFile(dfagraph, dotopts);
 						}
 						var genopts = new FAGeneratorOptions();
+						genopts.Symbols = symbolTable;
 						if(runtime)
 						{
 							genopts.Dependencies = FAGeneratorDependencies.UseRuntime;
@@ -430,28 +431,7 @@ namespace LexGen
 			catch { }
 			return result;
 		}
-		static string _MakeSafeName(string name)
-		{
-			StringBuilder sb;
-			if (char.IsDigit(name[0]))
-			{
-				sb = new StringBuilder(name.Length + 1);
-				sb.Append('_');
-			}
-			else
-			{
-				sb = new StringBuilder(name.Length);
-			}
-			for (var i = 0; i < name.Length; ++i)
-			{
-				var ch = name[i];
-				if ('_' == ch || char.IsLetterOrDigit(ch))
-					sb.Append(ch);
-				else
-					sb.Append('_');
-			}
-			return sb.ToString();
-		}
+		
 		static void _PrintUsage(TextWriter w)
 		{
 			w.Write("Usage: " + Path.GetFileNameWithoutExtension(Filename) + " ");

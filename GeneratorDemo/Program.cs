@@ -2,6 +2,7 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+using System.Diagnostics.SymbolStore;
 
 // See https://aka.ms/new-console-template for more information
 var exp = "/* foo */\r\n/*baz*/\r\n&%^ the quick /*bar */#(@*$//brown fox /* tricky */ jumped over the -10 $#(%*& lazy dog ^%$@@";
@@ -9,6 +10,7 @@ var commentStart = FA.Parse(@"\/\*", 0, false);
 var commentEnd = FA.Parse(@"\*\/", 0, false);
 var commentLine = FA.Parse(@"\/\/[^\r\n]*", 1, false);
 var whitespace = FA.Parse(@"[ \r\n\t]+",2,false);
+var syms = new string[] { "commentBlock", "commentLine", "whitespace" };
 var lexer = FA.ToLexer(new FA[] { commentStart , commentLine, whitespace }, true);
 var dgo = new FADotGraphOptions();
 dgo.BlockEnds = new FA[] { commentEnd.ToMinimizedDfa() };
@@ -19,6 +21,7 @@ gopts.GenerateTables = false;
 gopts.GenerateTextReaderRunner = false;
 gopts.ClassName = "CommentRunner";
 gopts.Dependencies = FAGeneratorDependencies.UseRuntime;
+gopts.Symbols = syms;
 var ccu = lexer.Generate(new FA[] { commentEnd }, gopts);
 
 CSharpCodeProvider cs = new CSharpCodeProvider();
