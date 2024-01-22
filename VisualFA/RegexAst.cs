@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-
+using System.Xml.Schema;
 
 namespace VisualFA
 {
@@ -2504,6 +2504,7 @@ namespace VisualFA
 			Expressions.Add(e);
 			return r;
 		}
+		
 		/// <summary>
 		/// Creates a default instance of the expression
 		/// </summary>
@@ -2532,7 +2533,7 @@ namespace VisualFA
 					}
 				}
 			}
-			
+
 			if (!result)
 			{
 				if (hasnull)
@@ -2564,7 +2565,7 @@ namespace VisualFA
 						var e = or.Expressions[i];
 						var lit = e as RegexLiteralExpression;
 						var st = e as RegexCharsetExpression;
-						if (lit != null && lit.Codepoints.Length==1)
+						if (lit != null && lit.Codepoints.Length == 1)
 						{
 							var r = new RegexCharsetCharEntry();
 							r.Codepoint = lit.Codepoints[0];

@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Xml.Schema;
 namespace VisualFA{partial class FA{public partial class CharacterClasses{public static int[][]UnicodeCategories=new int[][]{new int[]{65,90,192,214,216,
 222,256,256,258,258,260,260,262,262,264,264,266,266,268,268,270,270,272,272,274,274,276,276,278,278,280,280,282,282,284,284,286,286,288,288,290,290,292,
 292,294,294,296,296,298,298,300,300,302,302,304,304,306,306,308,308,310,310,313,313,315,315,317,317,319,319,321,321,323,323,325,325,327,327,330,330,332,
