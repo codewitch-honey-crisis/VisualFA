@@ -2799,10 +2799,15 @@ namespace VisualFA
 				return false;
 			}
 			int rfi = -1;
+			int rfl = -1;
 			for(var j = lexps.Count;j>0;--j)
 			{
 				rfi = _IndexOfSubrange(rexps, lexps.GetRange(0, j));
-				if (rfi > -1) break;
+				if (rfi > -1)
+				{
+					rfl = j;
+					break;
+				}
 			}
 			if (rfi!=-1)
 			{
@@ -2832,7 +2837,8 @@ namespace VisualFA
 					// matched at end foo|(bar)+foo
 					// will be ((bar)+)?foo or
 					// (bar)*foo after reduction
-					lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(0, rfi)), 0, 1));
+					var rng = rexps.GetRange(0, rfl);
+					lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rng), 0, 1));
 					lhs = _CatIfNeeded(lexps);
 					rhs = null;
 					return true;

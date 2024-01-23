@@ -49,7 +49,7 @@ FA lexer = FA.ToLexer(tokens,true);
 // create an expanded NFA
 // small bug in rendering the movement through
 // this expression (NFA) w/ Graphviz. Not easy to fix
-var sexp = @"(\([1-9][0-9][0-9]\)\-)?[1-9][0-9][0-9]\-[0-9]{4}";
+var sexp = @"((1\-)?\([1-9][0-9]{2}\)\-)?[1-9][0-9]{2}\-[0-9]{4}";
 FA testFa = FA.Parse(sexp, 0) ;
 testFa.RenderToFile(@"..\..\..\testFa.png");
 Console.WriteLine("var nfa = FA.Parse(@\"{0}\");",sexp);

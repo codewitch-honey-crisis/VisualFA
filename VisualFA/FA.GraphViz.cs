@@ -643,6 +643,66 @@ namespace VisualFA
 			builder.Append('-');
 			_AppendRangeCharTo(builder, last);
 		}
+		static void _AppendCharTo(StringBuilder builder,int @char)
+		{
+			switch(@char)
+			{
+				case '.':
+				case '[':
+				case ']':
+				case '^':
+				case '-':
+				case '+':
+				case '?':
+				case '(':
+				case ')':
+				case '\\':
+					builder.Append('\\');
+					builder.Append(char.ConvertFromUtf32(@char));
+					return;
+				case '\t':
+					builder.Append("\\t");
+					return;
+				case '\n':
+					builder.Append("\\n");
+					return;
+				case '\r':
+					builder.Append("\\r");
+					return;
+				case '\0':
+					builder.Append("\\0");
+					return;
+				case '\f':
+					builder.Append("\\f");
+					return;
+				case '\v':
+					builder.Append("\\v");
+					return;
+				case '\b':
+					builder.Append("\\b");
+					return;
+				default:
+					var s = char.ConvertFromUtf32(@char);
+					if (!char.IsLetterOrDigit(s, 0) && !char.IsSeparator(s, 0) && !char.IsPunctuation(s, 0) && !char.IsSymbol(s, 0))
+					{
+						if (s.Length == 1)
+						{
+							builder.Append("\\u");
+							builder.Append(unchecked((ushort)@char).ToString("x4"));
+						}
+						else
+						{
+							builder.Append("\\U");
+							builder.Append(@char.ToString("x8"));
+						}
+
+					}
+					else
+						builder.Append(s);
+					break;
+			}
+		}
+		
 		static void _AppendRangeCharTo(StringBuilder builder, int rangeChar)
 		{
 			switch (rangeChar)

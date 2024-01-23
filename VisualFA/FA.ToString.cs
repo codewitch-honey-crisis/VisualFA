@@ -38,6 +38,10 @@ namespace VisualFA
 			public string Exp;
 			public FA From;
 			public FA To;
+			public override string ToString()
+			{
+				return string.Concat(From, " \"", Exp, "\" ", To);
+			}
 		}
 		static void _ToExpressionFillEdgesIn(IList<_ExpEdge> edges, FA node,IList<_ExpEdge> result)
 		{
@@ -65,7 +69,7 @@ namespace VisualFA
 			List<FA> closure = new List<FA>();
 			List<_ExpEdge> fsmEdges = new List<_ExpEdge>();
 			FA first, final = null;
-
+			fa.SetIds();
 			first = fa;
 			var acc = first.FillFind(AcceptingFilter);
 			if (acc.Count == 1)
@@ -109,7 +113,7 @@ namespace VisualFA
 							fsmEdges.Add(eedge);
 							continue;
 						}
-						_AppendRangeCharTo(sb, range.Min);
+						_AppendCharTo(sb, range.Min);
 					}
 					else
 					{
@@ -150,57 +154,56 @@ namespace VisualFA
 			var outEdges = new List<_ExpEdge>(fsmEdges.Count);
 			while (closure.Count > 2)
 			{
-				for (int q = 1; q < closure.Count - 1; ++q)
+				
+				var node = closure[1];
+				var loops = new List<string>(inEdges.Count);
+				inEdges.Clear();
+				_ToExpressionFillEdgesIn(fsmEdges, node, inEdges);
+				for (int i = 0; i < inEdges.Count; ++i)
 				{
-					var node = closure[q];
-					var loops = new List<string>(inEdges.Count);
-					inEdges.Clear();
-					_ToExpressionFillEdgesIn(fsmEdges, node, inEdges);
-					for (int i = 0; i < inEdges.Count; ++i)
+					var edge = inEdges[i];
+					if (edge.From == edge.To)
 					{
-						var edge = inEdges[i];
-						if (edge.From == edge.To)
-						{
-							loops.Add(edge.Exp);
-						}
+						loops.Add(edge.Exp);
 					}
-					sb.Clear();
-					_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops), loops.Count > 1);
-					var middle = sb.ToString();
-					for (int i = 0; i < inEdges.Count; ++i)
+				}
+				sb.Clear();
+				_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops), loops.Count > 1);
+				var middle = sb.ToString();
+				for (int i = 0; i < inEdges.Count; ++i)
+				{
+					var inEdge = inEdges[i];
+					if (inEdge.From == inEdge.To)
 					{
-						var inEdge = inEdges[i];
-						if (inEdge.From == inEdge.To)
+						continue;
+					}
+					outEdges.Clear();
+					_ToExpressionFillEdgesOut(fsmEdges, node, outEdges);
+					for (int j = 0; j < outEdges.Count; ++j)
+					{
+						var outEdge = outEdges[j];
+						if (outEdge.From == outEdge.To)
 						{
 							continue;
 						}
-						outEdges.Clear();
-						_ToExpressionFillEdgesOut(fsmEdges, node, outEdges);
-						for (int j = 0; j < outEdges.Count; ++j)
-						{
-							var outEdge = outEdges[j];
-							if (outEdge.From == outEdge.To)
-							{
-								continue;
-							}
-							var expEdge = new _ExpEdge();
-							expEdge.From = inEdge.From;
-							expEdge.To = outEdge.To;
-							sb.Clear();
-							sb.Append(inEdge.Exp);
-							sb.Append(middle);
-							sb.Append(outEdge.Exp);
-							expEdge.Exp = sb.ToString();
-							fsmEdges.Add(expEdge);
-						}
+						var expEdge = new _ExpEdge();
+						expEdge.From = inEdge.From;
+						expEdge.To = outEdge.To;
+						sb.Clear();
+						sb.Append(inEdge.Exp);
+						sb.Append(middle);
+						sb.Append(outEdge.Exp);
+						expEdge.Exp = sb.ToString();
+						fsmEdges.Add(expEdge);
 					}
-					// reuse inedges since we're not using it
-					inEdges.Clear();
-					_ToExpressionFillEdgesOrphanState(fsmEdges, node,inEdges);
-					fsmEdges.Clear();
-					fsmEdges.AddRange(inEdges);
-					closure.Remove(node);
 				}
+				// reuse inedges since we're not using it
+				inEdges.Clear();
+				_ToExpressionFillEdgesOrphanState(fsmEdges, node,inEdges);
+				fsmEdges.Clear();
+				fsmEdges.AddRange(inEdges);
+				closure.Remove(node);
+				
 			}
 			sb.Clear();
 			if(fsmEdges.Count==1)

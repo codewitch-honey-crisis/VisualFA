@@ -1356,7 +1356,7 @@ public int FindFirstTransitionIndex(int codepoint){for(var i=0;i<_transitions.Co
 public IDictionary<FA,IList<FARange>>FillInputTransitionRangesGroupedByState(bool includeEpsilons=false,IDictionary<FA,IList<FARange>>result=null){if(null
 ==result)result=new Dictionary<FA,IList<FARange>>();foreach(var trns in _transitions){if(!includeEpsilons&&(trns.Min==-1&&trns.Max==-1)){continue;}IList<FARange>
 l;if(!result.TryGetValue(trns.To,out l)){l=new List<FARange>();result.Add(trns.To,l);}l.Add(new FARange(trns.Min,trns.Max));}foreach(var item in result)
-{((List<FARange>)item.Value).Sort((x,y)=>{var c=x.Max.CompareTo(y.Max);if(0!=c)return c;return x.Min.CompareTo(y.Min);});_NormalizeSortedRangeList(item.Value);
+{((List<FARange>)item.Value).Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return c;return x.Max.CompareTo(y.Max);});_NormalizeSortedRangeList(item.Value);
 }return result;}static void _NormalizeSortedRangeList(IList<FARange>pairs){for(int i=1;i<pairs.Count;++i){if(pairs[i-1].Max+1>=pairs[i].Min){var nr=new
  FARange(pairs[i-1].Min,pairs[i].Max);pairs[i-1]=nr;pairs.RemoveAt(i);--i;}}}/// <summary>
 /// Retrieves all transition indices given a specified UTF32 codepoint
@@ -1671,7 +1671,12 @@ proc.StandardInput.Close();if(!copy)return proc.StandardOutput.BaseStream;else{v
 proc.WaitForExit();return stm;}}}static void _AppendRangeTo(StringBuilder builder,IList<FARange>ranges){for(int i=0;i<ranges.Count;++i){_AppendRangeTo(builder,
 ranges,i);}}static void _AppendRangeTo(StringBuilder builder,IList<FARange>ranges,int index){var first=ranges[index].Min;var last=ranges[index].Max;_AppendRangeCharTo(builder,
 first);if(0==last.CompareTo(first))return;if(last==first+1){_AppendRangeCharTo(builder,last);return;}else if(last==first+2){_AppendRangeCharTo(builder,
-first+1);_AppendRangeCharTo(builder,last);return;}builder.Append('-');_AppendRangeCharTo(builder,last);}static void _AppendRangeCharTo(StringBuilder builder,
+first+1);_AppendRangeCharTo(builder,last);return;}builder.Append('-');_AppendRangeCharTo(builder,last);}static void _AppendCharTo(StringBuilder builder,int
+@char){switch(@char){case'.':case'[':case']':case'^':case'-':case'+':case'?':case'(':case')':case'\\':builder.Append('\\');builder.Append(char.ConvertFromUtf32(@char));
+return;case'\t':builder.Append("\\t");return;case'\n':builder.Append("\\n");return;case'\r':builder.Append("\\r");return;case'\0':builder.Append("\\0");
+return;case'\f':builder.Append("\\f");return;case'\v':builder.Append("\\v");return;case'\b':builder.Append("\\b");return;default:var s=char.ConvertFromUtf32(@char);
+if(!char.IsLetterOrDigit(s,0)&&!char.IsSeparator(s,0)&&!char.IsPunctuation(s,0)&&!char.IsSymbol(s,0)){if(s.Length==1){builder.Append("\\u");builder.Append(unchecked((ushort)@char).ToString("x4"));
+}else{builder.Append("\\U");builder.Append(@char.ToString("x8"));}}else builder.Append(s);break;}}static void _AppendRangeCharTo(StringBuilder builder,
 int rangeChar){switch(rangeChar){case'.':case'[':case']':case'^':case'-':case'\\':builder.Append('\\');builder.Append(char.ConvertFromUtf32(rangeChar));
 return;case'\t':builder.Append("\\t");return;case'\n':builder.Append("\\n");return;case'\r':builder.Append("\\r");return;case'\0':builder.Append("\\0");
 return;case'\f':builder.Append("\\f");return;case'\v':builder.Append("\\v");return;case'\b':builder.Append("\\b");return;default:var s=char.ConvertFromUtf32(rangeChar);
@@ -1679,34 +1684,34 @@ if(!char.IsLetterOrDigit(s,0)&&!char.IsSeparator(s,0)&&!char.IsPunctuation(s,0)&
 }else{builder.Append("\\U");builder.Append(rangeChar.ToString("x8"));}}else builder.Append(s);break;}}static string _EscapeLabel(string label){if(string.IsNullOrEmpty(label))
 return label;string result=label.Replace("\\",@"\\");result=result.Replace("\"","\\\"");result=result.Replace("\n","\\n");result=result.Replace("\r","\\r");
 result=result.Replace("\0","\\0");result=result.Replace("\v","\\v");result=result.Replace("\t","\\t");result=result.Replace("\f","\\f");return result;
-}}}namespace VisualFA{partial class FA:IFormattable{private struct _ExpEdge{public string Exp;public FA From;public FA To;}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>
-edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){if(edges[i].To==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>
-edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpression(FA
- fa){List<FA>closure=new List<FA>();List<_ExpEdge>fsmEdges=new List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if
-(acc.Count==1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=
-0;i<acc.Count;++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}closure.Clear();first.FillClosure(closure);var sb=new StringBuilder(); var
- trnsgrp=new Dictionary<FA,IList<FARange>>(closure.Count);for(int q=0;q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp))
-{sb.Clear();if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();
-eedge.Exp=string.Empty;eedge.From=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}_AppendRangeCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,
-trns.Value);sb.Append("]");}var edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,
+}}}namespace VisualFA{partial class FA:IFormattable{private struct _ExpEdge{public string Exp;public FA From;public FA To;public override string ToString()
+{return string.Concat(From," \"",Exp,"\" ",To);}}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;
+i<edges.Count;++i){if(edges[i].To==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result)
+{for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpression(FA fa){List<FA>closure=new List<FA>();
+List<_ExpEdge>fsmEdges=new List<_ExpEdge>();FA first,final=null;fa.SetIds();first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count==1){final=acc[0];
+}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;++i){var a=acc[i];
+a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}closure.Clear();first.FillClosure(closure);var sb=new StringBuilder(); var trnsgrp=new Dictionary<FA,IList<FARange>>(closure.Count);
+for(int q=0;q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp)){sb.Clear();
+if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();eedge.Exp
+=string.Empty;eedge.From=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}_AppendCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,trns.Value);
+sb.Append("]");}var edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,
 false);var q0=first;first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,false);final=tmp; var newEdge=
 new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=first;newEdge.To=q0;fsmEdges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From
 =qLast;newEdge.To=final;fsmEdges.Add(newEdge);closure.Insert(0,first);closure.Add(final);var inEdges=new List<_ExpEdge>(fsmEdges.Count);var outEdges=new
- List<_ExpEdge>(fsmEdges.Count);while(closure.Count>2){for(int q=1;q<closure.Count-1;++q){var node=closure[q];var loops=new List<string>(inEdges.Count);
-inEdges.Clear();_ToExpressionFillEdgesIn(fsmEdges,node,inEdges);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);
-}}sb.Clear();_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops),loops.Count>1);var middle=sb.ToString();for(int i=0;i<inEdges.Count;++i){var inEdge
-=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();_ToExpressionFillEdgesOut(fsmEdges,node,outEdges);for(int j=0;j<outEdges.Count;++j){
-var outEdge=outEdges[j];if(outEdge.From==outEdge.To){continue;}var expEdge=new _ExpEdge();expEdge.From=inEdge.From;expEdge.To=outEdge.To;sb.Clear();sb.Append(inEdge.Exp);
-sb.Append(middle);sb.Append(outEdge.Exp);expEdge.Exp=sb.ToString();fsmEdges.Add(expEdge);}} inEdges.Clear();_ToExpressionFillEdgesOrphanState(fsmEdges,
-node,inEdges);fsmEdges.Clear();fsmEdges.AddRange(inEdges);closure.Remove(node);}}sb.Clear();if(fsmEdges.Count==1){return fsmEdges[0].Exp;}if(fsmEdges.Count
->1){sb.Append("(");sb.Append(fsmEdges[0].Exp);for(int i=1;i<fsmEdges.Count;++i){sb.Append("|");var edge=fsmEdges[i];sb.Append(edge.Exp);}sb.Append(")");
-}return sb.ToString();}static string _ToExpressionOrJoin(IList<string>strings){if(strings.Count==0)return string.Empty;if(strings.Count==1)return strings[0];
-return string.Concat("(",string.Join("|",strings),")");}static void _ToExpressionKleeneStar(StringBuilder sb,string s,bool noWrap){if(string.IsNullOrEmpty(s))
-return;if(noWrap||s.Length==1){sb.Append(s);sb.Append("*");return;}sb.Append("(");sb.Append(s);sb.Append(")*");}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>
-edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node||edge.To==node){continue;}result.Add(edge);}}
-public string ToString(string format,IFormatProvider provider){return ToString(format);}public string ToString(string format){if(string.IsNullOrEmpty(format))
-{return ToString();}if(format=="e"){return _ToExpression(this);}else if(format=="r"){return RegexExpression.FromFA(this).Reduce(1000).ToString();}throw
- new FormatException("Invalid format specifier");}}}namespace VisualFA{
+ List<_ExpEdge>(fsmEdges.Count);while(closure.Count>2){var node=closure[1];var loops=new List<string>(inEdges.Count);inEdges.Clear();_ToExpressionFillEdgesIn(fsmEdges,
+node,inEdges);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);}}sb.Clear();_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops),
+loops.Count>1);var middle=sb.ToString();for(int i=0;i<inEdges.Count;++i){var inEdge=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();_ToExpressionFillEdgesOut(fsmEdges,
+node,outEdges);for(int j=0;j<outEdges.Count;++j){var outEdge=outEdges[j];if(outEdge.From==outEdge.To){continue;}var expEdge=new _ExpEdge();expEdge.From
+=inEdge.From;expEdge.To=outEdge.To;sb.Clear();sb.Append(inEdge.Exp);sb.Append(middle);sb.Append(outEdge.Exp);expEdge.Exp=sb.ToString();fsmEdges.Add(expEdge);
+}} inEdges.Clear();_ToExpressionFillEdgesOrphanState(fsmEdges,node,inEdges);fsmEdges.Clear();fsmEdges.AddRange(inEdges);closure.Remove(node);}sb.Clear();
+if(fsmEdges.Count==1){return fsmEdges[0].Exp;}if(fsmEdges.Count>1){sb.Append("(");sb.Append(fsmEdges[0].Exp);for(int i=1;i<fsmEdges.Count;++i){sb.Append("|");
+var edge=fsmEdges[i];sb.Append(edge.Exp);}sb.Append(")");}return sb.ToString();}static string _ToExpressionOrJoin(IList<string>strings){if(strings.Count
+==0)return string.Empty;if(strings.Count==1)return strings[0];return string.Concat("(",string.Join("|",strings),")");}static void _ToExpressionKleeneStar(StringBuilder
+ sb,string s,bool noWrap){if(string.IsNullOrEmpty(s))return;if(noWrap||s.Length==1){sb.Append(s);sb.Append("*");return;}sb.Append("(");sb.Append(s);sb.Append(")*");
+}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if
+(edge.From==node||edge.To==node){continue;}result.Add(edge);}}public string ToString(string format,IFormatProvider provider){return ToString(format);}
+public string ToString(string format){if(string.IsNullOrEmpty(format)){return ToString();}if(format=="e"){return _ToExpression(this);}else if(format=="r")
+{return RegexExpression.FromFA(this).Reduce(1000).ToString();}throw new FormatException("Invalid format specifier");}}}namespace VisualFA{
 #region FARunner
 #if FALIB
 public
@@ -2697,11 +2702,12 @@ exprs,IList<RegexExpression>sub){if(sub==null||exprs==null)return-1;if(sub.Count
 -1;}static bool _HuntDups(ref RegexExpression lhs,ref RegexExpression rhs){if(lhs==null||rhs==null)return false;if(object.ReferenceEquals(lhs,rhs))return
  false;var lexps=new List<RegexExpression>();var rexps=new List<RegexExpression>();var cat=rhs as RegexConcatExpression;if(cat==null){return false;}rexps.AddRange(cat.Expressions);
 cat=lhs as RegexConcatExpression;if(cat!=null){lexps.AddRange(cat.Expressions);}else{lexps.Add(lhs);}if(lexps.Count>rexps.Count){return false;}int rfi
-=-1;for(var j=lexps.Count;j>0;--j){rfi=_IndexOfSubrange(rexps,lexps.GetRange(0,j));if(rfi>-1)break;}if(rfi!=-1){if(rfi==0){ lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(lexps.Count,
-rexps.Count-lexps.Count)),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}else if(rfi+lexps.Count<rexps.Count){ int lc=lexps.Count;lexps.Clear();lexps.Add(new
- RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(0,rfi)),0,1));lexps.Add(_CatIfNeeded(rexps.GetRange(rfi,lc)));lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(rfi+lc,
-rexps.Count-(lc+1))),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}else{ lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(0,
-rfi)),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}}return false;}/// <summary>
+=-1;int rfl=-1;for(var j=lexps.Count;j>0;--j){rfi=_IndexOfSubrange(rexps,lexps.GetRange(0,j));if(rfi>-1){rfl=j;break;}}if(rfi!=-1){if(rfi==0){ lexps.Add(new
+ RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(lexps.Count,rexps.Count-lexps.Count)),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}else if(rfi+lexps.Count<rexps.Count)
+{ int lc=lexps.Count;lexps.Clear();lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(0,rfi)),0,1));lexps.Add(_CatIfNeeded(rexps.GetRange(rfi,lc)));
+lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(rfi+lc,rexps.Count-(lc+1))),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}else{ var
+ rng=rexps.GetRange(0,rfl);lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rng),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}}return false;
+}/// <summary>
 /// Creates a default instance of the expression
 /// </summary>
 public RegexOrExpression(){}public override bool TryReduce(out RegexExpression reduced){if(SkipReduce){reduced=this;return false;}var result=false;var
