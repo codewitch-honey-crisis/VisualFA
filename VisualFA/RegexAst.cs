@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-
 namespace VisualFA
 {
 #if FALIB
@@ -2312,8 +2311,12 @@ namespace VisualFA
 			if (HasNegatedRanges == rhs.HasNegatedRanges && rhs.Entries.Count == Entries.Count)
 			{
 				for (int ic = Entries.Count, i = 0; i < ic; ++i)
-					if (Entries[i] != rhs.Entries[i])
+				{
+					if (!Entries[i].Equals(rhs.Entries[i]))
+					{
 						return false;
+					}
+				}
 				return true;
 			}
 			return false;
@@ -2419,7 +2422,11 @@ namespace VisualFA
 						var ce = c.Expressions[i];
 						if (ce != null)
 						{
-							Expressions.Add(ce);
+							while (ce != null && ce.TryReduce(out oe)) { r = true; ce = oe; }
+							if (ce != null)
+							{
+								Expressions.Add(ce);
+							}
 						}
 					}
 					return true;
@@ -2744,6 +2751,29 @@ namespace VisualFA
 			if (exprs.Count == 1) return exprs[0];
 			return new RegexConcatExpression(exprs);
 		}
+		static int _IndexOfSubrange(List<RegexExpression> exprs, IList<RegexExpression> sub)
+		{
+			if (sub == null || exprs==null) return -1;
+			if (sub.Count > exprs.Count) return -1;
+			
+			for(int i = 0;i<exprs.Count-sub.Count+1;++i)
+			{
+				var range = exprs.GetRange(i, sub.Count);
+				var found = true;
+				for(var j = 0;j<range.Count;++j) {
+					if (!range[j].Equals(sub[j]))
+					{
+						found = false;
+						break;
+					}
+				}
+				if (found)
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
 		static bool _HuntDups(ref RegexExpression lhs, ref RegexExpression rhs)
 		{
 			if (lhs == null || rhs == null) return false;
@@ -2764,38 +2794,19 @@ namespace VisualFA
 			{
 				lexps.Add(lhs);
 			}
-			if(lexps.Count >= rexps.Count)
+			if(lexps.Count > rexps.Count)
 			{
 				return false;
 			}
-			int rfi = -1, rli = -1;
-			int lfi, lli = -1;
-			for(int i = 0;i<rexps.Count;++i)
+			int rfi = -1;
+			for(var j = lexps.Count;j>0;--j)
 			{
-				for(int j = 0;j<lexps.Count;++j)
-				{
-					if (lexps[j].Equals(rexps[i]))
-					{
-						if(rfi==-1)
-						{
-							lfi = j;
-							rfi = i;
-						}
-						rli = i;
-						lli = j;
-					} else
-					{
-						if(rli!=-1)
-						{
-							i = rexps.Count;
-							break;
-						}
-					}
-				}
+				rfi = _IndexOfSubrange(rexps, lexps.GetRange(0, j));
+				if (rfi > -1) break;
 			}
 			if (rfi!=-1)
 			{
-				if (rfi == 0 && lli == 0)
+				if (rfi == 0)
 				{
 					// matched at the beginning foo|foo(bar)+
 					// will be foo((bar)+)? and foo(bar)* after reduction
@@ -2803,7 +2814,7 @@ namespace VisualFA
 					lhs = _CatIfNeeded(lexps);
 					rhs = null;
 					return true;
-				} else if (lli==0 && rfi+lexps.Count<rexps.Count)
+				} else if (rfi+lexps.Count<rexps.Count)
 				{
 					// matched in the middle foo|(buzz)+foo(bar)*
 					// will be ((buzz)+)?foo((bar)*)? or (buzz)*foo(bar)*
@@ -2816,7 +2827,7 @@ namespace VisualFA
 					lhs = _CatIfNeeded(lexps);
 					rhs = null;
 					return true;
-				} else if(lli==0) 
+				} else 
 				{
 					// matched at end foo|(bar)+foo
 					// will be ((bar)+)?foo or
