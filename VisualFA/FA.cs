@@ -2141,7 +2141,7 @@ namespace VisualFA
 			}
 			foreach (var item in result)
 			{
-				((List<FARange>)item.Value).Sort((x, y) => { var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max); });
+				((List<FARange>)item.Value).Sort((x, y) => { var c = x.Max.CompareTo(y.Max); if (0 != c) return c; return x.Min.CompareTo(y.Min); });
 				_NormalizeSortedRangeList(item.Value);
 			}
 			return result;

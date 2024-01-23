@@ -143,8 +143,10 @@ namespace VisualFA
 			line = 1;
 			column = 1;
 		}
+#if !FALIB_SMALLER
 		// much bigger, but faster code
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
 		protected void Advance(
 #if FALIB_SPANS
 			ReadOnlySpan<char> s

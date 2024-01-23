@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Xml.Schema;
+
 
 namespace VisualFA
 {
 #if FALIB
 	public
 #endif
-	delegate bool RegexVisitAction(RegexExpression parent, RegexExpression expression, int level);
-
+	delegate bool RegexVisitAction(RegexExpression parent, RegexExpression expression, int childIndex, int level);
 	/// <summary>
 	/// Represents the common functionality of all regular expression elements
 	/// </summary>
@@ -43,13 +42,13 @@ namespace VisualFA
 		{
 			Position = position;
 		}
-		bool _Visit(RegexExpression parent, RegexVisitAction action, int level) {
-			if (action(parent,this, level))
+		bool _Visit(RegexExpression parent, RegexVisitAction action, int childIndex, int level) {
+			if (action(parent,this, childIndex, level))
 			{
 				var unary = this as RegexUnaryExpression;
 				if (unary != null && unary.Expression != null)
 				{
-					return unary.Expression._Visit(this,action,level+1);
+					return unary.Expression._Visit(this,action,0,level+1);
 				}
 				var multi = this as RegexMultiExpression;
 				if (multi != null)
@@ -59,8 +58,8 @@ namespace VisualFA
 						var e = multi.Expressions[i];
 						if(e!=null)
 						{
-							e._Visit(this, action, level + 1);
-						}
+							e._Visit(this, action, i, level + 1);
+						} 
 					}
 				}
 				return true;
@@ -73,7 +72,206 @@ namespace VisualFA
 		/// <param name="action">The anonymous method to call for each element</param>
 		public void Visit(RegexVisitAction action)
 		{
-			_Visit(null, action,0);
+			_Visit(null, action,0,0);
+		}
+		static List<int> _MainLorentzZFunction(string s)
+		{
+			int n = s.Length;
+			List<int> zvector = new List<int>(n);
+			for (int i = 0; i < n; ++i)
+			{
+				zvector.Add(0);
+			}
+			for (int j = 1, l = 0, r = 0; j < n; j++)
+			{
+				if (j <= r)
+					zvector[j] = Math.Min(r - j + 1, zvector[j - l]);
+				while (j + zvector[j] < n && s[zvector[j]] == s[j + zvector[j]])
+					zvector[j]++;
+				if (j + zvector[j] - 1 > r)
+				{
+					l = j;
+					r = j + zvector[j] - 1;
+				}
+			}
+			return zvector;
+		}
+
+		static void _MainLorentzGetRepetitions(IList<KeyValuePair<int, int>> repetitions, int shift, bool left, int cntr, int l, int k1, int k2)
+		{
+			for (int l1 = Math.Max(1, l - k2); l1 <= Math.Min(l, k1); ++l1)
+			{
+				if (left && l1 == l)
+					break;
+				int l2 = l - l1;
+				int pos = shift + (left ? cntr - l1 : cntr - l - l1 + 1);
+				repetitions.Add(new KeyValuePair<int, int>(pos, pos + 2 * l - 1));
+			}
+		}
+		static string _MainLorentzReverse(string input)
+		{
+			// allocate a buffer to hold the output
+			char[] output = new char[input.Length];
+			for (int outputIndex = 0, inputIndex = input.Length - 1; outputIndex < input.Length; outputIndex++, inputIndex--)
+			{
+				// check for surrogate pair
+				if (input[inputIndex] >= 0xDC00 && input[inputIndex] <= 0xDFFF &&
+					inputIndex > 0 && input[inputIndex - 1] >= 0xD800 && input[inputIndex - 1] <= 0xDBFF)
+				{
+					// preserve the order of the surrogate pair code units
+					output[outputIndex + 1] = input[inputIndex];
+					output[outputIndex] = input[inputIndex - 1];
+					outputIndex++;
+					inputIndex--;
+				}
+				else
+				{
+					output[outputIndex] = input[inputIndex];
+				}
+			}
+
+			return new string(output);
+		}
+		static void _MainLorentzRepetitions(IList<KeyValuePair<int, int>> repetitions, string s, int shift = 0)
+		{
+
+			int n = s.Length;
+			if (n == 1)
+				return;
+			/* Calculating size of each half */
+			int nu = n / 2;
+			int nv = n - nu;
+
+			/* Defining half strings and their reverse*/
+			string u = s.Substring(0, nu);
+			string v = s.Substring(nu);
+			string ru = _MainLorentzReverse(u);
+			string rv = _MainLorentzReverse(v);
+
+			/* Implementing recursion for both halves */
+			_MainLorentzRepetitions(repetitions, u, shift);
+			_MainLorentzRepetitions(repetitions, v, shift + nu);
+
+			/* Calling zFunction */
+			List<int> z1 = _MainLorentzZFunction(ru);
+			List<int> z2 = _MainLorentzZFunction(v + '#' + u);
+			List<int> z3 = _MainLorentzZFunction(ru + '#' + rv);
+			List<int> z4 = _MainLorentzZFunction(v);
+
+			/* Calculating the number of repetitions through fixed center and
+				lenght l, k1, and k2*/
+			for (int cntr = 0; cntr < n; cntr++)
+			{
+				int l, k1, k2;
+				if (cntr < nu)
+				{
+					l = nu - cntr;
+					k1 = _MainLorentzGetZ(z1, nu - cntr);
+					k2 = _MainLorentzGetZ(z2, nv + 1 + cntr);
+				}
+				else
+				{
+					l = cntr - nu + 1;
+					k1 = _MainLorentzGetZ(z3, nu + 1 + nv - 1 - (cntr - nu));
+					k2 = _MainLorentzGetZ(z4, (cntr - nu) + 1);
+				}
+				if (k1 + k2 >= l)
+					_MainLorentzGetRepetitions(repetitions, shift, cntr < nu, cntr, l, k1, k2);
+			}
+		}
+		static string _MainLorentzGetRepeatedPart(string str)
+		{
+			int len = str.Length;
+			int hw = len / 2;
+			int olen = len;
+			len = hw;
+			while (true)
+			{
+				olen = len;
+				string s1 = str.Substring(0, len);
+				string s2 = str.Substring(hw, len);
+				if (s1 != s2)
+				{
+					len = olen;
+					break;
+				}
+				len /= 2;
+				if (len < 2)
+				{
+					len = olen;
+					break;
+				}
+
+			}
+			return str.Substring(0, len);
+		}
+		static bool _MainLorentz(string input, out RegexExpression result)
+		{
+			if (input == null)
+			{
+				result = null;
+				return false;
+			}
+			if (input.Length < 2)
+			{
+				result = new RegexLiteralExpression(input);
+				return false;
+			}
+			var reps = new List<KeyValuePair<int, int>>();
+			_MainLorentzRepetitions(reps, input);
+			reps.Sort((lhs, rhs) => {
+				int ldist = lhs.Value - lhs.Key;
+				int rdist = rhs.Value - rhs.Key;
+				if (rdist == ldist)
+				{
+					return lhs.Key - rhs.Key;
+				}
+				return rdist - ldist;
+			});
+			if (reps.Count > 0)
+			{
+				var rep = reps[0];
+				if (rep.Value - rep.Key + 1 < 3)
+				{
+					result = new RegexLiteralExpression(input);
+					return false;
+				}
+				string ss = input.Substring(rep.Key, rep.Value - rep.Key + 1);
+				var part = _MainLorentzGetRepeatedPart(ss);
+				var repCount = ss.Length / part.Length;
+				System.Diagnostics.Debug.Assert(repCount > 1);
+				var exps = new List<RegexExpression>(3);
+				if (rep.Key > 0)
+				{
+					exps.Add(new RegexLiteralExpression(input.Substring(0, rep.Key)));
+				}
+				exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part), repCount, repCount));
+				if ((input.Length - rep.Key) >= ss.Length)
+				{
+					exps.Add(new RegexLiteralExpression(input.Substring(input.Length - ss.Length + rep.Key)));
+				}
+				if (exps.Count > 1)
+				{
+					result = new RegexConcatExpression(exps);
+					return true;
+				}
+				else
+				{
+					result = exps[0];
+					return true;
+				}
+			}
+
+			result = new RegexLiteralExpression(input);
+			return false;
+		}
+		private static int _MainLorentzGetZ(IList<int> z, int i)
+		{
+			if (0 < i && i < z.Count)
+			{
+				return z[i];
+			}
+			return 0;
 		}
 		/// <summary>
 		/// Attempts to reduce the expression to a simpler form
@@ -88,9 +286,39 @@ namespace VisualFA
 		public RegexExpression Reduce()
 		{
 			RegexExpression result = this;
-			while (result.TryReduce(out result)) ;
+			while (result!=null && result.TryReduce(out result)) ;
+			var altered = false;
+			result.Visit((exp, parent, childIndex, level) => {
+				var lit = exp as RegexLiteralExpression;
+				if(lit !=null)
+				{
+					RegexExpression newExp;
+					if(_MainLorentz(lit.Value, out newExp))
+					{
+						altered = true;
+						var uexp = parent as RegexUnaryExpression;
+						if(uexp != null)
+						{
+							uexp.Expression = newExp;
+						} else
+						{
+							var mexp = parent as RegexMultiExpression;
+							if(mexp!=null)
+							{
+								mexp.Expressions[childIndex] = newExp;
+							}
+						}
+					} 
+				}
+				return true;
+			});
+			if(altered)
+			{
+				while (result != null && result.TryReduce(out result)) ;
+			}
 			return result;
 		}
+		
 		/// <summary>
 		/// Creates a copy of the expression
 		/// </summary>
@@ -1373,11 +1601,11 @@ namespace VisualFA
 				}
 			}
 		}
-		
 		public override bool TryReduce(out RegexExpression reduced)
 		{
 			reduced = this;
 			return false;
+			
 		}
 		/// <summary>
 		/// Creates a literal expression with the specified codepoints
@@ -2192,7 +2420,7 @@ namespace VisualFA
 						var ce = c.Expressions[i];
 						if (ce != null)
 						{
-							_AddReduced(ce);
+							Expressions.Add(ce);
 						}
 					}
 					return true;
@@ -2235,7 +2463,7 @@ namespace VisualFA
 				case 1:
 					if (cat.Expressions[0] != null)
 					{
-						reduced = cat.Expressions[0].Reduce();
+						reduced = cat.Expressions[0];
 					} else
 					{
 						reduced = null;
@@ -2363,7 +2591,7 @@ namespace VisualFA
 			int i = 0, j = 0;
 			while(i<Expressions.Count && j<rhs.Expressions.Count) {
 				var l = Expressions[i];
-				var r = Expressions[j];
+				var r = rhs.Expressions[j];
 				if(l==null)
 				{
 					++i;
@@ -2378,6 +2606,8 @@ namespace VisualFA
 				{
 					return false;
 				}
+				++i;
+				++j;
 			}
 			return (i == j);
 		}
@@ -2504,7 +2734,99 @@ namespace VisualFA
 			Expressions.Add(e);
 			return r;
 		}
-		
+		static RegexExpression _CatIfNeeded(IList<RegexExpression> exprs)
+		{
+			if(exprs==null) return null;
+			if(exprs.Count==0) return null;
+			if (exprs.Count == 1) return exprs[0];
+			return new RegexConcatExpression(exprs);
+		}
+		static bool _HuntDups(ref RegexExpression lhs, ref RegexExpression rhs)
+		{
+			if (lhs == null || rhs == null) return false;
+			if (object.ReferenceEquals(lhs, rhs)) return false;
+			var lexps = new List<RegexExpression>();
+			var rexps = new List<RegexExpression>();
+			var cat = rhs as RegexConcatExpression;
+			if(cat == null)
+			{
+				return false;
+			}
+			rexps.AddRange(cat.Expressions);
+			cat = lhs as RegexConcatExpression;
+			if(cat!=null)
+			{
+				lexps.AddRange(cat.Expressions);
+			} else
+			{
+				lexps.Add(lhs);
+			}
+			if(lexps.Count >= rexps.Count)
+			{
+				return false;
+			}
+			int rfi = -1, rli = -1;
+			int lfi, lli = -1;
+			for(int i = 0;i<rexps.Count;++i)
+			{
+				for(int j = 0;j<lexps.Count;++j)
+				{
+					if (lexps[j].Equals(rexps[i]))
+					{
+						if(rfi==-1)
+						{
+							lfi = j;
+							rfi = i;
+						}
+						rli = i;
+						lli = j;
+					} else
+					{
+						if(rli!=-1)
+						{
+							i = rexps.Count;
+							break;
+						}
+					}
+				}
+			}
+			if (rfi!=-1)
+			{
+				if (rfi == 0 && lli == 0)
+				{
+					// matched at the beginning foo|foo(bar)+
+					// will be foo((bar)+)? and foo(bar)* after reduction
+					lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(lexps.Count, rexps.Count - lexps.Count)), 0, 1));
+					lhs = _CatIfNeeded(lexps);
+					rhs = null;
+					return true;
+				} else if (lli==0 && rfi+lexps.Count<rexps.Count)
+				{
+					// matched in the middle foo|(buzz)+foo(bar)*
+					// will be ((buzz)+)?foo((bar)*)? or (buzz)*foo(bar)*
+					// after reduction
+					int lc = lexps.Count;
+					lexps.Clear();
+					lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(0, rfi)), 0, 1));
+					lexps.Add(_CatIfNeeded(rexps.GetRange(rfi,lc)));
+					lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(rfi+lc, rexps.Count-(lc +1))), 0, 1));
+					lhs = _CatIfNeeded(lexps);
+					rhs = null;
+					return true;
+				} else if(lli==0) 
+				{
+					// matched at end foo|(bar)+foo
+					// will be ((bar)+)?foo or
+					// (bar)*foo after reduction
+					lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(0, rfi)), 0, 1));
+					lhs = _CatIfNeeded(lexps);
+					rhs = null;
+					return true;
+
+				}
+			}
+			return false;
+		}
 		/// <summary>
 		/// Creates a default instance of the expression
 		/// </summary>
@@ -2536,12 +2858,75 @@ namespace VisualFA
 
 			if (!result)
 			{
+				for(int i = 0;i<or.Expressions.Count;++i)
+				{
+					var lhs = or.Expressions[i];
+					for(int j = 0;j<i;++j)
+					{
+						var rhs = or.Expressions[j];
+
+						if(_HuntDups(ref lhs,ref rhs))
+						{
+							if (rhs == null)
+							{
+								or.Expressions[i] = lhs;
+								or.Expressions.RemoveAt(j);
+								--j;
+							}
+							else
+							{
+								or.Expressions[i] = lhs;
+								or.Expressions[j] = rhs;
+							}
+							result = true;
+						} else if(_HuntDups(ref rhs, ref lhs))
+						{
+							if (lhs == null)
+							{
+								or.Expressions[j] = rhs;
+								or.Expressions.RemoveAt(i);
+								--i;
+							}
+							else
+							{
+								or.Expressions[j] = rhs;
+								or.Expressions[i] = lhs;
+							}
+							result = true;
+						}
+					}
+				}
+				if(result)
+				{
+					for(int i = 0;i<or.Expressions.Count;++i)
+					{
+						if (or.Expressions[i] == null)
+						{
+							or.Expressions.RemoveAt(i);
+							--i;
+						}
+					}
+				}
 				if (hasnull)
 				{
 					or.Expressions.Add(null);
 				}
-				reduced = this;
-				return false;
+				if(result)
+				{
+					if(or.Expressions.Count == 0)
+					{
+						reduced = null;
+						return true;
+					} else if(or.Expressions.Count == 1)
+					{
+						reduced = or.Expressions[0];
+						return true;
+					} else
+					{
+						reduced = or;
+						return true;
+					}
+				}
 			}
 			switch (or.Expressions.Count)
 			{
@@ -2895,12 +3280,38 @@ namespace VisualFA
 				reduced = Expression;
 				return true;
 			}
-			RegexExpression rexp;
+			RegexExpression rexp=Expression;
 			reduced = this;
-			if (Expression.TryReduce(out rexp))
+			var lit = Expression as RegexLiteralExpression;
+			if (lit == null)
 			{
-				Expression = rexp;
-				return true;
+				if (Expression.TryReduce(out rexp))
+				{
+					Expression = rexp;
+					return true;
+				}
+			} 
+			var rep = rexp as RegexRepeatExpression;
+			if (rep != null)
+			{
+				// TODO: More combinations here
+				switch(MinOccurs)
+				{
+					case -1:
+					case 0:
+						switch(MaxOccurs)
+						{
+							case 1:
+								if(rep.MaxOccurs ==0 && rep.MinOccurs==1)
+								{
+									rep.MinOccurs = 0;
+									reduced = rep;
+									return true;
+								}
+								break;
+						}
+						break;
+				}
 			}
 			return false;
 			
