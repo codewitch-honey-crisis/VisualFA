@@ -51,10 +51,26 @@ foreach (var m in textRunner)
 }
 Console.WriteLine("---------------------");
 var genRunner = new CommentRunner();
+var map = new List<string>();
+var mia = genRunner.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+for(int i = 0;i<mia.Length;++i)
+{
+	var mem = mia[i];
+	if(mem.FieldType==typeof(int))
+	{
+		var k = (int)mem.GetValue(null);
+		for(int j = 0;j<=k;++j)
+		{
+			map.Add(null);
+		}
+		map[k] = mem.Name;
+	}
+}
 
 genRunner.Set(exp);
 foreach (var m in genRunner)
 {
-	Console.WriteLine(m);
-	//Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
+	
+	
+	Console.WriteLine("{0}\t{1} at {2}, {3}:{4}", m.SymbolId<0?"#error\t":map[m.SymbolId], m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
 }
