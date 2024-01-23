@@ -1705,8 +1705,8 @@ return string.Concat("(",string.Join("|",strings),")");}static void _ToExpressio
 return;if(noWrap||s.Length==1){sb.Append(s);sb.Append("*");return;}sb.Append("(");sb.Append(s);sb.Append(")*");}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>
 edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node||edge.To==node){continue;}result.Add(edge);}}
 public string ToString(string format,IFormatProvider provider){return ToString(format);}public string ToString(string format){if(string.IsNullOrEmpty(format))
-{return ToString();}if(format=="e"){return _ToExpression(this);}else if(format=="r"){return RegexExpression.FromFA(this).Reduce().ToString();}throw new
- FormatException("Invalid format specifier");}}}namespace VisualFA{
+{return ToString();}if(format=="e"){return _ToExpression(this);}else if(format=="r"){return RegexExpression.FromFA(this).Reduce(1000).ToString();}throw
+ new FormatException("Invalid format specifier");}}}namespace VisualFA{
 #region FARunner
 #if FALIB
 public
@@ -1940,36 +1940,17 @@ public abstract bool IsSingleElement{get;}/// <summary>
 /// Sets the location information for the expression
 /// </summary>
 /// <param name="position">The 0 based position where the expression appears</param>
-public void SetLocation(long position){Position=position;}bool _Visit(RegexExpression parent,RegexVisitAction action,int childIndex,int level){if(action(parent,this,
-childIndex,level)){var unary=this as RegexUnaryExpression;if(unary!=null&&unary.Expression!=null){return unary.Expression._Visit(this,action,0,level+1);
-}var multi=this as RegexMultiExpression;if(multi!=null){for(int i=0;i<multi.Expressions.Count;++i){var e=multi.Expressions[i];if(e!=null){e._Visit(this,
+public void SetLocation(long position){Position=position;}bool _Visit(RegexExpression parent,RegexVisitAction action,int childIndex,int level){if(action(parent,
+this,childIndex,level)){var unary=this as RegexUnaryExpression;if(unary!=null&&unary.Expression!=null){return unary.Expression._Visit(this,action,0,level
++1);}var multi=this as RegexMultiExpression;if(multi!=null){for(int i=0;i<multi.Expressions.Count;++i){var e=multi.Expressions[i];if(e!=null){e._Visit(this,
 action,i,level+1);}}}return true;}return false;}/// <summary>
 /// Visits each element in the AST
 /// </summary>
 /// <param name="action">The anonymous method to call for each element</param>
-public void Visit(RegexVisitAction action){_Visit(null,action,0,0);}static List<int>_MainLorentzZFunction(string s){int n=s.Length;List<int>zvector=new
- List<int>(n);for(int i=0;i<n;++i){zvector.Add(0);}for(int j=1,l=0,r=0;j<n;j++){if(j<=r)zvector[j]=Math.Min(r-j+1,zvector[j-l]);while(j+zvector[j]<n&&
-s[zvector[j]]==s[j+zvector[j]])zvector[j]++;if(j+zvector[j]-1>r){l=j;r=j+zvector[j]-1;}}return zvector;}struct _MainLorentzRep{public int Start;public
- int End;public int Len;public _MainLorentzRep(int start,int end,int len){Start=start;End=end;Len=len;}}static void _MainLorentzGetRepetitions(IList<_MainLorentzRep>
-repetitions,string s,int shift,bool left,int cntr,int l,int k1,int k2){for(int l1=Math.Max(1,l-k2);l1<=Math.Min(l,k1);++l1){if(left&&l1==l)break;int l2
-=l-l1;int pos=shift+(left?cntr-l1:cntr-l-l1+1);repetitions.Add(new _MainLorentzRep(pos,pos+2*l-1,l));}}static string _MainLorentzReverse(string input)
-{ char[]output=new char[input.Length];for(int outputIndex=0,inputIndex=input.Length-1;outputIndex<input.Length;outputIndex++,inputIndex--){ if(input[inputIndex]
->=0xDC00&&input[inputIndex]<=0xDFFF&&inputIndex>0&&input[inputIndex-1]>=0xD800&&input[inputIndex-1]<=0xDBFF){ output[outputIndex+1]=input[inputIndex];
-output[outputIndex]=input[inputIndex-1];outputIndex++;inputIndex--;}else{output[outputIndex]=input[inputIndex];}}return new string(output);}static void
- _MainLorentzRepetitions(IList<_MainLorentzRep>repetitions,string s,int shift=0){int n=s.Length;if(n==1)return; int nu=n/2;int nv=n-nu; string u=s.Substring(0,
-nu);string v=s.Substring(nu);string ru=_MainLorentzReverse(u);string rv=_MainLorentzReverse(v); _MainLorentzRepetitions(repetitions,u,shift);_MainLorentzRepetitions(repetitions,
-v,shift+nu); List<int>z1=_MainLorentzZFunction(ru);List<int>z2=_MainLorentzZFunction(v+'#'+u);List<int>z3=_MainLorentzZFunction(ru+'#'+rv);List<int>z4
-=_MainLorentzZFunction(v); for(int cntr=0;cntr<n;cntr++){int l,k1,k2;if(cntr<nu){l=nu-cntr;k1=_MainLorentzGetZ(z1,nu-cntr);k2=_MainLorentzGetZ(z2,nv+1
-+cntr);}else{l=cntr-nu+1;k1=_MainLorentzGetZ(z3,nu+1+nv-1-(cntr-nu));k2=_MainLorentzGetZ(z4,(cntr-nu)+1);}if(k1+k2>=l)_MainLorentzGetRepetitions(repetitions,s,
-shift,cntr<nu,cntr,l,k1,k2);}}static bool _MainLorentz(string input,out RegexExpression result){if(input==null){result=null;return false;}if(input.Length
-<2){result=new RegexLiteralExpression(input);return false;}var reps=new List<_MainLorentzRep>();_MainLorentzRepetitions(reps,input);reps.Sort((lhs,rhs)
-=>{int ldist=lhs.End-lhs.Start;int rdist=rhs.End-rhs.Start;if(rdist==ldist){return lhs.Start-rhs.Start;}if(rdist==ldist){return lhs.Len-rhs.Len;}return
- rdist-ldist;});if(reps.Count>0){var rep=reps[0];if(rep.End-rep.Start+1<3){result=new RegexLiteralExpression(input);return false;}string ss=input.Substring(rep.Start,
-rep.End-rep.Start+1); var part=ss.Substring(0,rep.Len); var repCount=ss.Length/rep.Len; var exps=new List<RegexExpression>(3);if(rep.Start>0){exps.Add(new
- RegexLiteralExpression(input.Substring(0,rep.Start)));}exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part),repCount,repCount));if((ss.Length
-+rep.Start)<input.Length){exps.Add(new RegexLiteralExpression(input.Substring(ss.Length+rep.Start)));}if(exps.Count>1){result=new RegexConcatExpression(exps);
-return true;}else{result=exps[0];return true;}}result=new RegexLiteralExpression(input);return false;}private static int _MainLorentzGetZ(IList<int>z,
-int i){if(0<i&&i<z.Count){return z[i];}return 0;}/// <summary>
+public void Visit(RegexVisitAction action){_Visit(null,action,0,0);}/// <summary>
+/// Should skip the reduction of this expression
+/// </summary>
+internal bool SkipReduce{get;set;}/// <summary>
 /// Attempts to reduce the expression to a simpler form
 /// </summary>
 /// <param name="reduced">The reduced expression</param>
@@ -1977,11 +1958,10 @@ int i){if(0<i&&i<z.Count){return z[i];}return 0;}/// <summary>
 public abstract bool TryReduce(out RegexExpression reduced);/// <summary>
 /// Reduces an expression to a simpler form, if possible
 /// </summary>
+/// <param name="maxPasses">The maximum number of reduction passes to perform or -1 for no limit</param>
 /// <returns>The new reduced expression</returns>
-public RegexExpression Reduce(){RegexExpression result=this;while(result!=null&&result.TryReduce(out result));var altered=false; result.Visit((parent,exp,
-childIndex,level)=>{var lit=exp as RegexLiteralExpression;if(lit!=null){RegexExpression newExp;if(_MainLorentz(lit.Value,out newExp)){altered=true;var
- uexp=parent as RegexUnaryExpression;if(uexp!=null){uexp.Expression=newExp;}else{var mexp=parent as RegexMultiExpression;if(mexp!=null){mexp.Expressions[childIndex]
-=newExp;}}}}return true;});if(altered){while(result!=null&&result.TryReduce(out result));}return result;}/// <summary>
+public RegexExpression Reduce(int maxPasses=-1){RegexExpression result=this;while(result!=null&&(maxPasses==-1||(maxPasses--)>0)&&!result.SkipReduce&&
+result.TryReduce(out result));return result;}/// <summary>
 /// Creates a copy of the expression
 /// </summary>
 /// <returns>A copy of the expression</returns>
@@ -2182,10 +2162,38 @@ public override bool IsEmptyElement=>Codepoints==null||Codepoints.Length==0;/// 
 public int[]Codepoints{get;set;}=null;/// <summary>
 /// Indicates the string literal of this expression
 /// </summary>
-public string Value{get{if(Codepoints==null){return null;}if(Codepoints.Length==0){return"";}var sb=new StringBuilder();for(int i=0;i<Codepoints.Length;i++)
-{sb.Append(char.ConvertFromUtf32(Codepoints[i]));}return sb.ToString();}set{if(value==null)throw new NullReferenceException();if(value.Length==0)throw
+public string Value{get{if(Codepoints==null){return null;}if(Codepoints.Length==0){return"";}var sb=new StringBuilder();for(int i=0;i<Codepoints.Length;
+i++){sb.Append(char.ConvertFromUtf32(Codepoints[i]));}return sb.ToString();}set{if(value==null)throw new NullReferenceException();if(value.Length==0)throw
  new InvalidOperationException();if(value==null){Codepoints=null;}else if(value.Length==0){Codepoints=new int[0];}else{var list=new List<int>(FA.ToUtf32(value));
-Codepoints=list.ToArray();}}}public override bool TryReduce(out RegexExpression reduced){reduced=this;return false;}/// <summary>
+Codepoints=list.ToArray();}}}
+#region Main_Lorentz algo
+static List<int>_MainLorentzZFunction(string s){int n=s.Length;List<int>zvector=new List<int>(n);for(int i=0;i<n;++i){zvector.Add(0);}for(int j=1,l=0,
+r=0;j<n;j++){if(j<=r)zvector[j]=Math.Min(r-j+1,zvector[j-l]);while(j+zvector[j]<n&&s[zvector[j]]==s[j+zvector[j]])zvector[j]++;if(j+zvector[j]-1>r){l=
+j;r=j+zvector[j]-1;}}return zvector;}struct _MainLorentzRep{public int Start;public int End;public int Len;public _MainLorentzRep(int start,int end,int
+ len){Start=start;End=end;Len=len;}}static void _MainLorentzGetRepetitions(IList<_MainLorentzRep>repetitions,string s,int shift,bool left,int cntr,int
+ l,int k1,int k2){for(int l1=Math.Max(1,l-k2);l1<=Math.Min(l,k1);++l1){if(left&&l1==l)break;int l2=l-l1;int pos=shift+(left?cntr-l1:cntr-l-l1+1);repetitions.Add(new
+ _MainLorentzRep(pos,pos+2*l-1,l));}}static string _MainLorentzReverse(string input){ char[]output=new char[input.Length];for(int outputIndex=0,inputIndex
+=input.Length-1;outputIndex<input.Length;outputIndex++,inputIndex--){ if(input[inputIndex]>=0xDC00&&input[inputIndex]<=0xDFFF&&inputIndex>0&&input[inputIndex
+-1]>=0xD800&&input[inputIndex-1]<=0xDBFF){ output[outputIndex+1]=input[inputIndex];output[outputIndex]=input[inputIndex-1];outputIndex++;inputIndex--;
+}else{output[outputIndex]=input[inputIndex];}}return new string(output);}static void _MainLorentzRepetitions(IList<_MainLorentzRep>repetitions,string s,
+int shift=0){int n=s.Length;if(n==1)return; int nu=n/2;int nv=n-nu; string u=s.Substring(0,nu);string v=s.Substring(nu);string ru=_MainLorentzReverse(u);
+string rv=_MainLorentzReverse(v); _MainLorentzRepetitions(repetitions,u,shift);_MainLorentzRepetitions(repetitions,v,shift+nu); List<int>z1=_MainLorentzZFunction(ru);
+List<int>z2=_MainLorentzZFunction(v+'#'+u);List<int>z3=_MainLorentzZFunction(ru+'#'+rv);List<int>z4=_MainLorentzZFunction(v); for(int cntr=0;cntr<n;cntr++)
+{int l,k1,k2;if(cntr<nu){l=nu-cntr;k1=_MainLorentzGetZ(z1,nu-cntr);k2=_MainLorentzGetZ(z2,nv+1+cntr);}else{l=cntr-nu+1;k1=_MainLorentzGetZ(z3,nu+1+nv-
+1-(cntr-nu));k2=_MainLorentzGetZ(z4,(cntr-nu)+1);}if(k1+k2>=l)_MainLorentzGetRepetitions(repetitions,s,shift,cntr<nu,cntr,l,k1,k2);}}static bool _MainLorentz(string
+ input,ref RegexExpression result){if(input==null){result=null;return false;}if(input.Length<2){if(result!=null){result.SkipReduce=true;}return false;
+}var reps=new List<_MainLorentzRep>();_MainLorentzRepetitions(reps,input);reps.Sort((lhs,rhs)=>{int ldist=lhs.End-lhs.Start;int rdist=rhs.End-rhs.Start;
+if(rdist==ldist){return lhs.Start-rhs.Start;}if(rdist==ldist){return rhs.Len-lhs.Len;}return rdist-ldist;});if(reps.Count>0){var rep=reps[0];if(rep.End
+-rep.Start+1<3){if(result!=null){result.SkipReduce=true;}return false;}string ss=input.Substring(rep.Start,rep.End-rep.Start+1); var part=ss.Substring(0,
+rep.Len); while(ss.Length+rep.Start<input.Length-part.Length){var css=input.Substring(rep.Start+ss.Length,part.Length);if(css==part){ss+=css;}}var repCount
+=ss.Length/rep.Len; var exps=new List<RegexExpression>(3);RegexLiteralExpression lit;if(rep.Start>0){lit=new RegexLiteralExpression(input.Substring(0,
+rep.Start));lit.SkipReduce=true;exps.Add(lit);}lit=new RegexLiteralExpression(part);lit.SkipReduce=true;exps.Add(new RegexRepeatExpression(lit,repCount,
+repCount));if((ss.Length+rep.Start)<input.Length){lit=new RegexLiteralExpression(input.Substring(ss.Length+rep.Start));lit.SkipReduce=true;exps.Add(lit);
+}if(exps.Count>1){result=new RegexConcatExpression(exps);return true;}else{result=exps[0];return true;}}return false;}private static int _MainLorentzGetZ(IList<int>
+z,int i){if(0<i&&i<z.Count){return z[i];}return 0;}
+#endregion
+public override bool TryReduce(out RegexExpression reduced){reduced=this;if(SkipReduce||Codepoints==null||Codepoints.Length<3){return false;}return _MainLorentz(Value,
+ref reduced);}/// <summary>
 /// Creates a literal expression with the specified codepoints
 /// </summary>
 /// <param name="codepoints">The characters to represent</param>
@@ -2505,10 +2513,10 @@ var result=new List<FARange>();for(int ic=Entries.Count,i=0;i<ic;++i){var entry=
  FARange(crc.Codepoint,crc.Codepoint));var crr=entry as RegexCharsetRangeEntry;if(null!=crr)result.Add(new FARange(crr.FirstCodepoint,crr.LastCodepoint));
 var crcl=entry as RegexCharsetClassEntry;if(null!=crcl){var known=FA.CharacterClasses.Known[crcl.Name];for(int j=0;j<known.Length;j+=2){result.Add(new
  FARange(known[j],known[j+1]));}}}if(HasNegatedRanges){return new List<FARange>(FARange.ToNotRanges(result));}return result;}public override bool TryReduce(out
- RegexExpression reduced){if(Entries.Count==0){reduced=null;return true;}var c=Entries.Count;var rngs=GetRanges();if(rngs.Count==1){if(rngs[0].Min==rngs[0].Max)
-{reduced=new RegexLiteralExpression(new int[]{rngs[0].Min});return true;}}if(c<=rngs.Count){reduced=this;return false;}var sx=new RegexCharsetExpression();
-for(var i=0;i<rngs.Count;++i){var rng=rngs[i];var r=new RegexCharsetRangeEntry();r.FirstCodepoint=rng.Min;r.LastCodepoint=rng.Max;sx.Entries.Add(r);}reduced
-=sx;return true;}/// <summary>
+ RegexExpression reduced){if(SkipReduce){reduced=this;return false;}if(Entries.Count==0){reduced=null;return true;}var c=Entries.Count;var rngs=GetRanges();
+if(rngs.Count==1){if(rngs[0].Min==rngs[0].Max){reduced=new RegexLiteralExpression(new int[]{rngs[0].Min});return true;}}if(c<=rngs.Count){reduced=this;
+return false;}var sx=new RegexCharsetExpression();for(var i=0;i<rngs.Count;++i){var rng=rngs[i];var r=new RegexCharsetRangeEntry();r.FirstCodepoint=rng.Min;
+r.LastCodepoint=rng.Max;sx.Entries.Add(r);}reduced=sx;return true;}/// <summary>
 /// Indicates whether the range is a "not range"
 /// </summary>
 /// <remarks>This is represented by the [^] regular expression syntax</remarks>
@@ -2594,14 +2602,14 @@ public RegexConcatExpression(IList<RegexExpression>expressions){for(int i=0;i<ex
 public RegexConcatExpression(){}private bool _AddReduced(RegexExpression e){if(e==null)return true;var r=false;var oe=e;while(e!=null&&e.TryReduce(out
  oe)){r=true;e=oe;}if(e!=null){var c=e as RegexConcatExpression;if(null!=c){for(var i=0;i<c.Expressions.Count;++i){var ce=c.Expressions[i];if(ce!=null)
 {Expressions.Add(ce);}}return true;}Expressions.Add(e);}else{if(!Expressions.Contains(null)){Expressions.Add(null);}}return r;}public override bool TryReduce(out
- RegexExpression reduced){var result=false;var cat=new RegexConcatExpression();for(var i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e==null){result
-=true;continue;}if(cat._AddReduced(e)){result=true;}}switch(cat.Expressions.Count){case 0:reduced=null;return true;case 1:if(cat.Expressions[0]!=null)
-{reduced=cat.Expressions[0];}else{reduced=null;}return true;default: for(var i=1;i<cat.Expressions.Count;++i){var e=cat.Expressions[i]!=null?cat.Expressions[i].Reduce():(RegexExpression)null;
-var rep=e as RegexRepeatExpression;if(rep!=null){var ee=rep.Expression;var cc=ee as RegexConcatExpression;if(cc!=null&&i>=cc.Expressions.Count){var k=
-0;for(var j=i-cc.Expressions.Count;j<i;++j){if(!cc.Expressions[k].Equals(cat.Expressions[j])){reduced=result?cat:this;return result;}++k;}cat.Expressions[i]
-=new RegexRepeatExpression(cc,rep.MinOccurs+1,rep.MaxOccurs>0?rep.MaxOccurs+1:0).Reduce();cat.Expressions.RemoveRange(i-cc.Expressions.Count,cc.Expressions.Count);
+ RegexExpression reduced){if(SkipReduce){reduced=this;return false;}var result=false;var cat=new RegexConcatExpression();for(var i=0;i<Expressions.Count;
+++i){var e=Expressions[i];if(e==null){result=true;continue;}if(cat._AddReduced(e)){result=true;}}switch(cat.Expressions.Count){case 0:reduced=null;return
+ true;case 1:if(cat.Expressions[0]!=null){reduced=cat.Expressions[0];}else{reduced=null;}return true;default: for(var i=1;i<cat.Expressions.Count;++i)
+{var e=cat.Expressions[i];var rep=e as RegexRepeatExpression;if(rep!=null){var ee=rep.Expression;var cc=ee as RegexConcatExpression;if(cc!=null&&i>=cc.Expressions.Count)
+{var k=0;for(var j=i-cc.Expressions.Count;j<i;++j){if(!cc.Expressions[k].Equals(cat.Expressions[j])){reduced=result?cat:this;return result;}++k;}cat.Expressions[i]
+=new RegexRepeatExpression(cc,rep.MinOccurs+1,rep.MaxOccurs>0?rep.MaxOccurs+1:0);cat.Expressions.RemoveRange(i-cc.Expressions.Count,cc.Expressions.Count);
 result=true;}else{if(cat.Expressions[i-1].Equals(ee)){cat.Expressions[i]=new RegexRepeatExpression(ee,rep.MinOccurs+1,rep.MaxOccurs>0?rep.MaxOccurs+1:
-0).Reduce();cat.Expressions.RemoveAt(i-1);result=true;}}}var lit=e as RegexLiteralExpression;if(lit!=null){var litp=cat.Expressions[i-1]as RegexLiteralExpression;
+0);cat.Expressions.RemoveAt(i-1);result=true;}}}var lit=e as RegexLiteralExpression;if(lit!=null){var litp=cat.Expressions[i-1]as RegexLiteralExpression;
 if(litp!=null){cat.Expressions[i]=new RegexLiteralExpression(litp.Value+lit.Value);cat.Expressions.RemoveAt(i-1);result=true;}}}reduced=result?cat:this;
 return result;}}/// <summary>
 /// Creates a state machine representing this expression
@@ -2680,7 +2688,7 @@ public override bool IsEmptyElement=>Expressions.Count==0||(Expressions.Count==1
 /// <exception cref="ArgumentNullException"><paramref name="expressions"/> was null</exception>
 /// <exception cref="ArgumentException"><paramref name="expressions"/> was empty</exception>
 public RegexOrExpression(IList<RegexExpression>expressions){if(expressions==null)throw new ArgumentNullException(nameof(expressions));Expressions.AddRange(expressions);
-}private bool _AddReduced(RegexExpression e,ref bool hasnull){if(e==null)return hasnull;var r=false;while(e!=null&&e.TryReduce(out e))r=true;if(e==null)
+}private bool _AddReduced(RegexExpression e,ref bool hasnull){if(e==null)return hasnull;var r=false;while(e!=null&&e.TryReduce(out e)){r=true;}if(e==null)
 return true;var o=e as RegexOrExpression;if(null!=o){for(var i=0;i<o.Expressions.Count;++i){var oe=o.Expressions[i];if(oe!=null){_AddReduced(oe,ref hasnull);
 }else hasnull=true;}return true;}Expressions.Add(e);return r;}static RegexExpression _CatIfNeeded(IList<RegexExpression>exprs){if(exprs==null)return null;
 if(exprs.Count==0)return null;if(exprs.Count==1)return exprs[0];return new RegexConcatExpression(exprs);}static bool _HuntDups(ref RegexExpression lhs,
@@ -2695,21 +2703,22 @@ rfi)),0,1));lexps.Add(_CatIfNeeded(rexps.GetRange(rfi,lc)));lexps.Add(new RegexR
 lhs=_CatIfNeeded(lexps);rhs=null;return true;}}return false;}/// <summary>
 /// Creates a default instance of the expression
 /// </summary>
-public RegexOrExpression(){}public override bool TryReduce(out RegexExpression reduced){var result=false;var or=new RegexOrExpression();var hasnull=false;
-for(var i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e==null||e.IsEmptyElement){if(hasnull){result=true;}hasnull=true;}else{if(or._AddReduced(e,
-ref hasnull)){result=true;}}}if(!result){for(int i=0;i<or.Expressions.Count;++i){var lhs=or.Expressions[i];for(int j=0;j<i;++j){var rhs=or.Expressions[j];
-if(_HuntDups(ref lhs,ref rhs)){if(rhs==null){or.Expressions[i]=lhs;or.Expressions.RemoveAt(j);--j;}else{or.Expressions[i]=lhs;or.Expressions[j]=rhs;}result
-=true;}else if(_HuntDups(ref rhs,ref lhs)){if(lhs==null){or.Expressions[j]=rhs;or.Expressions.RemoveAt(i);--i;}else{or.Expressions[j]=rhs;or.Expressions[i]
-=lhs;}result=true;}}}if(result){for(int i=0;i<or.Expressions.Count;++i){if(or.Expressions[i]==null){or.Expressions.RemoveAt(i);--i;}}}if(hasnull){or.Expressions.Add(null);
-}if(result){if(or.Expressions.Count==0){reduced=null;return true;}else if(or.Expressions.Count==1){reduced=or.Expressions[0];return true;}else{reduced
-=or;return true;}}}switch(or.Expressions.Count){case 0:reduced=null;return true;case 1:if(!hasnull){reduced=or.Expressions[0];return true;}reduced=new
- RegexRepeatExpression(or.Expressions[0],0,1);while(reduced!=null&&reduced.TryReduce(out reduced));return true;default:RegexCharsetExpression s=null;RegexCharsetEntry
- c=null;for(var i=0;i<or.Expressions.Count;++i){var e=or.Expressions[i];var lit=e as RegexLiteralExpression;var st=e as RegexCharsetExpression;if(lit!=
-null&&lit.Codepoints.Length==1){var r=new RegexCharsetCharEntry();r.Codepoint=lit.Codepoints[0];if(c==null){c=r;if(s==null){s=new RegexCharsetExpression();
-}s.Entries.Add(c);}else{s.Entries.Add(r);c=r;}or.Expressions.RemoveAt(i);--i;}else if(st!=null){if(st.HasNegatedRanges){foreach(var range in st.GetRanges())
-{var r=new RegexCharsetRangeEntry();r.FirstCodepoint=range.Min;r.LastCodepoint=range.Max;if(c==null){c=r;if(s==null){s=new RegexCharsetExpression();}s.Entries.Add(c);
-}else{s.Entries.Add(r);c=r;}}or.Expressions.RemoveAt(i);--i;}}}if(s!=null&&!s.IsEmptyElement){RegexExpression se=s;while(se!=null&&se.TryReduce(out se))
-;or.Expressions.Add(se);}if(hasnull){or.Expressions.Add(null);}reduced=or;return true;}}/// <summary>
+public RegexOrExpression(){}public override bool TryReduce(out RegexExpression reduced){if(SkipReduce){reduced=this;return false;}var result=false;var
+ or=new RegexOrExpression();var hasnull=false;for(var i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e==null||e.IsEmptyElement){if(hasnull){result
+=true;}hasnull=true;}else{if(or._AddReduced(e,ref hasnull)){result=true;}}}if(!result){for(int i=0;i<or.Expressions.Count;++i){var lhs=or.Expressions[i];
+for(int j=0;j<i;++j){var rhs=or.Expressions[j];if(_HuntDups(ref lhs,ref rhs)){if(rhs==null){or.Expressions[i]=lhs;or.Expressions.RemoveAt(j);--j;}else
+{or.Expressions[i]=lhs;or.Expressions[j]=rhs;}result=true;}else if(_HuntDups(ref rhs,ref lhs)){if(lhs==null){or.Expressions[j]=rhs;or.Expressions.RemoveAt(i);
+--i;}else{or.Expressions[j]=rhs;or.Expressions[i]=lhs;}result=true;}}}if(result){for(int i=0;i<or.Expressions.Count;++i){if(or.Expressions[i]==null){or.Expressions.RemoveAt(i);
+--i;}}}if(hasnull){or.Expressions.Add(null);}if(result){if(or.Expressions.Count==0){reduced=null;return true;}else if(or.Expressions.Count==1){reduced
+=or.Expressions[0];return true;}else{reduced=or;return true;}}}switch(or.Expressions.Count){case 0:reduced=null;return true;case 1:if(!hasnull){reduced
+=or.Expressions[0];return true;}reduced=new RegexRepeatExpression(or.Expressions[0],0,1);while(reduced!=null&&reduced.TryReduce(out reduced));return true;
+default:RegexCharsetExpression s=null;RegexCharsetEntry c=null;for(var i=0;i<or.Expressions.Count;++i){var e=or.Expressions[i];var lit=e as RegexLiteralExpression;
+var st=e as RegexCharsetExpression;if(lit!=null&&lit.Codepoints.Length==1){var r=new RegexCharsetCharEntry();r.Codepoint=lit.Codepoints[0];if(c==null)
+{c=r;if(s==null){s=new RegexCharsetExpression();}s.Entries.Add(c);result=true;}else{result=true;s.Entries.Add(r);c=r;}result=true;or.Expressions.RemoveAt(i);
+--i;}else if(st!=null){if(st.HasNegatedRanges){foreach(var range in st.GetRanges()){var r=new RegexCharsetRangeEntry();r.FirstCodepoint=range.Min;r.LastCodepoint
+=range.Max;if(c==null){c=r;if(s==null){s=new RegexCharsetExpression();}result=true;s.Entries.Add(c);}else{result=true;s.Entries.Add(r);c=r;}}result=true;
+or.Expressions.RemoveAt(i);--i;}}}if(s!=null&&!s.IsEmptyElement&&!s.SkipReduce){RegexExpression se=s;while(se!=null&&se.TryReduce(out se));or.Expressions.Add(se);
+}if(hasnull){or.Expressions.Add(null);}reduced=result?or:this;return result;}}/// <summary>
 /// Creates a state machine representing this expression
 /// </summary>
 /// <param name="accept">The accept symbol to use for this expression</param>
@@ -2809,10 +2818,10 @@ Expression.AppendTo(sb);if(!ise)sb.Append(')');switch(MinOccurs){case-1:case 0:s
 break;default:sb.Append('{');if(-1!=MinOccurs)sb.Append(MinOccurs);sb.Append(',');sb.Append(MaxOccurs);sb.Append('}');break;}break;case 1:switch(MaxOccurs)
 {case-1:case 0:sb.Append('+');break;default:sb.Append("{1,");sb.Append(MaxOccurs);sb.Append('}');break;}break;default:sb.Append('{');if(MaxOccurs!=MinOccurs)
 {if(-1!=MinOccurs)sb.Append(MinOccurs);sb.Append(',');if(-1!=MaxOccurs)sb.Append(MaxOccurs);}else{sb.Append(MinOccurs);}sb.Append('}');break;}}public override
- bool TryReduce(out RegexExpression reduced){if(Expression==null){reduced=null;return true;}if(MinOccurs==1&&MaxOccurs==1){reduced=Expression;return true;
-}RegexExpression rexp=Expression;reduced=this;var lit=Expression as RegexLiteralExpression;if(lit==null){if(Expression.TryReduce(out rexp)){Expression
-=rexp;return true;}}var rep=rexp as RegexRepeatExpression;if(rep!=null){ switch(MinOccurs){case-1:case 0:switch(MaxOccurs){case 1:if(rep.MaxOccurs==0&&
-rep.MinOccurs==1){rep.MinOccurs=0;reduced=rep;return true;}break;}break;}}return false;}/// <summary>
+ bool TryReduce(out RegexExpression reduced){if(SkipReduce){reduced=this;return false;}if(Expression==null){reduced=null;return true;}if(MinOccurs==1&&
+MaxOccurs==1){reduced=Expression;return true;}RegexExpression rexp=Expression;reduced=this;var lit=Expression as RegexLiteralExpression;if(lit==null){
+if(Expression.TryReduce(out rexp)){Expression=rexp;return true;}}var rep=rexp as RegexRepeatExpression;if(rep!=null){ switch(MinOccurs){case-1:case 0:
+switch(MaxOccurs){case 1:if(rep.MaxOccurs==0&&rep.MinOccurs==1){rep.MinOccurs=0;reduced=rep;return true;}break;}break;}}return false;}/// <summary>
 /// Creates a new copy of this expression
 /// </summary>
 /// <returns>A new copy of this expression</returns>

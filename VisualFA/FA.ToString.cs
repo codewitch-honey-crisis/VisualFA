@@ -273,7 +273,7 @@ namespace VisualFA
 				return _ToExpression(this);
 			} else if(format=="r")
 			{
-				return RegexExpression.FromFA(this).Reduce().ToString();
+				return RegexExpression.FromFA(this).Reduce(1000).ToString();
 			}
 			throw new FormatException("Invalid format specifier");
 		}
