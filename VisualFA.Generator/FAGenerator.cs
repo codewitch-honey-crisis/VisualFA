@@ -231,18 +231,22 @@ namespace VisualFA
 			// int p;
 			// int l;
 			// int c;
-			dest.Add(new CodeVariableDeclarationStatement(typeof(int), "ch"));
+
 			if (!textReader)
 			{
+				dest.Add(new CodeVariableDeclarationStatement(typeof(int), "ch"));
 				dest.Add(new CodeVariableDeclarationStatement(typeof(int), "len"));
 			}
 			dest.Add(new CodeVariableDeclarationStatement(typeof(int), "p"));
 			dest.Add(new CodeVariableDeclarationStatement(typeof(int), "l"));
 			dest.Add(new CodeVariableDeclarationStatement(typeof(int), "c"));
 
-			// ch = -1;
-			dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("ch"), 
-				new CodePrimitiveExpression(-1)));
+			if (!textReader)
+			{
+				// ch = -1;
+				dest.Add(new CodeAssignStatement(new CodeVariableReferenceExpression("ch"),
+					new CodePrimitiveExpression(-1)));
+			}
 			if (textReader)
 			{
 				// this.capture.Clear();
