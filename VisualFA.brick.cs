@@ -1967,10 +1967,9 @@ return false;}var reps=new List<KeyValuePair<int,int>>();_MainLorentzRepetitions
 =rhs.Value-rhs.Key;if(rdist==ldist){return lhs.Key-rhs.Key;}return rdist-ldist;});if(reps.Count>0){var rep=reps[0];if(rep.Value-rep.Key+1<3){result=new
  RegexLiteralExpression(input);return false;}string ss=input.Substring(rep.Key,rep.Value-rep.Key+1);var part=_MainLorentzGetRepeatedPart(ss);var repCount
 =ss.Length/part.Length;System.Diagnostics.Debug.Assert(repCount>1);var exps=new List<RegexExpression>(3);if(rep.Key>0){exps.Add(new RegexLiteralExpression(input.Substring(0,
-rep.Key)));}exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part),repCount,repCount));if((input.Length-rep.Key)>=ss.Length){exps.Add(new
- RegexLiteralExpression(input.Substring(input.Length-ss.Length+rep.Key)));}if(exps.Count>1){result=new RegexConcatExpression(exps);return true;}else{result
-=exps[0];return true;}}result=new RegexLiteralExpression(input);return false;}private static int _MainLorentzGetZ(IList<int>z,int i){if(0<i&&i<z.Count)
-{return z[i];}return 0;}/// <summary>
+rep.Key)));}exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part),repCount,repCount));if((ss.Length+rep.Key)<input.Length){exps.Add(new RegexLiteralExpression(input.Substring(ss.Length
++rep.Key)));}if(exps.Count>1){result=new RegexConcatExpression(exps);return true;}else{result=exps[0];return true;}}result=new RegexLiteralExpression(input);
+return false;}private static int _MainLorentzGetZ(IList<int>z,int i){if(0<i&&i<z.Count){return z[i];}return 0;}/// <summary>
 /// Attempts to reduce the expression to a simpler form
 /// </summary>
 /// <param name="reduced">The reduced expression</param>
@@ -1979,7 +1978,7 @@ public abstract bool TryReduce(out RegexExpression reduced);/// <summary>
 /// Reduces an expression to a simpler form, if possible
 /// </summary>
 /// <returns>The new reduced expression</returns>
-public RegexExpression Reduce(){RegexExpression result=this;while(result!=null&&result.TryReduce(out result));var altered=false;result.Visit((exp,parent,
+public RegexExpression Reduce(){RegexExpression result=this;while(result!=null&&result.TryReduce(out result));var altered=false;result.Visit((parent,exp,
 childIndex,level)=>{var lit=exp as RegexLiteralExpression;if(lit!=null){RegexExpression newExp;if(_MainLorentz(lit.Value,out newExp)){altered=true;var
  uexp=parent as RegexUnaryExpression;if(uexp!=null){uexp.Expression=newExp;}else{var mexp=parent as RegexMultiExpression;if(mexp!=null){mexp.Expressions[childIndex]
 =newExp;}}}}return true;});if(altered){while(result!=null&&result.TryReduce(out result));}return result;}/// <summary>

@@ -246,9 +246,9 @@ namespace VisualFA
 					exps.Add(new RegexLiteralExpression(input.Substring(0, rep.Key)));
 				}
 				exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part), repCount, repCount));
-				if ((input.Length - rep.Key) >= ss.Length)
+				if ((ss.Length + rep.Key) < input.Length)
 				{
-					exps.Add(new RegexLiteralExpression(input.Substring(input.Length - ss.Length + rep.Key)));
+					exps.Add(new RegexLiteralExpression(input.Substring(ss.Length + rep.Key)));
 				}
 				if (exps.Count > 1)
 				{
@@ -288,7 +288,7 @@ namespace VisualFA
 			RegexExpression result = this;
 			while (result!=null && result.TryReduce(out result)) ;
 			var altered = false;
-			result.Visit((exp, parent, childIndex, level) => {
+			result.Visit((parent,exp, childIndex, level) => {
 				var lit = exp as RegexLiteralExpression;
 				if(lit !=null)
 				{
