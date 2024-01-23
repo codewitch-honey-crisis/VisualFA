@@ -1949,27 +1949,27 @@ action,i,level+1);}}}return true;}return false;}/// <summary>
 /// <param name="action">The anonymous method to call for each element</param>
 public void Visit(RegexVisitAction action){_Visit(null,action,0,0);}static List<int>_MainLorentzZFunction(string s){int n=s.Length;List<int>zvector=new
  List<int>(n);for(int i=0;i<n;++i){zvector.Add(0);}for(int j=1,l=0,r=0;j<n;j++){if(j<=r)zvector[j]=Math.Min(r-j+1,zvector[j-l]);while(j+zvector[j]<n&&
-s[zvector[j]]==s[j+zvector[j]])zvector[j]++;if(j+zvector[j]-1>r){l=j;r=j+zvector[j]-1;}}return zvector;}static void _MainLorentzGetRepetitions(IList<KeyValuePair<int,
-int>>repetitions,int shift,bool left,int cntr,int l,int k1,int k2){for(int l1=Math.Max(1,l-k2);l1<=Math.Min(l,k1);++l1){if(left&&l1==l)break;int l2=l-
-l1;int pos=shift+(left?cntr-l1:cntr-l-l1+1);repetitions.Add(new KeyValuePair<int,int>(pos,pos+2*l-1));}}static string _MainLorentzReverse(string input)
+s[zvector[j]]==s[j+zvector[j]])zvector[j]++;if(j+zvector[j]-1>r){l=j;r=j+zvector[j]-1;}}return zvector;}struct _MainLorentzRep{public int Start;public
+ int End;public int Len;public _MainLorentzRep(int start,int end,int len){Start=start;End=end;Len=len;}}static void _MainLorentzGetRepetitions(IList<_MainLorentzRep>
+repetitions,string s,int shift,bool left,int cntr,int l,int k1,int k2){for(int l1=Math.Max(1,l-k2);l1<=Math.Min(l,k1);++l1){if(left&&l1==l)break;int l2
+=l-l1;int pos=shift+(left?cntr-l1:cntr-l-l1+1);repetitions.Add(new _MainLorentzRep(pos,pos+2*l-1,l));}}static string _MainLorentzReverse(string input)
 { char[]output=new char[input.Length];for(int outputIndex=0,inputIndex=input.Length-1;outputIndex<input.Length;outputIndex++,inputIndex--){ if(input[inputIndex]
 >=0xDC00&&input[inputIndex]<=0xDFFF&&inputIndex>0&&input[inputIndex-1]>=0xD800&&input[inputIndex-1]<=0xDBFF){ output[outputIndex+1]=input[inputIndex];
 output[outputIndex]=input[inputIndex-1];outputIndex++;inputIndex--;}else{output[outputIndex]=input[inputIndex];}}return new string(output);}static void
- _MainLorentzRepetitions(IList<KeyValuePair<int,int>>repetitions,string s,int shift=0){int n=s.Length;if(n==1)return; int nu=n/2;int nv=n-nu; string u
-=s.Substring(0,nu);string v=s.Substring(nu);string ru=_MainLorentzReverse(u);string rv=_MainLorentzReverse(v); _MainLorentzRepetitions(repetitions,u,shift);
-_MainLorentzRepetitions(repetitions,v,shift+nu); List<int>z1=_MainLorentzZFunction(ru);List<int>z2=_MainLorentzZFunction(v+'#'+u);List<int>z3=_MainLorentzZFunction(ru
-+'#'+rv);List<int>z4=_MainLorentzZFunction(v); for(int cntr=0;cntr<n;cntr++){int l,k1,k2;if(cntr<nu){l=nu-cntr;k1=_MainLorentzGetZ(z1,nu-cntr);k2=_MainLorentzGetZ(z2,
-nv+1+cntr);}else{l=cntr-nu+1;k1=_MainLorentzGetZ(z3,nu+1+nv-1-(cntr-nu));k2=_MainLorentzGetZ(z4,(cntr-nu)+1);}if(k1+k2>=l)_MainLorentzGetRepetitions(repetitions,
-shift,cntr<nu,cntr,l,k1,k2);}}static string _MainLorentzGetRepeatedPart(string str){int len=str.Length;int hw=len/2;int olen=len;len=hw;while(true){olen
-=len;string s1=str.Substring(0,len);string s2=str.Substring(hw,len);if(s1!=s2){len=olen;break;}len/=2;if(len<2){len=olen;break;}}return str.Substring(0,
-len);}static bool _MainLorentz(string input,out RegexExpression result){if(input==null){result=null;return false;}if(input.Length<2){result=new RegexLiteralExpression(input);
-return false;}var reps=new List<KeyValuePair<int,int>>();_MainLorentzRepetitions(reps,input);reps.Sort((lhs,rhs)=>{int ldist=lhs.Value-lhs.Key;int rdist
-=rhs.Value-rhs.Key;if(rdist==ldist){return lhs.Key-rhs.Key;}return rdist-ldist;});if(reps.Count>0){var rep=reps[0];if(rep.Value-rep.Key+1<3){result=new
- RegexLiteralExpression(input);return false;}string ss=input.Substring(rep.Key,rep.Value-rep.Key+1);var part=_MainLorentzGetRepeatedPart(ss);var repCount
-=ss.Length/part.Length;System.Diagnostics.Debug.Assert(repCount>1);var exps=new List<RegexExpression>(3);if(rep.Key>0){exps.Add(new RegexLiteralExpression(input.Substring(0,
-rep.Key)));}exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part),repCount,repCount));if((ss.Length+rep.Key)<input.Length){exps.Add(new RegexLiteralExpression(input.Substring(ss.Length
-+rep.Key)));}if(exps.Count>1){result=new RegexConcatExpression(exps);return true;}else{result=exps[0];return true;}}result=new RegexLiteralExpression(input);
-return false;}private static int _MainLorentzGetZ(IList<int>z,int i){if(0<i&&i<z.Count){return z[i];}return 0;}/// <summary>
+ _MainLorentzRepetitions(IList<_MainLorentzRep>repetitions,string s,int shift=0){int n=s.Length;if(n==1)return; int nu=n/2;int nv=n-nu; string u=s.Substring(0,
+nu);string v=s.Substring(nu);string ru=_MainLorentzReverse(u);string rv=_MainLorentzReverse(v); _MainLorentzRepetitions(repetitions,u,shift);_MainLorentzRepetitions(repetitions,
+v,shift+nu); List<int>z1=_MainLorentzZFunction(ru);List<int>z2=_MainLorentzZFunction(v+'#'+u);List<int>z3=_MainLorentzZFunction(ru+'#'+rv);List<int>z4
+=_MainLorentzZFunction(v); for(int cntr=0;cntr<n;cntr++){int l,k1,k2;if(cntr<nu){l=nu-cntr;k1=_MainLorentzGetZ(z1,nu-cntr);k2=_MainLorentzGetZ(z2,nv+1
++cntr);}else{l=cntr-nu+1;k1=_MainLorentzGetZ(z3,nu+1+nv-1-(cntr-nu));k2=_MainLorentzGetZ(z4,(cntr-nu)+1);}if(k1+k2>=l)_MainLorentzGetRepetitions(repetitions,s,
+shift,cntr<nu,cntr,l,k1,k2);}}static bool _MainLorentz(string input,out RegexExpression result){if(input==null){result=null;return false;}if(input.Length
+<2){result=new RegexLiteralExpression(input);return false;}var reps=new List<_MainLorentzRep>();_MainLorentzRepetitions(reps,input);reps.Sort((lhs,rhs)
+=>{int ldist=lhs.End-lhs.Start;int rdist=rhs.End-rhs.Start;if(rdist==ldist){return lhs.Start-rhs.Start;}if(rdist==ldist){return lhs.Len-rhs.Len;}return
+ rdist-ldist;});if(reps.Count>0){var rep=reps[0];if(rep.End-rep.Start+1<3){result=new RegexLiteralExpression(input);return false;}string ss=input.Substring(rep.Start,
+rep.End-rep.Start+1); var part=ss.Substring(0,rep.Len); var repCount=ss.Length/rep.Len; var exps=new List<RegexExpression>(3);if(rep.Start>0){exps.Add(new
+ RegexLiteralExpression(input.Substring(0,rep.Start)));}exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part),repCount,repCount));if((ss.Length
++rep.Start)<input.Length){exps.Add(new RegexLiteralExpression(input.Substring(ss.Length+rep.Start)));}if(exps.Count>1){result=new RegexConcatExpression(exps);
+return true;}else{result=exps[0];return true;}}result=new RegexLiteralExpression(input);return false;}private static int _MainLorentzGetZ(IList<int>z,
+int i){if(0<i&&i<z.Count){return z[i];}return 0;}/// <summary>
 /// Attempts to reduce the expression to a simpler form
 /// </summary>
 /// <param name="reduced">The reduced expression</param>
@@ -1978,7 +1978,7 @@ public abstract bool TryReduce(out RegexExpression reduced);/// <summary>
 /// Reduces an expression to a simpler form, if possible
 /// </summary>
 /// <returns>The new reduced expression</returns>
-public RegexExpression Reduce(){RegexExpression result=this;while(result!=null&&result.TryReduce(out result));var altered=false;result.Visit((parent,exp,
+public RegexExpression Reduce(){RegexExpression result=this;while(result!=null&&result.TryReduce(out result));var altered=false; result.Visit((parent,exp,
 childIndex,level)=>{var lit=exp as RegexLiteralExpression;if(lit!=null){RegexExpression newExp;if(_MainLorentz(lit.Value,out newExp)){altered=true;var
  uexp=parent as RegexUnaryExpression;if(uexp!=null){uexp.Expression=newExp;}else{var mexp=parent as RegexMultiExpression;if(mexp!=null){mexp.Expressions[childIndex]
 =newExp;}}}}return true;});if(altered){while(result!=null&&result.TryReduce(out result));}return result;}/// <summary>

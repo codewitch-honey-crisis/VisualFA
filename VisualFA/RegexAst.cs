@@ -96,8 +96,19 @@ namespace VisualFA
 			}
 			return zvector;
 		}
-
-		static void _MainLorentzGetRepetitions(IList<KeyValuePair<int, int>> repetitions, int shift, bool left, int cntr, int l, int k1, int k2)
+		struct _MainLorentzRep
+		{
+			public int Start;
+			public int End;
+			public int Len;
+			public _MainLorentzRep(int start,int end, int len)
+			{
+				Start = start;
+				End = end;
+				Len = len;
+			}
+		}
+		static void _MainLorentzGetRepetitions(IList<_MainLorentzRep> repetitions, string s,int shift, bool left, int cntr, int l, int k1, int k2)
 		{
 			for (int l1 = Math.Max(1, l - k2); l1 <= Math.Min(l, k1); ++l1)
 			{
@@ -105,7 +116,7 @@ namespace VisualFA
 					break;
 				int l2 = l - l1;
 				int pos = shift + (left ? cntr - l1 : cntr - l - l1 + 1);
-				repetitions.Add(new KeyValuePair<int, int>(pos, pos + 2 * l - 1));
+				repetitions.Add(new _MainLorentzRep(pos, pos + 2 * l - 1, l));
 			}
 		}
 		static string _MainLorentzReverse(string input)
@@ -132,7 +143,7 @@ namespace VisualFA
 
 			return new string(output);
 		}
-		static void _MainLorentzRepetitions(IList<KeyValuePair<int, int>> repetitions, string s, int shift = 0)
+		static void _MainLorentzRepetitions(IList<_MainLorentzRep> repetitions, string s, int shift = 0)
 		{
 
 			int n = s.Length;
@@ -159,7 +170,7 @@ namespace VisualFA
 			List<int> z4 = _MainLorentzZFunction(v);
 
 			/* Calculating the number of repetitions through fixed center and
-				lenght l, k1, and k2*/
+				length l, k1, and k2*/
 			for (int cntr = 0; cntr < n; cntr++)
 			{
 				int l, k1, k2;
@@ -176,35 +187,10 @@ namespace VisualFA
 					k2 = _MainLorentzGetZ(z4, (cntr - nu) + 1);
 				}
 				if (k1 + k2 >= l)
-					_MainLorentzGetRepetitions(repetitions, shift, cntr < nu, cntr, l, k1, k2);
+					_MainLorentzGetRepetitions(repetitions,s, shift, cntr < nu, cntr, l, k1, k2);
 			}
 		}
-		static string _MainLorentzGetRepeatedPart(string str)
-		{
-			int len = str.Length;
-			int hw = len / 2;
-			int olen = len;
-			len = hw;
-			while (true)
-			{
-				olen = len;
-				string s1 = str.Substring(0, len);
-				string s2 = str.Substring(hw, len);
-				if (s1 != s2)
-				{
-					len = olen;
-					break;
-				}
-				len /= 2;
-				if (len < 2)
-				{
-					len = olen;
-					break;
-				}
-
-			}
-			return str.Substring(0, len);
-		}
+		
 		static bool _MainLorentz(string input, out RegexExpression result)
 		{
 			if (input == null)
@@ -217,38 +203,55 @@ namespace VisualFA
 				result = new RegexLiteralExpression(input);
 				return false;
 			}
-			var reps = new List<KeyValuePair<int, int>>();
+			var reps = new List<_MainLorentzRep>();
 			_MainLorentzRepetitions(reps, input);
 			reps.Sort((lhs, rhs) => {
-				int ldist = lhs.Value - lhs.Key;
-				int rdist = rhs.Value - rhs.Key;
+				int ldist = lhs.End - lhs.Start;
+				int rdist = rhs.End - rhs.Start;
 				if (rdist == ldist)
 				{
-					return lhs.Key - rhs.Key;
+					return lhs.Start - rhs.Start;
 				}
+				if (rdist == ldist)
+				{
+					return lhs.Len - rhs.Len;
+				}
+
 				return rdist - ldist;
 			});
 			if (reps.Count > 0)
 			{
 				var rep = reps[0];
-				if (rep.Value - rep.Key + 1 < 3)
+				if (rep.End - rep.Start + 1 < 3)
 				{
 					result = new RegexLiteralExpression(input);
 					return false;
 				}
-				string ss = input.Substring(rep.Key, rep.Value - rep.Key + 1);
-				var part = _MainLorentzGetRepeatedPart(ss);
-				var repCount = ss.Length / part.Length;
-				System.Diagnostics.Debug.Assert(repCount > 1);
-				var exps = new List<RegexExpression>(3);
-				if (rep.Key > 0)
+				string ss = input.Substring(rep.Start, rep.End - rep.Start + 1);
+				//var part = _MainLorentzGetRepeatedPart(ss);
+				var part = ss.Substring(0, rep.Len);
+				// Main-Lorentz won't catch foofoofoof because it subdivides
+				// here we catch the extra foo
+				/*while (ss.Length + rep.Start < input.Length - part.Length)
 				{
-					exps.Add(new RegexLiteralExpression(input.Substring(0, rep.Key)));
+					var css = input.Substring(rep.Start + ss.Length, part.Length);
+					if(css==part)
+					{
+						ss += css;
+					}
+				}*/
+				var repCount = ss.Length/rep.Len;
+				
+				//System.Diagnostics.Debug.Assert(repCount > 1);
+				var exps = new List<RegexExpression>(3);
+				if (rep.Start > 0)
+				{
+					exps.Add(new RegexLiteralExpression(input.Substring(0, rep.Start)));
 				}
 				exps.Add(new RegexRepeatExpression(new RegexLiteralExpression(part), repCount, repCount));
-				if ((ss.Length + rep.Key) < input.Length)
+				if ((ss.Length + rep.Start) < input.Length)
 				{
-					exps.Add(new RegexLiteralExpression(input.Substring(ss.Length + rep.Key)));
+					exps.Add(new RegexLiteralExpression(input.Substring(ss.Length + rep.Start)));
 				}
 				if (exps.Count > 1)
 				{
@@ -288,6 +291,7 @@ namespace VisualFA
 			RegexExpression result = this;
 			while (result!=null && result.TryReduce(out result)) ;
 			var altered = false;
+			// do Main-Lorentz last so it doesn't blow everything to heck
 			result.Visit((parent,exp, childIndex, level) => {
 				var lit = exp as RegexLiteralExpression;
 				if(lit !=null)
