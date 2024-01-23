@@ -2880,6 +2880,7 @@ namespace VisualFA
 								or.Expressions[i] = lhs;
 								or.Expressions.RemoveAt(j);
 								--j;
+								--i;
 							}
 							else
 							{
@@ -2893,6 +2894,7 @@ namespace VisualFA
 							{
 								or.Expressions[j] = rhs;
 								or.Expressions.RemoveAt(i);
+								--j;
 								--i;
 							}
 							else

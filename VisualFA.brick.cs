@@ -2706,15 +2706,15 @@ lhs=_CatIfNeeded(lexps);rhs=null;return true;}}return false;}/// <summary>
 public RegexOrExpression(){}public override bool TryReduce(out RegexExpression reduced){if(SkipReduce){reduced=this;return false;}var result=false;var
  or=new RegexOrExpression();var hasnull=false;for(var i=0;i<Expressions.Count;++i){var e=Expressions[i];if(e==null||e.IsEmptyElement){if(hasnull){result
 =true;}hasnull=true;}else{if(or._AddReduced(e,ref hasnull)){result=true;}}}if(!result){for(int i=0;i<or.Expressions.Count;++i){var lhs=or.Expressions[i];
-for(int j=0;j<i;++j){var rhs=or.Expressions[j];if(_HuntDups(ref lhs,ref rhs)){if(rhs==null){or.Expressions[i]=lhs;or.Expressions.RemoveAt(j);--j;}else
-{or.Expressions[i]=lhs;or.Expressions[j]=rhs;}result=true;}else if(_HuntDups(ref rhs,ref lhs)){if(lhs==null){or.Expressions[j]=rhs;or.Expressions.RemoveAt(i);
---i;}else{or.Expressions[j]=rhs;or.Expressions[i]=lhs;}result=true;}}}if(result){for(int i=0;i<or.Expressions.Count;++i){if(or.Expressions[i]==null){or.Expressions.RemoveAt(i);
---i;}}}if(hasnull){or.Expressions.Add(null);}if(result){if(or.Expressions.Count==0){reduced=null;return true;}else if(or.Expressions.Count==1){reduced
-=or.Expressions[0];return true;}else{reduced=or;return true;}}}switch(or.Expressions.Count){case 0:reduced=null;return true;case 1:if(!hasnull){reduced
-=or.Expressions[0];return true;}reduced=new RegexRepeatExpression(or.Expressions[0],0,1);while(reduced!=null&&reduced.TryReduce(out reduced));return true;
-default:RegexCharsetExpression s=null;RegexCharsetEntry c=null;for(var i=0;i<or.Expressions.Count;++i){var e=or.Expressions[i];var lit=e as RegexLiteralExpression;
-var st=e as RegexCharsetExpression;if(lit!=null&&lit.Codepoints.Length==1){var r=new RegexCharsetCharEntry();r.Codepoint=lit.Codepoints[0];if(c==null)
-{c=r;if(s==null){s=new RegexCharsetExpression();}s.Entries.Add(c);result=true;}else{result=true;s.Entries.Add(r);c=r;}result=true;or.Expressions.RemoveAt(i);
+for(int j=0;j<i;++j){var rhs=or.Expressions[j];if(_HuntDups(ref lhs,ref rhs)){if(rhs==null){or.Expressions[i]=lhs;or.Expressions.RemoveAt(j);--j;--i;}
+else{or.Expressions[i]=lhs;or.Expressions[j]=rhs;}result=true;}else if(_HuntDups(ref rhs,ref lhs)){if(lhs==null){or.Expressions[j]=rhs;or.Expressions.RemoveAt(i);
+--j;--i;}else{or.Expressions[j]=rhs;or.Expressions[i]=lhs;}result=true;}}}if(result){for(int i=0;i<or.Expressions.Count;++i){if(or.Expressions[i]==null)
+{or.Expressions.RemoveAt(i);--i;}}}if(hasnull){or.Expressions.Add(null);}if(result){if(or.Expressions.Count==0){reduced=null;return true;}else if(or.Expressions.Count
+==1){reduced=or.Expressions[0];return true;}else{reduced=or;return true;}}}switch(or.Expressions.Count){case 0:reduced=null;return true;case 1:if(!hasnull)
+{reduced=or.Expressions[0];return true;}reduced=new RegexRepeatExpression(or.Expressions[0],0,1);while(reduced!=null&&reduced.TryReduce(out reduced));
+return true;default:RegexCharsetExpression s=null;RegexCharsetEntry c=null;for(var i=0;i<or.Expressions.Count;++i){var e=or.Expressions[i];var lit=e as
+ RegexLiteralExpression;var st=e as RegexCharsetExpression;if(lit!=null&&lit.Codepoints.Length==1){var r=new RegexCharsetCharEntry();r.Codepoint=lit.Codepoints[0];
+if(c==null){c=r;if(s==null){s=new RegexCharsetExpression();}s.Entries.Add(c);result=true;}else{result=true;s.Entries.Add(r);c=r;}result=true;or.Expressions.RemoveAt(i);
 --i;}else if(st!=null){if(st.HasNegatedRanges){foreach(var range in st.GetRanges()){var r=new RegexCharsetRangeEntry();r.FirstCodepoint=range.Min;r.LastCodepoint
 =range.Max;if(c==null){c=r;if(s==null){s=new RegexCharsetExpression();}result=true;s.Entries.Add(c);}else{result=true;s.Entries.Add(r);c=r;}}result=true;
 or.Expressions.RemoveAt(i);--i;}}}if(s!=null&&!s.IsEmptyElement&&!s.SkipReduce){RegexExpression se=s;while(se!=null&&se.TryReduce(out se));or.Expressions.Add(se);
