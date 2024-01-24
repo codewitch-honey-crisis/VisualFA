@@ -2706,7 +2706,7 @@ cat=lhs as RegexConcatExpression;if(cat!=null){lexps.AddRange(cat.Expressions);}
  RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(lexps.Count,rexps.Count-lexps.Count)),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}else if(rfi+lexps.Count<rexps.Count)
 { int lc=lexps.Count;lexps.Clear();lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(0,rfi)),0,1));lexps.Add(_CatIfNeeded(rexps.GetRange(rfi,lc)));
 lexps.Add(new RegexRepeatExpression(_CatIfNeeded(rexps.GetRange(rfi+lc,rexps.Count-(lc+1))),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}else{ var
- rng=rexps.GetRange(0,rfl);lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rng),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}}return false;
+ rng=rexps.GetRange(0,rfi);lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rng),0,1));lhs=_CatIfNeeded(lexps);rhs=null;return true;}}return false;
 }/// <summary>
 /// Creates a default instance of the expression
 /// </summary>

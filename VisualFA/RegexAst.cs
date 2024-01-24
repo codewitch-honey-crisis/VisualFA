@@ -2837,7 +2837,7 @@ namespace VisualFA
 					// matched at end foo|(bar)+foo
 					// will be ((bar)+)?foo or
 					// (bar)*foo after reduction
-					var rng = rexps.GetRange(0, rfl);
+					var rng = rexps.GetRange(0, rfi);
 					lexps.Insert(0,new RegexRepeatExpression(_CatIfNeeded(rng), 0, 1));
 					lhs = _CatIfNeeded(lexps);
 					rhs = null;
