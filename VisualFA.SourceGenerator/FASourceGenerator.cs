@@ -546,6 +546,18 @@ namespace VisualFA
                 IEnumerable<SyntaxNode> allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
                 foreach (var node in allNodes)
                 {
+                    if(node.IsKind(SyntaxKind.NamespaceDeclaration))
+                    {
+                        var nsDecl = node as NamespaceDeclarationSyntax;
+                        if(nsDecl.Name.ToString()=="VisualFA")
+                        {
+                            sharedCodeReaderNS = null;
+                            sharedCodeStringNS = null;
+                            sharedCodeRunnerNS = null;
+                            vfaReffed = true;
+                            break;
+                        }
+                    }
                     if (node.IsKind(SyntaxKind.ClassDeclaration))
                     {
                         var classDecl = node as ClassDeclarationSyntax;
@@ -775,8 +787,32 @@ namespace VisualFA
                         }
                         sb.AppendLine(")]");
                     }
+                    var access = "public";
+                   
+                    var pub = false;
+                    foreach(var mod in lm.Decl.Modifiers)
+                    {
+                        if(mod.Text == "public")
+                        {
+                            pub = true;
+                            break;
+                        }
+                    }
+                    var intr= false;
+                    foreach (var mod in lm.Decl.Modifiers)
+                    {
+                        if (mod.Text == "internal")
+                        {
+                            intr = true;
+                            break;
+                        }
+                    }
+                    if (!pub)
+                    {
+                        access = intr?"internal":"private";
+                    }
                     
-                    sb.Append(mtab+"public static partial " + lm.ReturnTypeName+" "+lm.Decl.Identifier.ToString());
+                    sb.Append(mtab+access+" static partial " + lm.ReturnTypeName+" "+lm.Decl.Identifier.ToString());
                     sb.Append('('); 
                     if (lm.HasArg)
                     {
@@ -1016,7 +1052,7 @@ namespace VisualFA
                         }
                         if (!found)
                         {
-                            throw new InvalidProgramException("[FARule] method must return an FARunner derivative");
+                            throw new InvalidProgramException("[FARule] method must return an FARunner derivative: "+mns+", "+rtfn);
                         }
                     }
                     var attrs = methodSymbol.GetAttributes();

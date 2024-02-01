@@ -251,7 +251,7 @@ namespace Tests
                 {
                     return Tests.FAMatch.Create(-2, null, 0, 0, 0);
                 }
-                return FAMatch.Create(-1, capture.ToString(), p, l, c);
+                return Tests.FAMatch.Create(-1, capture.ToString(), p, l, c);
             }
             Advance();
             goto errorout;
