@@ -6,13 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\VisualFA.brick.cs" Link="VisualFA.brick.cs" />
-  </ItemGroup>
 	<ItemGroup>
 
 		<ProjectReference Include="..\VisualFA.SourceGenerator\VisualFA.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+
+		<ProjectReference Include="..\VisualFA\VisualFA.csproj" />
 	</ItemGroup>
   <ItemGroup>
     <Compile Update="TestSource.cs">

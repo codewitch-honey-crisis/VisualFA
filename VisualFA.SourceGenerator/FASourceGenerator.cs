@@ -546,34 +546,49 @@ namespace VisualFA
                 IEnumerable<SyntaxNode> allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
                 foreach (var node in allNodes)
                 {
-                    if(node.IsKind(SyntaxKind.NamespaceDeclaration))
-                    {
-                        var nsDecl = node as NamespaceDeclarationSyntax;
-                        if(nsDecl.Name.ToString()=="VisualFA")
-                        {
-                            sharedCodeReaderNS = null;
-                            sharedCodeStringNS = null;
-                            sharedCodeRunnerNS = null;
-                            vfaReffed = true;
-                            break;
-                        }
-                    }
                     if (node.IsKind(SyntaxKind.ClassDeclaration))
                     {
                         var classDecl = node as ClassDeclarationSyntax;
                         if (classDecl!.Identifier.Text == FAStringRunnerName)
                         {
-                            sharedCodeStringNS = _GetNamespace(classDecl);
+                            var ns = _GetNamespace(classDecl);
+                            if (ns == "VisualFA")
+                            {
+                                vfaReffed = true;
+                                sharedCodeReaderNS = null;
+                                sharedCodeStringNS = null;
+                                sharedCodeRunnerNS = null;
+                                break;
+                            }
+                            sharedCodeStringNS = ns;
                             break;
                         }
                         else if (classDecl!.Identifier.Text == FATextReaderRunnerName)
                         {
-                            sharedCodeReaderNS = _GetNamespace(classDecl);
+                            var ns = _GetNamespace(classDecl);
+                            if (ns == "VisualFA")
+                            {
+                                vfaReffed = true;
+                                sharedCodeReaderNS = null;
+                                sharedCodeStringNS = null;
+                                sharedCodeRunnerNS = null;
+                                break;
+                            }
+                            sharedCodeReaderNS = ns;
                             break;
                         }
                         else if (classDecl!.Identifier.Text == FARunnerName)
                         {
-                            sharedCodeRunnerNS = _GetNamespace(classDecl);
+                            var ns = _GetNamespace(classDecl);
+                            if (ns == "VisualFA")
+                            {
+                                vfaReffed = true;
+                                sharedCodeReaderNS = null;
+                                sharedCodeStringNS = null;
+                                sharedCodeRunnerNS = null;
+                                break;
+                            }
+                            sharedCodeRunnerNS = ns;
                             break;
                         }
                         if (sharedCodeStringNS != null && sharedCodeReaderNS != null && sharedCodeRunnerNS!=null)
@@ -906,7 +921,7 @@ namespace VisualFA
             var rtrdrcmp = new List<string>();
             if (vfaReffed)
             {
-                rtcmp.Add(FARunnerName);
+                rtcmp.Add(FARunnerFullName);
                 rtstrcmp.Add(FAStringRunnerFullName);
                 rtrdrcmp.Add(FATextReaderRunnerFullName);
                 rtspeccmp.Add(FAStringRunnerFullName);
@@ -991,7 +1006,16 @@ namespace VisualFA
                     if (!rtspeccmp.Contains(rtfn))
                     {
                         var found = false;
-                        if (!string.IsNullOrEmpty(mns) && (mns==sharedReaderNS || mns==sharedStringNS))
+                        if(vfaReffed)
+                        {
+                            if (rtspeccmp.Contains("VisualFA." + rtfn))
+                            {
+                                found = true;
+                            } else if(rtspeccmp.Contains(rtfn))
+                            {
+                                found = true;
+                            }
+                        } else if (!string.IsNullOrEmpty(mns) && (mns==sharedReaderNS || mns==sharedStringNS))
                         {
                             if (rtspeccmp.Contains(mns+"."+rtfn))
                             {
@@ -1052,7 +1076,7 @@ namespace VisualFA
                         }
                         if (!found)
                         {
-                            throw new InvalidProgramException("[FARule] method must return an FARunner derivative: "+mns+", "+rtfn);
+                            throw new InvalidProgramException("[FARule] method must return an FARunner derivative");
                         }
                     }
                     var attrs = methodSymbol.GetAttributes();
