@@ -493,11 +493,11 @@ namespace VisualFA
             sb.AppendLine(tab + "            }");
             if (method.IsReader)
             {
-                sb.AppendLine(tab + "            return FAMatch.Create(-1, capture.ToString(), p, l, c);");
+                sb.AppendLine(tab + "            return " + faMatch + ".Create(-1, capture.ToString(), p, l, c);");
             }
             else
             {
-                sb.AppendLine(tab + "            return FAMatch.Create(-1, @string.Substring(p, len), p, l, c);");
+                sb.AppendLine(tab + "            return " + faMatch + ".Create(-1, @string.Substring(p, len), p, l, c);");
             }
             sb.AppendLine(tab + "        }");
             if (method.IsReader)
