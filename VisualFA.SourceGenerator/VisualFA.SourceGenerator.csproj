@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- 👇 Source generators must target netstandard 2.0 -->
+    <TargetFramework>netstandard2.0</TargetFramework> 
+    <!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
+    <IncludeBuildOutput>false</IncludeBuildOutput> 
+    <!-- 👇 New project, why not! -->
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+    <LangVersion>Latest</LangVersion>
+    <RootNamespace>VisualFA</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
+
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Shared\FAMatch.cs" />
+    <Compile Remove="Shared\FARunner.cs" />
+    <Compile Remove="Shared\FAStringDfaTableRunner.cs" />
+    <Compile Remove="Shared\FAStringRunner.cs" />
+    <Compile Remove="Shared\FATextReaderDfaTableRunner.cs" />
+    <Compile Remove="Shared\FATextReaderRunner.cs" />
+  </ItemGroup>
+
+  <!-- The following libraries include the source generator interfaces and types we need -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="bin\Debug\netstandard2.0\\VisualFA.SourceGenerator.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\VisualFA.brick.cs" Link="VisualFA.brick.cs" />
+  </ItemGroup>
+
+  <!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shared\FAMatch.cs" />
+    <EmbeddedResource Include="Shared\FARunner.cs" />
+    <EmbeddedResource Include="Shared\FAStringDfaTableRunner.cs" />
+    <EmbeddedResource Include="Shared\FAStringRunner.cs" />
+    <EmbeddedResource Include="Shared\FATextReaderDfaTableRunner.cs" />
+    <EmbeddedResource Include="Shared\FATextReaderRunner.cs" />
+  </ItemGroup>
+</Project>

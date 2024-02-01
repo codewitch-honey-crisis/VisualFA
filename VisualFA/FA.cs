@@ -736,6 +736,7 @@ namespace VisualFA
 		{
 			if (null == result)
 				result = new List<FA>();
+			if(_Seen == null) { _Seen = new HashSet<FA>(); }
 			_Seen.Clear();
 			_Closure(result);
 			return result;
@@ -766,8 +767,9 @@ namespace VisualFA
 		{
 			if (null == result)
 				result = new List<FA>();
-			_Seen.Clear();
-			_Find(filter, result);
+            if (_Seen == null) { _Seen = new HashSet<FA>(); }
+            _Seen.Clear();
+            _Find(filter, result);
 			return result;
 		}
 		FA _FindFirst(FAFindFilter filter)
@@ -798,8 +800,9 @@ namespace VisualFA
 		/// <returns>The first state that matches the filter criteria, or null if not found.</returns>
 		public FA FindFirst(FAFindFilter filter)
 		{
-			_Seen.Clear();
-			var result = _FindFirst(filter);
+            if (_Seen == null) { _Seen = new HashSet<FA>(); }
+            _Seen.Clear();
+            var result = _FindFirst(filter);
 			return result;
 		}
 		IList<FA> _EpsilonClosure(IList<FA> result, HashSet<FA> seen)
@@ -849,8 +852,9 @@ namespace VisualFA
 		{
 			if (null == result)
 				result = new List<FA>();
-			_Seen.Clear();
-			for(int i = 0;i<states.Count;++i)
+            if (_Seen == null) { _Seen = new HashSet<FA>(); }
+            _Seen.Clear();
+            for (int i = 0;i<states.Count;++i)
 			{
 				var fa = states[i];
 				fa._EpsilonClosure(result,_Seen);
@@ -868,8 +872,9 @@ namespace VisualFA
 		{
 			if (null == result)
 				result = new List<FA>();
-			_Seen.Clear();
-			state._EpsilonClosure(result, _Seen);
+            if (_Seen == null) { _Seen = new HashSet<FA>(); }
+            _Seen.Clear();
+            state._EpsilonClosure(result, _Seen);
 			return result;
 		}
 		/// <summary>
@@ -1014,8 +1019,9 @@ namespace VisualFA
 		/// <returns>The list of next states</returns>
 		public static IList<FA> FillMove(IList<FA> states, int codepoint, IList<FA> result = null)
 		{
-			_Seen.Clear();
-			if (result == null) result = new List<FA>();
+            if (_Seen == null) { _Seen = new HashSet<FA>(); }
+            _Seen.Clear();
+            if (result == null) result = new List<FA>();
 			for (int q = 0; q < states.Count;++q)
 			{
 				var state = states[q];
@@ -2391,9 +2397,10 @@ namespace VisualFA
 			var initial = new _KeySet<FA>();
 			var epscl = new List<FA>();
 			List<FA> ecs = new List<FA>();
-			List<FA> efcs = null; 
-			_Seen.Clear();
-			fa._EpsilonClosure(epscl, _Seen);
+			List<FA> efcs = null;
+            if (_Seen == null) { _Seen = new HashSet<FA>(); }
+            _Seen.Clear();
+            fa._EpsilonClosure(epscl, _Seen);
 			for(int i = 0; i < epscl.Count;++i)
 			{
 				var efa = epscl[i];
@@ -2446,11 +2453,12 @@ namespace VisualFA
 						ecs.Clear();
 						if (!c.IsCompact)
 						{
-							// use the internal _EpsilonClosure
-							// method to avoid an extra call
-							// (basically inlining it)
-							_Seen.Clear();
-							c._EpsilonClosure(ecs, _Seen);
+                            // use the internal _EpsilonClosure
+                            // method to avoid an extra call
+                            // (basically inlining it)
+                            if (_Seen == null) { _Seen = new HashSet<FA>(); }
+                            _Seen.Clear();
+                            c._EpsilonClosure(ecs, _Seen);
 						} else
 						{
 							ecs.Add(c);
@@ -2484,8 +2492,9 @@ namespace VisualFA
 											efcs = new List<FA>();
 										}
 										efcs.Clear();
-										_Seen.Clear();
-										trns.To._EpsilonClosure(efcs, _Seen);
+                                        if (_Seen == null) { _Seen = new HashSet<FA>(); }
+                                        _Seen.Clear();
+                                        trns.To._EpsilonClosure(efcs, _Seen);
 										for (int m = 0; m < efcs.Count; ++m)
 										{
 											set.Add(efcs[m]);

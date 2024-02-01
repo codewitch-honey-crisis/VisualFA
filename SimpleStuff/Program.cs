@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 
 var opts = new FADotGraphOptions();
 
+
 opts.HideAcceptSymbolIds = false;
 FA commentBlock = FA.Parse(@"\/\*", 0);
 FA commentBlockEnd = FA.Parse(@"\*\/");
