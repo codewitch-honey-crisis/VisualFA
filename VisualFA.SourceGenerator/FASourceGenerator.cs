@@ -26,9 +26,9 @@ namespace VisualFA
             Expression = expression;
         }
         public string Expression { get; set; } = """";
-        public string? BlockEnd { get; set; } = null;
+        public string BlockEnd { get; set; } = null;
         public int Id { get; set; } = -1;
-        public string? Symbol { get; set; } = null;
+        public string Symbol { get; set; } = null;
     }
 }";
         private const string FARuleAttributeFullName = "VisualFA.FARuleAttribute";
@@ -38,8 +38,13 @@ namespace VisualFA
         private const string FARunnerName = "FARunner";
         private const string FAStringRunnerFullName = "VisualFA.FAStringRunner";
         private const string FAStringRunnerName = "FAStringRunner";
+        private const string FAStringDfaTableRunnerFullName = "VisualFA.FAStringDfaTableRunner";
+        private const string FAStringDfaTableRunnerName = "FAStringDfaTableRunner";
         private const string FATextReaderRunnerFullName = "VisualFA.FATextReaderRunner";
         private const string FATextReaderRunnerName = "FATextReaderRunner";
+        private const string FATextReaderDfaTableRunnerFullName = "VisualFA.FATextReaderDfaTableRunner";
+        private const string FATextReaderDfaTableRunnerName = "FATextReaderDfaTableRunner";
+
         private const string TextReaderName = "TextReader";
         private const string TextReaderFullName = "System.IO.TextReader";
         private const string StringFullName = "string";
@@ -278,30 +283,11 @@ namespace VisualFA
             sb.AppendLine(tab + "    ");
             sb.AppendLine(tab + "}");
         }
-        static void _ImplementRunner(_LexMethod method, string faRunnerBase, string faMatch, SourceProductionContext context)
+
+        static void _ImplementCompiledRunner(_LexMethod method, string faRunnerBase, string faMatch, SourceProductionContext context)
         {
-            var fas = new FA[method.Rules.Length];
-            var maxBe = 0;
-            for(int i = 0;i<method.Rules.Length;i++)
-            {
-                var rule = method.Rules[i];
-                try
-                {
-                    fas[i] = FA.Parse(rule.Expression!, rule.Id);
-                }
-                catch(Exception ex) {
-                    throw new InvalidProgramException("Error parsing regex expression: " + _Escape(rule.BlockEnd),ex);
-                }
-                if (!string.IsNullOrEmpty(rule.BlockEnd))
-                {
-                    var newMax = rule.Id + 1;
-                    if (newMax > maxBe)
-                    {
-                        maxBe = newMax;
-                    }
-                }
-            }
-            var lexer = FA.ToLexer(fas, true, true);
+            int maxBe;
+            FA lexer = _MethodToLexer(method, out maxBe);
             var closure = lexer.FillClosure();
             var sb = new StringBuilder();
             var ns = _GetNamespace(method.ParentDecl);
@@ -312,16 +298,17 @@ namespace VisualFA
                 sb.AppendLine("namespace " + ns);
                 sb.AppendLine("{");
             }
-            sb.AppendLine(tab + "partial class " + method.QName + (method.IsReader?"TextReader":"String")+"Runner");
-            sb.AppendLine(tab+"    : "+faRunnerBase);
-            sb.AppendLine(tab+"{");
+            sb.AppendLine(tab + "partial class " + method.QName + (method.IsReader ? "TextReader" : "String") + "Runner");
+            sb.AppendLine(tab + "    : " + faRunnerBase);
+            sb.AppendLine(tab + "{");
             for (int i = 0; i < method.Rules.Length; i++)
             {
                 var rule = method.Rules[i];
                 if (!string.IsNullOrEmpty(rule.Symbol))
                 {
                     sb.Append(tab + "    /// <summary>Matched the expression: " + _Escape(rule.Expression!));
-                    if (!string.IsNullOrEmpty(rule.BlockEnd)) {
+                    if (!string.IsNullOrEmpty(rule.BlockEnd))
+                    {
                         sb.Append(".*?");
                         sb.Append(_Escape(rule.BlockEnd!));
                     }
@@ -329,32 +316,13 @@ namespace VisualFA
                     sb.AppendLine(tab + "    public const int " + _MakeSafeName(rule.Symbol!) + " = " + rule.Id.ToString() + ";");
                 }
             }
-            FA[] bes = null;
-            if (maxBe > 0)
-            {
-                bes = new FA[maxBe];
-                for (int i = 0; i < method.Rules.Length; i++)
-                {
-                    var rule = method.Rules[i];
-                    if (!string.IsNullOrEmpty(rule.BlockEnd))
-                    {
-                        try
-                        {
-                            bes[i] = FA.Parse(rule.BlockEnd!).ToMinimizedDfa();
-                        }
-                        catch(Exception ex) {
-                            throw new InvalidProgramException("Error parsing regex block end: " + _Escape(rule.BlockEnd),ex);
-                        }
-
-                    }
-                }
-            }
-            for(int i = 0; i < bes!.Length;i++)
+            FA[] bes = _MethodToBlockEnds(method, maxBe);
+            for (int i = 0; i < bes!.Length; i++)
             {
                 var be = bes[i];
-                if (be!=null)
+                if (be != null)
                 {
-                    _GenerateBlockEnd(method.IsReader, i, be, faMatch, tab,sb);
+                    _GenerateBlockEnd(method.IsReader, i, be, faMatch, tab, sb);
                 }
             }
             sb.AppendLine(tab + "    public override " + faMatch + " NextMatch()");
@@ -363,7 +331,7 @@ namespace VisualFA
             {
                 sb.AppendLine(tab + "        int ch = -1;");
                 sb.AppendLine(tab + "        int len = 0;");
-            } 
+            }
             sb.AppendLine(tab + "        int p;");
             sb.AppendLine(tab + "        int l;");
             sb.AppendLine(tab + "        int c;");
@@ -394,22 +362,24 @@ namespace VisualFA
             for (int i = 0; i < closure.Count; i++)
             {
                 var q = closure[i];
-                if (i==0)
+                if (i == 0)
                 {
                     if (FA.IsLoop(closure))
                     {
                         sb.AppendLine(tab + "    q0:");
-                    } else
+                    }
+                    else
                     {
                         sb.AppendLine(tab + "    // q0:");
                     }
-                } else
+                }
+                else
                 {
-                    sb.AppendLine(tab + "    q"+i.ToString()+":");
+                    sb.AppendLine(tab + "    q" + i.ToString() + ":");
                 }
                 var rnggrps = q.FillInputTransitionRangesGroupedByState();
-                
-                foreach(var rnggrp in rnggrps)
+
+                foreach (var rnggrp in rnggrps)
                 {
                     if (i == 0)
                     {
@@ -430,7 +400,7 @@ namespace VisualFA
                     }
                     sb.AppendLine(tab + "        // " + tmp.ToString());
                     sb.Append(tab + "        if (");
-                    _GenerateRangesExpression(method.IsReader?"current":"ch", rnggrp.Value, sb);
+                    _GenerateRangesExpression(method.IsReader ? "current" : "ch", rnggrp.Value, sb);
                     sb.AppendLine(")");
                     sb.AppendLine(tab + "        {");
                     if (method.IsReader)
@@ -441,7 +411,7 @@ namespace VisualFA
                     {
                         sb.AppendLine(tab + "            Advance(@string, ref ch, ref len, false);");
                     }
-                    sb.AppendLine(tab + "            goto q"+closure.IndexOf(rnggrp.Key).ToString()+";");
+                    sb.AppendLine(tab + "            goto q" + closure.IndexOf(rnggrp.Key).ToString() + ";");
                     sb.AppendLine(tab + "        }");
                 }
                 // not matched
@@ -463,7 +433,8 @@ namespace VisualFA
                         if (method.IsReader)
                         {
                             sb.AppendLine(tab + "        return " + faMatch + ".Create(" + q.AcceptSymbol.ToString() + ", capture.ToString(), p, l, c);");
-                        } else
+                        }
+                        else
                         {
                             sb.AppendLine(tab + "        return " + faMatch + ".Create(" + q.AcceptSymbol.ToString() + ", @string.Substring(p,len), p, l, c);");
                         }
@@ -477,7 +448,7 @@ namespace VisualFA
             }
             sb.AppendLine(tab + "    errorout:");
             sb.Append(tab + "        if (");
-            _GenerateRangesExpression(method.IsReader?"current":"ch", q0ranges, sb);
+            _GenerateRangesExpression(method.IsReader ? "current" : "ch", q0ranges, sb);
             sb.AppendLine(")");
             sb.AppendLine(tab + "        {");
             if (method.IsReader)
@@ -515,7 +486,125 @@ namespace VisualFA
             {
                 sb.AppendLine("}");
             }
-            context.AddSource(method.QName + ".g.cs",sb.ToString()); 
+            context.AddSource(method.QName + ".g.cs", sb.ToString());
+        }
+
+        private static FA[] _MethodToBlockEnds(_LexMethod method, int maxBe)
+        {
+            FA[] bes = null;
+            if (maxBe > 0)
+            {
+                bes = new FA[maxBe];
+                for (int i = 0; i < method.Rules.Length; i++)
+                {
+                    var rule = method.Rules[i];
+                    if (!string.IsNullOrEmpty(rule.BlockEnd))
+                    {
+                        try
+                        {
+                            bes[i] = FA.Parse(rule.BlockEnd!).ToMinimizedDfa();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new InvalidProgramException("Error parsing regex block end: " + _Escape(rule.BlockEnd), ex);
+                        }
+
+                    }
+                }
+            }
+
+            return bes;
+        }
+
+        private static FA _MethodToLexer(_LexMethod method, out int maxBe)
+        {
+            var fas = new FA[method.Rules.Length];
+            maxBe = 0;
+            for (int i = 0; i < method.Rules.Length; i++)
+            {
+                var rule = method.Rules[i];
+                try
+                {
+                    fas[i] = FA.Parse(rule.Expression!, rule.Id);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidProgramException("Error parsing regex expression: " + _Escape(rule.BlockEnd), ex);
+                }
+                if (!string.IsNullOrEmpty(rule.BlockEnd))
+                {
+                    var newMax = rule.Id + 1;
+                    if (newMax > maxBe)
+                    {
+                        maxBe = newMax;
+                    }
+                }
+            }
+            return FA.ToLexer(fas, true, true);
+
+        }
+
+        static void _GenerateIntArrayInit(string tab, int[] values, StringBuilder sb)
+        {
+            int cols = 0;
+            if(values==null)
+            {
+                sb.Append("null");
+                return;
+            }
+            for(var i = 0;i<values.Length;i++)
+            {
+                var value = values[i].ToString();
+                cols += values.Length;
+                sb.Append(value);
+                if (i < values.Length-1)
+                {
+                    cols += 2;
+                    sb.Append(", ");
+                }
+                if(cols> 80)
+                {
+                    sb.AppendLine();
+                    sb.Append(tab);
+                    cols = 0;
+                }
+            }
+            if(cols!=0)
+            {
+                sb.AppendLine();
+            }
+        }
+        static void _GenerateIntIntArrayInit(string tab, int[][] values, StringBuilder sb)
+        {
+            int cols = 0;
+            if (values == null)
+            {
+                sb.AppendLine(tab+"null");
+                return;
+            }
+            for (var i = 0; i < values.Length; i++)
+            {
+                var value = values[i];
+                if(value==null)
+                {
+                    sb.Append(tab+"null");
+                } else
+                {
+                    sb.Append(tab);
+                    sb.Append("new int[] { ");
+                    _GenerateIntArrayInit(tab + "    ", value, sb);
+                    sb.AppendLine("}");
+                }
+                if (i < values.Length - 1)
+                {
+                    sb.Append(",");
+                }
+                sb.AppendLine();
+            }
+            if (cols != 0)
+            {
+                sb.AppendLine();
+            }
         }
         static void _Execute(Compilation compilation, ImmutableArray<MethodDeclarationSyntax> methods, SourceProductionContext context)
         {
@@ -528,7 +617,9 @@ namespace VisualFA
             var vfaReffed = false;
             string sharedCodeRunnerNS = null;
             string sharedCodeStringNS = null;
+            string sharedCodeStringTableNS = null;
             string sharedCodeReaderNS = null;
+            string sharedCodeReaderTableNS = null;
             string faMatch = null;
             foreach (var sym in asms)
             {
@@ -558,6 +649,8 @@ namespace VisualFA
                                 sharedCodeReaderNS = null;
                                 sharedCodeStringNS = null;
                                 sharedCodeRunnerNS = null;
+                                sharedCodeStringTableNS = null;
+                                sharedCodeReaderTableNS = null;
                                 break;
                             }
                             sharedCodeStringNS = ns;
@@ -572,6 +665,8 @@ namespace VisualFA
                                 sharedCodeReaderNS = null;
                                 sharedCodeStringNS = null;
                                 sharedCodeRunnerNS = null;
+                                sharedCodeStringTableNS = null;
+                                sharedCodeReaderTableNS = null;
                                 break;
                             }
                             sharedCodeReaderNS = ns;
@@ -586,6 +681,8 @@ namespace VisualFA
                                 sharedCodeReaderNS = null;
                                 sharedCodeStringNS = null;
                                 sharedCodeRunnerNS = null;
+                                sharedCodeStringTableNS = null;
+                                sharedCodeReaderTableNS = null;
                                 break;
                             }
                             sharedCodeRunnerNS = ns;
@@ -645,24 +742,34 @@ namespace VisualFA
             string textRunnerBase=null;
             
             // Convert each EnumDeclarationSyntax to an EnumToGenerate
-            var methodsToGenerate = _GetLexMethods(compilation, distinctMethods, vfaReffed,sharedCodeRunnerNS, sharedCodeStringNS,sharedCodeReaderNS, context.CancellationToken);
+            var methodsToGenerate = _GetLexMethods(compilation, distinctMethods, vfaReffed,sharedCodeRunnerNS, sharedCodeStringNS,sharedCodeReaderNS,sharedCodeStringTableNS, sharedCodeReaderTableNS, context.CancellationToken);
             if (!vfaReffed)
             {
                 var needsReader = -1;
                 var needsString = -1;
+                var needsStringTable = -1;
+                var needsReaderTable = -1;
                 for (int i = 0; i < methodsToGenerate.Count; ++i)
                 {
                     var lm = methodsToGenerate[i];
                     if (lm.IsReader)
                     {
+                        if(lm.IsTable)
+                        {
+                            needsReaderTable = i;
+                        }
                         needsReader = i;
-                        if (needsString > -1) break;
+                        
                     }
                     else
                     {
+                        if (lm.IsTable)
+                        {
+                            needsStringTable = i;
+                        }
                         needsString = i;
-                        if (needsReader > -1) break;
                     }
+
                 }
                 if (sharedCodeStringNS == null && needsString > -1)
                 {
@@ -696,6 +803,38 @@ namespace VisualFA
 
                     }
                 }
+                if (sharedCodeStringTableNS == null && needsStringTable > -1)
+                {
+                    var cls = methods[needsStringTable].Parent as ClassDeclarationSyntax;
+                    if (cls != null)
+                    {
+                        var ns = _GetNamespace(cls);
+                        StringBuilder sharedSb;
+                        sharedNsMap.TryGetValue(ns, out sharedSb);
+                        if (sharedSb == null)
+                        {
+                            sharedSb = new StringBuilder();
+                            sharedNsMap.Add(ns, sharedSb);
+                        }
+                        sharedCodeStringTableNS = ns;
+                        var tab = "";
+                        if (!string.IsNullOrEmpty(ns))
+                        {
+                            tab = "    ";
+
+                        }
+                        using (var sr = _GetResource("FAStringDfaTableRunner.cs"))
+                        {
+                            stringRunnerBase = string.IsNullOrEmpty(ns) ? FAStringRunnerName : ns + "." + FAStringRunnerName;
+                            string line;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                sharedSb.AppendLine(tab + line);
+                            }
+                        }
+
+                    }
+                }
                 if (sharedCodeReaderNS == null && needsReader > -1)
                 {
                     var cls = methods[needsReader].Parent as ClassDeclarationSyntax;
@@ -709,7 +848,7 @@ namespace VisualFA
                             sharedSb = new StringBuilder();
                             sharedNsMap.Add(ns, sharedSb);
                         }
-                        sharedCodeStringNS = ns;
+                        sharedCodeReaderNS = ns;
                         var tab = "";
                         if (!string.IsNullOrEmpty(ns))
                         {
@@ -727,9 +866,38 @@ namespace VisualFA
                         }
 
                     }
-                } else
+                }
+                if (sharedCodeReaderTableNS == null && needsReaderTable > -1)
                 {
+                    var cls = methods[needsReaderTable].Parent as ClassDeclarationSyntax;
+                    if (cls != null)
+                    {
+                        var ns = _GetNamespace(cls);
+                        StringBuilder sharedSb;
+                        sharedNsMap.TryGetValue(ns, out sharedSb);
+                        if (sharedSb == null)
+                        {
+                            sharedSb = new StringBuilder();
+                            sharedNsMap.Add(ns, sharedSb);
+                        }
+                        sharedCodeReaderTableNS = ns;
+                        var tab = "";
+                        if (!string.IsNullOrEmpty(ns))
+                        {
+                            tab = "    ";
 
+                        }
+                        using (var sr = _GetResource("FATextReaderDfaTableRunner.cs"))
+                        {
+                            textRunnerBase = string.IsNullOrEmpty(ns) ? FATextReaderRunnerName : ns + "." + FATextReaderRunnerName;
+                            string line;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                sharedSb.AppendLine(tab + line);
+                            }
+                        }
+
+                    }
                 }
             }
             else
@@ -752,8 +920,10 @@ namespace VisualFA
                 for(int i = 0;i<methodsToGenerate.Count;++i)
                 {
                     var lm = methodsToGenerate[i];
-
-                    _ImplementRunner(lm, lm.IsReader ? textRunnerBase! : stringRunnerBase!,faMatch!, context);
+                    if (!lm.IsTable)
+                    {
+                        _ImplementCompiledRunner(lm, lm.IsReader ? textRunnerBase! : stringRunnerBase!, faMatch!, context);
+                    }
                     ns = _GetNamespace(lm.ParentDecl);
                     if (ns!=oldNS)
                     {
@@ -835,8 +1005,42 @@ namespace VisualFA
                     }
                     sb.AppendLine(")");
                     sb.AppendLine(mtab + "{");
-                    var tname = lm.QName + (lm.IsReader ? "TextReader" : "String") + "Runner";
-                    sb.AppendLine(mtab + "    var result = new "+tname+"();");
+                    if (!lm.IsTable)
+                    {
+                        var tname = lm.QName + (lm.IsReader ? "TextReader" : "String") + "Runner";
+                        sb.AppendLine(mtab + "    var result = new " + tname + "();");
+                    } else
+                    {
+                        var tns = lm.IsReader ? sharedCodeReaderTableNS : sharedCodeStringTableNS;
+                        if(vfaReffed)
+                        {
+                            tns = "VisualFA";
+                        }
+                        if(!string.IsNullOrEmpty(tns))
+                        {
+                            tns += ".";
+                        }
+                        var tname = tns+"FA"+ (lm.IsReader ? "TextReader" : "String") + "DfaTableRunner";
+                        sb.AppendLine(mtab + "    var result = new " + tname + "(");
+                        sb.Append(mtab + "        new int[] { ");
+                        int maxBe;
+                        var lexer = _MethodToLexer(lm, out maxBe);
+                        _GenerateIntArrayInit(mtab + "            ", lexer.ToArray(),sb);
+                        sb.AppendLine(mtab + mtab + "        },");
+                        var bes = _MethodToBlockEnds(lm, maxBe);
+                        var beis = new int[bes.Length][];
+                        for(var j = 0;j < bes.Length;j++)
+                        {
+                            var be = bes[j];
+                            if(be!=null)
+                            {
+                                beis[j] = be.ToArray();
+                            }
+                        }
+                        sb.Append(mtab + "        new int[][] { ");
+                        _GenerateIntIntArrayInit(mtab + "            ", beis, sb);
+                        sb.AppendLine(mtab + mtab + "        });");
+                    }
                     if (lm.HasArg)
                     {
                         sb.AppendLine(mtab + "    result.Set(text);");
@@ -892,6 +1096,7 @@ namespace VisualFA
             public ClassDeclarationSyntax ParentDecl;
             public MethodDeclarationSyntax Decl;
             public bool IsReader;
+            public bool IsTable;
             public bool HasArg;
             public string ReturnTypeName;
             public _LexRule[] Rules;
@@ -906,7 +1111,7 @@ namespace VisualFA
             throw new KeyNotFoundException(name);
         }
         
-        static List<_LexMethod> _GetLexMethods(Compilation compilation, IEnumerable<MethodDeclarationSyntax> methods, bool vfaReffed,string sharedRunnerNS,string sharedStringNS,string sharedReaderNS, CancellationToken ct)
+        static List<_LexMethod> _GetLexMethods(Compilation compilation, IEnumerable<MethodDeclarationSyntax> methods, bool vfaReffed,string sharedRunnerNS,string sharedStringNS,string sharedReaderNS,string sharedStringTableNS,string sharedReaderTableNS, CancellationToken ct)
         {
             var result = new List<_LexMethod>();
             INamedTypeSymbol faRuleAttribute = compilation.GetTypeByMetadataName(FARuleAttributeFullName);
@@ -924,8 +1129,13 @@ namespace VisualFA
                 rtcmp.Add(FARunnerFullName);
                 rtstrcmp.Add(FAStringRunnerFullName);
                 rtrdrcmp.Add(FATextReaderRunnerFullName);
+                rtstrcmp.Add(FAStringDfaTableRunnerFullName);
+                rtrdrcmp.Add(FATextReaderDfaTableRunnerFullName);
                 rtspeccmp.Add(FAStringRunnerFullName);
                 rtspeccmp.Add(FATextReaderRunnerFullName);
+                rtspeccmp.Add(FAStringDfaTableRunnerFullName);
+                rtspeccmp.Add(FATextReaderDfaTableRunnerFullName);
+
             } else
             {
                 if (sharedRunnerNS!=null)
@@ -958,6 +1168,24 @@ namespace VisualFA
                     rtstrcmp.Add(FAStringRunnerName);
                     rtspeccmp.Add(FAStringRunnerName);
                 }
+                if (sharedStringTableNS != null)
+                {
+                    if (sharedStringTableNS.Length == 0)
+                    {
+                        rtstrcmp.Add(FAStringDfaTableRunnerName);
+                        rtspeccmp.Add(FAStringDfaTableRunnerName);
+                    }
+                    else
+                    {
+                        rtstrcmp.Add(sharedStringTableNS + "." + FAStringDfaTableRunnerName);
+                        rtspeccmp.Add(sharedStringTableNS + "." + FAStringDfaTableRunnerName);
+                    }
+                }
+                else
+                {
+                    rtstrcmp.Add(FAStringDfaTableRunnerName);
+                    rtspeccmp.Add(FAStringDfaTableRunnerName);
+                }
                 if (sharedReaderNS != null)
                 {
                     if (sharedReaderNS.Length == 0)
@@ -975,6 +1203,24 @@ namespace VisualFA
                 {
                     rtrdrcmp.Add(FATextReaderRunnerName);
                     rtspeccmp.Add(FATextReaderRunnerName);
+                }
+                if (sharedReaderTableNS != null)
+                {
+                    if (sharedReaderTableNS.Length == 0)
+                    {
+                        rtrdrcmp.Add(FATextReaderDfaTableRunnerName);
+                        rtspeccmp.Add(FATextReaderDfaTableRunnerName);
+                    }
+                    else
+                    {
+                        rtrdrcmp.Add(sharedReaderTableNS + "." + FATextReaderDfaTableRunnerName);
+                        rtspeccmp.Add(sharedReaderTableNS + "." + FATextReaderDfaTableRunnerName);
+                    }
+                }
+                else
+                {
+                    rtrdrcmp.Add(FATextReaderDfaTableRunnerName);
+                    rtspeccmp.Add(FATextReaderDfaTableRunnerName);
                 }
             }
             foreach (var methodDeclarationSyntax in methods)
@@ -1015,7 +1261,7 @@ namespace VisualFA
                             {
                                 found = true;
                             }
-                        } else if (!string.IsNullOrEmpty(mns) && (mns==sharedReaderNS || mns==sharedStringNS))
+                        } else if (!string.IsNullOrEmpty(mns) && (mns==sharedReaderNS || mns==sharedStringNS || mns ==sharedStringTableNS || mns==sharedReaderTableNS))
                         {
                             if (rtspeccmp.Contains(mns+"."+rtfn))
                             {
@@ -1031,6 +1277,11 @@ namespace VisualFA
                         if (!found)
                         {
                             throw new AmbiguousMatchException("[FARule] method must specify FATextReaderRunner or FAStringRunner as a return type or take an argument");
+                        }
+                        if (rtfn == FAStringDfaTableRunnerFullName || rtfn == FAStringDfaTableRunnerName ||
+                            rtfn == FATextReaderDfaTableRunnerFullName || rtfn == FATextReaderDfaTableRunnerName)
+                        {
+                            lexMethod.IsTable = true;
                         }
                     }
                     lexMethod.IsReader = rtrdrcmp.Contains(rtfn);
@@ -1054,6 +1305,11 @@ namespace VisualFA
                                 throw new InvalidProgramException("[FARule] method returning an FAStringRunner must take no arguments, or a single string argument");
                             }
                             lexMethod.IsReader = false;
+                        }
+                        if(rtfn==FAStringDfaTableRunnerFullName || rtfn==FAStringDfaTableRunnerName ||
+                            rtfn == FATextReaderDfaTableRunnerFullName || rtfn == FATextReaderDfaTableRunnerName)
+                        {
+                            lexMethod.IsTable = true;
                         }
                     } else
                     {

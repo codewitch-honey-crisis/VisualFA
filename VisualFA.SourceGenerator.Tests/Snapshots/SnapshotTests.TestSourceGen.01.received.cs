@@ -1,260 +1,415 @@
-﻿//HintName: TestSourceCalc.g.cs
+﻿//HintName: FARunnerShared.g.cs
 namespace Tests
 {
-    partial class TestSourceCalcTextReaderRunner
-        : Tests.FATextReaderRunner
+    
+    /// <summary>
+    /// Represents a match from <code>FARunner.MatchNext()</code>
+    /// </summary>
+    partial struct FAMatch
     {
-        /// <summary>Matched the expression: \/\*.*?\*\/</summary>
-        public const int commentBlock = 0;
-        /// <summary>Matched the expression: //[^\n]*</summary>
-        public const int lineComment = 1;
-        /// <summary>Matched the expression: [ \t\r\n]+</summary>
-        public const int whiteSpace = 2;
-        /// <summary>Matched the expression: [A-Za-z_][A-Za-z0-9_]*</summary>
-        public const int identifier = 3;
-        /// <summary>Matched the expression: (0|([1-9][0-9]*))((\.[0-9]+[Ee]\-?[1-9][0-9]*)?|\.[0-9]+)</summary>
-        public const int number = 4;
-        /// <summary>Matched the expression: \+</summary>
-        public const int plus = 5;
-        /// <summary>Matched the expression: \-</summary>
-        public const int minus = 6;
-        /// <summary>Matched the expression: \*</summary>
-        public const int multiply = 7;
-        /// <summary>Matched the expression: \/</summary>
-        public const int divide = 8;
-        /// <summary>Matched the expression: %</summary>
-        public const int modulo = 9;
-        Tests.FAMatch _BlockEnd0(int p, int l, int c)
+        /// <summary>
+        /// The matched symbol - this is the accept id, or less than zero if the text did not match an expression
+        /// </summary>
+        public int SymbolId;
+        /// <summary>
+        /// The matched value
+        /// </summary>
+        public string? Value;
+        /// <summary>
+        /// The position of the match within the codepoint series - this may not be the same as the character position due to surrogates
+        /// </summary>
+        public long Position;
+        /// <summary>
+        /// The one based line number
+        /// </summary>
+        public int Line;
+        /// <summary>
+        /// The one based column
+        /// </summary>
+        public int Column;
+        /// <summary>
+        /// Indicates whether the text matched the expression
+        /// </summary>
+        /// <remarks>Non matches are returned with negative accept symbols. You can use this property to determine if the text therein was part of a match.</remarks>
+        public bool IsSuccess
         {
-        q0:
-            // [\*]
-            if (current == 42)
+            get
             {
-                Advance();
-                goto q1;
+                return SymbolId > -1;
             }
-            goto errorout;
-        q1:
-            // [\/]
-            if (current == 47)
+        }
+        /// <summary>
+        /// Provides a string representation of the match
+        /// </summary>
+        /// <returns>A string containing match information</returns>
+        public override string ToString()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.Append("[SymbolId: ");
+            sb.Append(SymbolId);
+            sb.Append(", Value: ");
+            if (Value != null)
             {
-                Advance();
-                goto q2;
+                sb.Append("\"");
+                sb.Append(Value.Replace("\r", "\\r").Replace("\t", "\\t").Replace("\n", "\\n").Replace("\v", "\\v"));
+                sb.Append("\", Position: ");
             }
-            goto errorout;
-        q2:
-            return Tests.FAMatch.Create(0, capture.ToString(), p, l, c);
-        errorout:
+            else
+            {
+                sb.Append("null, Position: ");
+            }
+            sb.Append(Position);
+            sb.Append(" (");
+            sb.Append(Line);
+            sb.Append(", ");
+            sb.Append(Column);
+            sb.Append(")]");
+            return sb.ToString();
+        }
+        /// <summary>
+        /// Constructs a new instance
+        /// </summary>
+        /// <param name="symbolId">The symbol id</param>
+        /// <param name="value">The matched value</param>
+        /// <param name="position">The absolute codepoint position</param>
+        /// <param name="line">The line</param>
+        /// <param name="column">The column</param>
+    
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static FAMatch Create(int symbolId, string? value, long position, int line, int column)
+        {
+            FAMatch result = default(FAMatch);
+            result.SymbolId = symbolId;
+            result.Value = value;
+            result.Position = position;
+            result.Line = line;
+            result.Column = column;
+            return result;
+        }
+    }
+    abstract partial class FARunner : IEnumerable<FAMatch>
+    {
+        protected internal FARunner()
+        {
+            position = -1;
+            line = 1;
+            column = 1;
+            tabWidth = 4;
+        }
+        public sealed class Enumerator : IEnumerator<FAMatch>
+        {
+            int _state;
+            FAMatch _current;
+            WeakReference<FARunner> _parent;
+            public Enumerator(FARunner parent)
+            {
+                _parent = new WeakReference<FARunner>(parent);
+                _state = -2;
+            }
+            public FAMatch Current
+            {
+                get
+                {
+                    if (_state == -3)
+                    {
+                        throw new ObjectDisposedException(nameof(Enumerator));
+                    }
+                    if (_state < 0)
+                    {
+                        throw new InvalidOperationException("The enumerator is not positioned on an element");
+                    }
+                    return _current;
+                }
+            }
+    
+            object System.Collections.IEnumerator.Current { get { return Current; } }
+            void IDisposable.Dispose() { _state = -3; }
+            public bool MoveNext()
+            {
+                if (_state == -3)
+                {
+                    throw new ObjectDisposedException(nameof(Enumerator));
+                }
+                if (_state == -1)
+                {
+                    return false;
+                }
+                _state = 0;
+                FARunner parent;
+                if (!_parent.TryGetTarget(out parent))
+                {
+                    throw new InvalidOperationException("The parent was destroyed");
+                }
+                _current = parent.NextMatch();
+                if (_current.SymbolId == -2)
+                {
+                    _state = -2;
+                    return false;
+                }
+                return true;
+            }
+            public void Reset()
+            {
+                if (_state == -3)
+                {
+                    throw new ObjectDisposedException(nameof(Enumerator));
+                }
+                FARunner parent;
+                if (!_parent.TryGetTarget(out parent))
+                {
+                    throw new InvalidOperationException("The parent was destroyed");
+                }
+                parent.Reset();
+                _state = -2;
+            }
+        }
+        /// <summary>
+        /// Indicates the width of a tab, in columns
+        /// </summary>
+        public int TabWidth
+        {
+            get
+            {
+                return tabWidth;
+            }
+            set
+            {
+                if (value < 1) { throw new ArgumentOutOfRangeException(); }
+                tabWidth = value;
+            }
+        }
+        protected int tabWidth;
+        protected int position;
+        protected int line;
+        protected int column;
+        protected static void ThrowUnicode(int pos)
+        {
+            throw new IOException("Unicode error in stream at position " + pos.ToString());
+        }
+    
+        public abstract FAMatch NextMatch();
+        public abstract void Reset();
+        public Enumerator GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+        IEnumerator<FAMatch> IEnumerable<FAMatch>.GetEnumerator() { return GetEnumerator(); }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
+    }
+    abstract partial class FATextReaderRunner : FARunner
+    {
+        protected TextReader reader = TextReader.Null;
+        protected System.Text.StringBuilder capture = new System.Text.StringBuilder();
+        protected int current = -2;
+        public void Set(TextReader reader)
+        {
+            if (reader == null) throw new ArgumentNullException(nameof(reader));
+            this.reader = reader;
+            current = -2;
+            position = -1;
+            line = 1;
+            column = 1;
+        }
+        public override void Reset()
+        {
+            throw new NotSupportedException();
+        }
+        protected void Advance()
+        {
+            switch (this.current)
+            {
+                case '\n':
+                    ++line;
+                    column = 1;
+                    break;
+                case '\r':
+                    column = 1;
+                    break;
+                case '\t':
+                    column = ((column - 1) / tabWidth) * (tabWidth + 1);
+                    break;
+                default:
+                    if (this.current > 31)
+                    {
+                        ++column;
+                    }
+                    break;
+            }
+            if (current > -1)
+            {
+                capture.Append(char.ConvertFromUtf32(current));
+            }
+            current = reader.Read();
             if (current == -1)
             {
-                return Tests.FAMatch.Create(-1, capture.ToString(), p, l, c);
+                return;
             }
-            Advance();
-            goto q0;
-            
+            ++position;
+            char ch1 = unchecked((char)current);
+            if (char.IsHighSurrogate(ch1))
+            {
+                current = reader.Read();
+                if (current == -1)
+                {
+                    ThrowUnicode(position);
+                }
+                char ch2 = unchecked((char)current);
+                current = char.ConvertToUtf32(ch1, ch2);
+                ++position;
+            }
         }
-        public override Tests.FAMatch NextMatch()
+    }
+    partial class FATextReaderDfaTableRunner : FATextReaderRunner
+    {
+        private readonly int[] _dfa;
+        private readonly int[][]? _blockEnds;
+        public FATextReaderDfaTableRunner(int[] dfa, int[][]? blockEnds = null)
         {
-            int p;
-            int l;
-            int c;
+            _dfa = dfa;
+            _blockEnds = blockEnds;
+        }
+        public override FAMatch NextMatch()
+        {
+            int tlen;
+            int tto;
+            int prlen;
+            int pmin;
+            int pmax;
+            int i;
+            int j;
+            int state = 0;
+            int acc;
             capture.Clear();
             if (current == -2)
             {
                 Advance();
             }
-            p = position;
-            l = line;
-            c = column;
-        // q0:
-            // [\t-\n\r ]
-            if (current == 9 || current == 10 || current == 13 || current == 32)
+            int len = 0;
+            long cursor_pos = position;
+            int line = this.line;
+            int column = this.column;
+        start_dfa:
+            acc = _dfa[state];
+            ++state;
+            tlen = _dfa[state];
+            ++state;
+            for (i = 0; i < tlen; ++i)
             {
-                Advance();
-                goto q1;
-            }
-            // [%]
-            if (current == 37)
-            {
-                Advance();
-                goto q2;
-            }
-            // [\*]
-            if (current == 42)
-            {
-                Advance();
-                goto q3;
-            }
-            // [\+]
-            if (current == 43)
-            {
-                Advance();
-                goto q4;
-            }
-            // [\-]
-            if (current == 45)
-            {
-                Advance();
-                goto q5;
-            }
-            // [\/]
-            if (current == 47)
-            {
-                Advance();
-                goto q6;
-            }
-            // [0]
-            if (current == 48)
-            {
-                Advance();
-                goto q9;
-            }
-            // [1-9]
-            if ((current >= 49 && current <= 57))
-            {
-                Advance();
-                goto q15;
-            }
-            // [A-Z_a-z]
-            if ((current >= 65 && current <= 90) || current == 95 || (current >= 97 && current <= 122))
-            {
-                Advance();
-                goto q16;
-            }
-            goto errorout;
-        q1:
-            // [\t-\n\r ]
-            if (current == 9 || current == 10 || current == 13 || current == 32)
-            {
-                Advance();
-                goto q1;
-            }
-            return Tests.FAMatch.Create(2, capture.ToString(), p, l, c);
-        q2:
-            return Tests.FAMatch.Create(9, capture.ToString(), p, l, c);
-        q3:
-            return Tests.FAMatch.Create(7, capture.ToString(), p, l, c);
-        q4:
-            return Tests.FAMatch.Create(5, capture.ToString(), p, l, c);
-        q5:
-            return Tests.FAMatch.Create(6, capture.ToString(), p, l, c);
-        q6:
-            // [\*]
-            if (current == 42)
-            {
-                Advance();
-                goto q7;
-            }
-            // [\/]
-            if (current == 47)
-            {
-                Advance();
-                goto q8;
-            }
-            return Tests.FAMatch.Create(8, capture.ToString(), p, l, c);
-        q7:
-            return _BlockEnd0(p, l, c);
-        q8:
-            // [\0-\t\v-\x10ffff]
-            if ((current >= 0 && current <= 9) || (current >= 11 && current <= 1114111))
-            {
-                Advance();
-                goto q8;
-            }
-            return Tests.FAMatch.Create(1, capture.ToString(), p, l, c);
-        q9:
-            // [\.]
-            if (current == 46)
-            {
-                Advance();
-                goto q10;
-            }
-            return Tests.FAMatch.Create(4, capture.ToString(), p, l, c);
-        q10:
-            // [0-9]
-            if ((current >= 48 && current <= 57))
-            {
-                Advance();
-                goto q11;
-            }
-            goto errorout;
-        q11:
-            // [0-9]
-            if ((current >= 48 && current <= 57))
-            {
-                Advance();
-                goto q11;
-            }
-            // [Ee]
-            if (current == 69 || current == 101)
-            {
-                Advance();
-                goto q12;
-            }
-            return Tests.FAMatch.Create(4, capture.ToString(), p, l, c);
-        q12:
-            // [\-]
-            if (current == 45)
-            {
-                Advance();
-                goto q13;
-            }
-            // [1-9]
-            if ((current >= 49 && current <= 57))
-            {
-                Advance();
-                goto q14;
-            }
-            goto errorout;
-        q13:
-            // [1-9]
-            if ((current >= 49 && current <= 57))
-            {
-                Advance();
-                goto q14;
-            }
-            goto errorout;
-        q14:
-            // [0-9]
-            if ((current >= 48 && current <= 57))
-            {
-                Advance();
-                goto q14;
-            }
-            return Tests.FAMatch.Create(4, capture.ToString(), p, l, c);
-        q15:
-            // [\.]
-            if (current == 46)
-            {
-                Advance();
-                goto q10;
-            }
-            // [0-9]
-            if ((current >= 48 && current <= 57))
-            {
-                Advance();
-                goto q15;
-            }
-            return Tests.FAMatch.Create(4, capture.ToString(), p, l, c);
-        q16:
-            // [0-9A-Z_a-z]
-            if ((current >= 48 && current <= 57) || (current >= 65 && current <= 90) || current == 95 || (current >= 97 && current <= 122))
-            {
-                Advance();
-                goto q16;
-            }
-            return Tests.FAMatch.Create(3, capture.ToString(), p, l, c);
-        errorout:
-            if (current == -1 || current == 9 || current == 10 || current == 13 || current == 32 || current == 37 || current == 42 || current == 43 || current == 45 || current == 47 || current == 48 || (current >= 49 && current <= 57) || (current >= 65 && current <= 90) || current == 95 || (current >= 97 && current <= 122))
-            {
-                if (capture.Length == 0)
+                tto = _dfa[state];
+                ++state;
+                prlen = _dfa[state];
+                ++state;
+                for (j = 0; j < prlen; ++j)
                 {
-                    return Tests.FAMatch.Create(-2, null, 0, 0, 0);
+                    pmin = _dfa[state];
+                    ++state;
+                    pmax = _dfa[state];
+                    ++state;
+                    if (current < pmin)
+                    {
+                        state += ((prlen - (j + 1)) * 2);
+                        j = prlen;
+                    }
+                    else if (current <= pmax)
+                    {
+                        Advance();
+                        state = tto;
+                        goto start_dfa;
+                    }
                 }
-                return Tests.FAMatch.Create(-1, capture.ToString(), p, l, c);
             }
-            Advance();
-            goto errorout;
+            if (acc != -1)
+            {
+                int sym = acc;
+                int[]? be = (_blockEnds != null && _blockEnds.Length > acc) ? _blockEnds[acc] : null;
+                if (be != null)
+                {
+                    state = 0;
+                start_be_dfa:
+                    acc = be[state];
+                    ++state;
+                    tlen = be[state];
+                    ++state;
+                    for (i = 0; i < tlen; ++i)
+                    {
+                        tto = be[state];
+                        ++state;
+                        prlen = be[state];
+                        ++state;
+                        for (j = 0; j < prlen; ++j)
+                        {
+                            pmin = be[state];
+                            ++state;
+                            pmax = be[state];
+                            ++state;
+                            if (current < pmin)
+                            {
+                                state += ((prlen - (j + 1)) * 2);
+                                j = prlen;
+                            }
+                            else if (current <= pmax)
+                            {
+                                Advance();
+                                state = tto;
+                                goto start_be_dfa;
+                            }
+                        }
+                    }
+                    if (acc != -1)
+                    {
+                        return FAMatch.Create(sym, capture.ToString(), cursor_pos, line, column);
+                    }
+                    if (current == -1)
+                    {
+                        return FAMatch.Create(-1, capture.ToString(), cursor_pos, line, column);
+                    }
+                    Advance();
+                    state = 0;
+                    goto start_be_dfa;
+                }
+                return FAMatch.Create(acc, capture.ToString(), cursor_pos, line, column);
+            }
+            // error. keep trying until we find a potential transition.
+            while (current != -1)
+            {
+                var moved = false;
+                state = 1;
+                tlen = _dfa[state];
+                ++state;
+                for (i = 0; i < tlen; ++i)
+                {
+                    ++state;
+                    prlen = _dfa[state];
+                    ++state;
+                    for (j = 0; j < prlen; ++j)
+                    {
+                        pmin = _dfa[state];
+                        ++state;
+                        pmax = _dfa[state];
+                        ++state;
+                        if (current < pmin)
+                        {
+                            state += ((prlen - (j + 1)) * 2);
+                            j = prlen;
+                        }
+                        else if (current <= pmax)
+                        {
+                            moved = true;
+                        }
+                    }
+                }
+                if (moved)
+                {
+                    break;
+                }
+                Advance();
+            }
+            if (len == 0)
+            {
+                return FAMatch.Create(-2, null, 0, 0, 0);
+            }
+            return FAMatch.Create(-1, capture.ToString(), cursor_pos, line, column);
         }
     }
+
 }

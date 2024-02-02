@@ -19,7 +19,7 @@ namespace Tests
         [FARule(@"\*", Symbol = "multiply")]
         [FARule(@"\/", Symbol = "divide")]
         [FARule(@"%", Symbol = "modulo")]
-        internal static partial FATextReaderRunner Calc(TextReader text);
+        internal static partial VisualFA.FATextReaderDfaTableRunner Calc(TextReader text);
         //public partial static FAStringRunner CalcRunner(string text);
     }
 }
