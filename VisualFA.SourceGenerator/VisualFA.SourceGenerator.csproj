@@ -10,8 +10,23 @@
     <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>Latest</LangVersion>
     <RootNamespace>VisualFA</RootNamespace>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Visual FA Source Generator for C#</Title>
+    <Authors>honey the codewitch</Authors>
+    <Product>Visual FA</Product>
+    <Description>Generates fast DFA lexers and matchers in C# during the build process</Description>
+    <Copyright>Copyright (c) 2024 by honey the codewitch</Copyright>
+    <PackageIcon>VisualFA_icon.jpg</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/codewitch-honey-crisis/VisualFA</RepositoryUrl>
+    <PackageTags>lexer;tokenizer;dfa;regex</PackageTags>
   </PropertyGroup>
-
+	<PropertyGroup>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	</PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
@@ -21,7 +36,7 @@
     <EmbeddedResource Remove="bin\**" />
     <None Remove="bin\**" />
   </ItemGroup>
-
+	
   <ItemGroup>
     <Compile Remove="Shared\FAMatch.cs" />
     <Compile Remove="Shared\FARunner.cs" />
@@ -46,6 +61,18 @@
   <!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\VisualFA_icon.jpg">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shared\FAMatch.cs" />
@@ -54,5 +81,8 @@
     <EmbeddedResource Include="Shared\FAStringRunner.cs" />
     <EmbeddedResource Include="Shared\FATextReaderDfaTableRunner.cs" />
     <EmbeddedResource Include="Shared\FATextReaderRunner.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

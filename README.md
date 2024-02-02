@@ -52,6 +52,38 @@ FATextReaderRunner (Compiled): [■■■■■■■■■■] 100% Found 22000
 
 ### Use
 
+### The C# source generation (requires C#9 or better)
+
+```cs
+partial class Tokenizers
+{
+    [FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
+    [FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
+    [FARule(@"[ \t\r\n]+", Symbol = "whiteSpace")]
+    [FARule(@"[A-Za-z_][A-Za-z0-9_]*", Symbol = "identifier")]
+    [FARule(@"(0|([1-9][0-9]*))((\.[0-9]+[Ee]\-?[1-9][0-9]*)?|\.[0-9]+)", Symbol = "number")]
+    [FARule(@"\+", Symbol = "plus")]
+    [FARule(@"\-", Symbol = "minus")]
+    [FARule(@"\*", Symbol = "multiply")]
+    [FARule(@"\/", Symbol = "divide")]
+    [FARule(@"%", Symbol = "modulo")]
+    //internal static partial FATextReaderRunner CalcTextReaderRunner(TextReader text);
+    internal static partial FAStringRunner CalcStringRunner(string text);
+    //internal static partial FATextReaderDfaTableRunner CalcTextReaderTableRunner(TextReader text);
+    //internal static partial FAStringDfaTableRunner CalcStringTableRunner(string text);
+    static void Main(string[] args)
+    {
+        var exp = "the 10 quick brown #@%$! foxes jumped over 1.5 lazy dogs";
+        foreach (var match in Tokenizers.Calc(exp))
+        {
+            Console.WriteLine(match);
+        }
+    }
+}
+```
+
+#### The runtimes
+
 ```cs
 string exp = @"[A-Z_a-z][A-Z_a-z0-9]*|0|\-?[1-9][0-9]*";
 string text = "the quick brown fox jumped over the -10 lazy #@!*$ dog";

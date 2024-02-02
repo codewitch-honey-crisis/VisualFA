@@ -1,0 +1,10 @@
+namespace VisualFA.SourceGenerator.NugetIntegrationTests;
+
+public class UnitTest1
+{
+    [Fact]
+    public void Test1()
+    {
+
+    }
+}
