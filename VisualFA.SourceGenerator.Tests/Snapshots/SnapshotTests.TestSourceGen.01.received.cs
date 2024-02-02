@@ -1,4 +1,5 @@
 ﻿//HintName: FARunnerShared.g.cs
+#nullable disable
 namespace Tests
 {
     
@@ -14,7 +15,7 @@ namespace Tests
         /// <summary>
         /// The matched value
         /// </summary>
-        public string? Value;
+        public string Value;
         /// <summary>
         /// The position of the match within the codepoint series - this may not be the same as the character position due to surrogates
         /// </summary>
@@ -76,7 +77,7 @@ namespace Tests
         /// <param name="column">The column</param>
     
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public static FAMatch Create(int symbolId, string? value, long position, int line, int column)
+        public static FAMatch Create(int symbolId, string value, long position, int line, int column)
         {
             FAMatch result = default(FAMatch);
             result.SymbolId = symbolId;
@@ -262,8 +263,8 @@ namespace Tests
     partial class FATextReaderDfaTableRunner : FATextReaderRunner
     {
         private readonly int[] _dfa;
-        private readonly int[][]? _blockEnds;
-        public FATextReaderDfaTableRunner(int[] dfa, int[][]? blockEnds = null)
+        private readonly int[][] _blockEnds;
+        public FATextReaderDfaTableRunner(int[] dfa, int[][] blockEnds = null)
         {
             _dfa = dfa;
             _blockEnds = blockEnds;
@@ -321,7 +322,7 @@ namespace Tests
             if (acc != -1)
             {
                 int sym = acc;
-                int[]? be = (_blockEnds != null && _blockEnds.Length > acc) ? _blockEnds[acc] : null;
+                int[] be = (_blockEnds != null && _blockEnds.Length > acc) ? _blockEnds[acc] : null;
                 if (be != null)
                 {
                     state = 0;

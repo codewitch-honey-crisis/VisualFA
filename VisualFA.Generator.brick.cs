@@ -574,22 +574,21 @@ new CodeStatement[]{new CodeVariableDeclarationStatement(new CodeTypeReference(t
  CodeExpression[0])),new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),
 CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-2)),new CodeStatement[]{new CodeExpressionStatement(new CodeMethodInvokeExpression(new
  CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"Advance"),new CodeExpression[0]))},new CodeStatement[0]),new CodeVariableDeclarationStatement(new
- CodeTypeReference(typeof(int)),"len",new CodePrimitiveExpression(0)),new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(long)),"cursor_pos",
-new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position")),new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(int)),
-"line",new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"line")),new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(int)),
-"column",new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"column")),new CodeLabeledStatement("start_dfa",new CodeSnippetStatement("")),
-new CodeAssignStatement(new CodeVariableReferenceExpression("acc"),new CodeArrayIndexerExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
-"_dfa"),new CodeExpression[]{new CodeVariableReferenceExpression("state")})),new CodeAssignStatement(new CodeVariableReferenceExpression("state"),new CodeBinaryOperatorExpression(new
- CodeVariableReferenceExpression("state"),CodeBinaryOperatorType.Add,new CodePrimitiveExpression(1))),new CodeAssignStatement(new CodeVariableReferenceExpression("tlen"),
-new CodeArrayIndexerExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_dfa"),new CodeExpression[]{new CodeVariableReferenceExpression("state")})),
+ CodeTypeReference(typeof(long)),"cursor_pos",new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position")),new CodeVariableDeclarationStatement(new
+ CodeTypeReference(typeof(int)),"line",new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"line")),new CodeVariableDeclarationStatement(new
+ CodeTypeReference(typeof(int)),"column",new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"column")),new CodeLabeledStatement("start_dfa",
+new CodeSnippetStatement("")),new CodeAssignStatement(new CodeVariableReferenceExpression("acc"),new CodeArrayIndexerExpression(new CodeFieldReferenceExpression(new
+ CodeThisReferenceExpression(),"_dfa"),new CodeExpression[]{new CodeVariableReferenceExpression("state")})),new CodeAssignStatement(new CodeVariableReferenceExpression("state"),
+new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("state"),CodeBinaryOperatorType.Add,new CodePrimitiveExpression(1))),new CodeAssignStatement(new
+ CodeVariableReferenceExpression("tlen"),new CodeArrayIndexerExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_dfa"),new
+ CodeExpression[]{new CodeVariableReferenceExpression("state")})),new CodeAssignStatement(new CodeVariableReferenceExpression("state"),new CodeBinaryOperatorExpression(new
+ CodeVariableReferenceExpression("state"),CodeBinaryOperatorType.Add,new CodePrimitiveExpression(1))),new CodeIterationStatement(new CodeAssignStatement(new
+ CodeVariableReferenceExpression("i"),new CodePrimitiveExpression(0)),new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("i"),CodeBinaryOperatorType.LessThan,
+new CodeVariableReferenceExpression("tlen")),new CodeAssignStatement(new CodeVariableReferenceExpression("i"),new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("i"),
+CodeBinaryOperatorType.Add,new CodePrimitiveExpression(1))),new CodeStatement[]{new CodeAssignStatement(new CodeVariableReferenceExpression("tto"),new
+ CodeArrayIndexerExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_dfa"),new CodeExpression[]{new CodeVariableReferenceExpression("state")})),
 new CodeAssignStatement(new CodeVariableReferenceExpression("state"),new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("state"),CodeBinaryOperatorType.Add,
-new CodePrimitiveExpression(1))),new CodeIterationStatement(new CodeAssignStatement(new CodeVariableReferenceExpression("i"),new CodePrimitiveExpression(0)),
-new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("i"),CodeBinaryOperatorType.LessThan,new CodeVariableReferenceExpression("tlen")),
-new CodeAssignStatement(new CodeVariableReferenceExpression("i"),new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("i"),CodeBinaryOperatorType.Add,
-new CodePrimitiveExpression(1))),new CodeStatement[]{new CodeAssignStatement(new CodeVariableReferenceExpression("tto"),new CodeArrayIndexerExpression(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_dfa"),new CodeExpression[]{new CodeVariableReferenceExpression("state")})),new CodeAssignStatement(new
- CodeVariableReferenceExpression("state"),new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("state"),CodeBinaryOperatorType.Add,new
- CodePrimitiveExpression(1))),new CodeAssignStatement(new CodeVariableReferenceExpression("prlen"),new CodeArrayIndexerExpression(new CodeFieldReferenceExpression(new
+new CodePrimitiveExpression(1))),new CodeAssignStatement(new CodeVariableReferenceExpression("prlen"),new CodeArrayIndexerExpression(new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"_dfa"),new CodeExpression[]{new CodeVariableReferenceExpression("state")})),new CodeAssignStatement(new CodeVariableReferenceExpression("state"),
 new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("state"),CodeBinaryOperatorType.Add,new CodePrimitiveExpression(1))),new CodeIterationStatement(new
  CodeAssignStatement(new CodeVariableReferenceExpression("j"),new CodePrimitiveExpression(0)),new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("j"),
@@ -695,58 +694,58 @@ new CodeVariableReferenceExpression("pmax")),new CodeStatement[]{new CodeAssignS
 new CodeStatement[0])})})}),new CodeConditionStatement(new CodeVariableReferenceExpression("moved"),new CodeStatement[]{new CodeGotoStatement("break_loop")},
 new CodeStatement[0]),new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"Advance"),
 new CodeExpression[0]))}),new CodeLabeledStatement("break_loop",new CodeSnippetStatement("")),new CodeConditionStatement(new CodeBinaryOperatorExpression(new
- CodeVariableReferenceExpression("len"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(0)),new CodeStatement[]{new CodeMethodReturnStatement(new
+ CodePropertyReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture"),"Length"),CodeBinaryOperatorType.ValueEquality,
+new CodePrimitiveExpression(0)),new CodeStatement[]{new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
+ CodeTypeReferenceExpression(new CodeTypeReference("FAMatch")),"Create"),new CodeExpression[]{new CodePrimitiveExpression(-2),new CodePrimitiveExpression(null),
+new CodePrimitiveExpression(0),new CodePrimitiveExpression(0),new CodePrimitiveExpression(0)}))},new CodeStatement[0]),new CodeMethodReturnStatement(new
  CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference("FAMatch")),"Create"),new CodeExpression[]
-{new CodePrimitiveExpression(-2),new CodePrimitiveExpression(null),new CodePrimitiveExpression(0),new CodePrimitiveExpression(0),new CodePrimitiveExpression(0)}))},
-new CodeStatement[0]),new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new
- CodeTypeReference("FAMatch")),"Create"),new CodeExpression[]{new CodePrimitiveExpression(-1),new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture"),"ToString"),new CodeExpression[0]),new CodeVariableReferenceExpression("cursor_pos"),
-new CodeVariableReferenceExpression("line"),new CodeVariableReferenceExpression("column")}))},new CodeTypeReference[0],null,new CodeCommentStatement[0],
-new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
-new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0])},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0]);
-}}public static System.CodeDom.CodeCompileUnit ReadOnlySpan{get{return DeslangedSpan._CompileUnit(new string[0],new CodeNamespace[]{DeslangedSpan._Namespace("",
-new CodeNamespaceImport[0],new CodeTypeDeclaration[0],new CodeCommentStatement[0]),DeslangedSpan._Namespace("System",new CodeNamespaceImport[0],new CodeTypeDeclaration[]
-{DeslangedSpan._TypeDeclaration("ReadOnlySpan",true,false,false,false,false,(MemberAttributes.Final|MemberAttributes.Private),TypeAttributes.NotPublic,
-new CodeTypeParameter[]{new CodeTypeParameter("T")},new CodeTypeReference[0],new CodeTypeMember[]{DeslangedSpan._MemberMethod(new CodeTypeReference(typeof(string)),
-"ToString",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
- CodePrimitiveExpression(null))},new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],
-new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(int)),"Length",(MemberAttributes.Final|MemberAttributes.
-Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodePrimitiveExpression(0))},new CodeStatement[0],
-new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberMethod(new
- CodeTypeReference("ReadOnlySpan`1",new CodeTypeReference[]{new CodeTypeReference("T")}),"Slice",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[]
-{new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"position"),new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),
-"length")},new CodeStatement[]{new CodeMethodReturnStatement(new CodePrimitiveExpression(null))},new CodeTypeReference[0],null,new CodeCommentStatement[0],
-new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[]{new CodeCommentStatement(" dummy for DNF so Slang can compile")},
-new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0])},new CodeAttributeDeclaration[0],new CodeDirective[0],
-new CodeDirective[0]);}}}}namespace VisualFA{using System.CodeDom;using System.Reflection;internal partial class DeslangedString{private static CodeCompileUnit
- _CompileUnit(string[]referencedAssemblies,CodeNamespace[]namespaces,CodeAttributeDeclaration[]assemblyCustomAttributes,CodeDirective[]startDirectives,
-CodeDirective[]endDirectives){CodeCompileUnit result=new CodeCompileUnit();result.ReferencedAssemblies.AddRange(referencedAssemblies);result.Namespaces.AddRange(namespaces);
-result.AssemblyCustomAttributes.AddRange(assemblyCustomAttributes);result.StartDirectives.AddRange(startDirectives);result.EndDirectives.AddRange(endDirectives);
-return result;}private static CodeNamespace _Namespace(string name,CodeNamespaceImport[]imports,CodeTypeDeclaration[]types,CodeCommentStatement[]comments)
-{CodeNamespace result=new CodeNamespace();result.Name=name;result.Imports.AddRange(imports);result.Types.AddRange(types);result.Comments.AddRange(comments);
-return result;}private static CodeTypeDeclaration _TypeDeclaration(string name,bool isClass,bool isEnum,bool isInterface,bool isStruct,bool isPartial,
-MemberAttributes attributes,TypeAttributes typeAttributes,CodeTypeParameter[]typeParameters,CodeTypeReference[]baseTypes,CodeTypeMember[]members,CodeCommentStatement[]
-comments,CodeAttributeDeclaration[]customAttributes,CodeDirective[]startDirectives,CodeDirective[]endDirectives,CodeLinePragma linePragma){CodeTypeDeclaration
- result=new CodeTypeDeclaration(name);result.IsClass=isClass;result.IsEnum=isEnum;result.IsInterface=isInterface;result.IsStruct=isStruct;result.IsPartial
-=isPartial;result.Attributes=attributes;result.TypeAttributes=typeAttributes;result.TypeParameters.AddRange(typeParameters);result.BaseTypes.AddRange(baseTypes);
-result.Members.AddRange(members);result.Comments.AddRange(comments);result.CustomAttributes.AddRange(customAttributes);result.StartDirectives.AddRange(startDirectives);
-result.EndDirectives.AddRange(endDirectives);result.LinePragma=linePragma;return result;}private static CodeMemberField _MemberField(CodeTypeReference
- type,string name,CodeExpression initExpression,MemberAttributes attributes,CodeCommentStatement[]comments,CodeAttributeDeclaration[]customAttributes,
-CodeDirective[]startDirectives,CodeDirective[]endDirectives,CodeLinePragma linePragma){CodeMemberField result=new CodeMemberField(type,name);result.InitExpression
-=initExpression;result.Attributes=attributes;result.Comments.AddRange(comments);result.CustomAttributes.AddRange(customAttributes);result.StartDirectives.AddRange(startDirectives);
-result.EndDirectives.AddRange(endDirectives);result.LinePragma=linePragma;return result;}private static CodeMemberProperty _MemberProperty(CodeTypeReference
- type,string name,MemberAttributes attributes,CodeParameterDeclarationExpression[]parameters,CodeStatement[]getStatements,CodeStatement[]setStatements,
-CodeTypeReference[]implementationTypes,CodeTypeReference privateImplementationType,CodeCommentStatement[]comments,CodeAttributeDeclaration[]customAttributes,
-CodeDirective[]startDirectives,CodeDirective[]endDirectives,CodeLinePragma linePragma){CodeMemberProperty result=new CodeMemberProperty();result.Type=
-type;result.Name=name;result.Attributes=attributes;result.Parameters.AddRange(parameters);result.GetStatements.AddRange(getStatements);result.SetStatements.AddRange(setStatements);
-result.ImplementationTypes.AddRange(implementationTypes);result.PrivateImplementationType=privateImplementationType;result.Comments.AddRange(comments);
+{new CodePrimitiveExpression(-1),new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+"capture"),"ToString"),new CodeExpression[0]),new CodeVariableReferenceExpression("cursor_pos"),new CodeVariableReferenceExpression("line"),new CodeVariableReferenceExpression("column")}))},
+new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
+null)},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0])},new CodeAttributeDeclaration[0],
+new CodeDirective[0],new CodeDirective[0]);}}public static System.CodeDom.CodeCompileUnit ReadOnlySpan{get{return DeslangedSpan._CompileUnit(new string[0],
+new CodeNamespace[]{DeslangedSpan._Namespace("",new CodeNamespaceImport[0],new CodeTypeDeclaration[0],new CodeCommentStatement[0]),DeslangedSpan._Namespace("System",
+new CodeNamespaceImport[0],new CodeTypeDeclaration[]{DeslangedSpan._TypeDeclaration("ReadOnlySpan",true,false,false,false,false,(MemberAttributes.Final
+|MemberAttributes.Private),TypeAttributes.NotPublic,new CodeTypeParameter[]{new CodeTypeParameter("T")},new CodeTypeReference[0],new CodeTypeMember[]{
+DeslangedSpan._MemberMethod(new CodeTypeReference(typeof(string)),"ToString",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],
+new CodeStatement[]{new CodeMethodReturnStatement(new CodePrimitiveExpression(null))},new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
+new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(int)),"Length",
+(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodePrimitiveExpression(0))},
+new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
+null),DeslangedSpan._MemberMethod(new CodeTypeReference("ReadOnlySpan`1",new CodeTypeReference[]{new CodeTypeReference("T")}),"Slice",(MemberAttributes.Final
+|MemberAttributes.Public),new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"position"),
+new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(int)),"length")},new CodeStatement[]{new CodeMethodReturnStatement(new CodePrimitiveExpression(null))},
+new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
+null)},new CodeCommentStatement[]{new CodeCommentStatement(" dummy for DNF so Slang can compile")},new CodeAttributeDeclaration[0],new CodeDirective[0],
+new CodeDirective[0],null)},new CodeCommentStatement[0])},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0]);}}}}namespace VisualFA
+{using System.CodeDom;using System.Reflection;internal partial class DeslangedString{private static CodeCompileUnit _CompileUnit(string[]referencedAssemblies,
+CodeNamespace[]namespaces,CodeAttributeDeclaration[]assemblyCustomAttributes,CodeDirective[]startDirectives,CodeDirective[]endDirectives){CodeCompileUnit
+ result=new CodeCompileUnit();result.ReferencedAssemblies.AddRange(referencedAssemblies);result.Namespaces.AddRange(namespaces);result.AssemblyCustomAttributes.AddRange(assemblyCustomAttributes);
+result.StartDirectives.AddRange(startDirectives);result.EndDirectives.AddRange(endDirectives);return result;}private static CodeNamespace _Namespace(string
+ name,CodeNamespaceImport[]imports,CodeTypeDeclaration[]types,CodeCommentStatement[]comments){CodeNamespace result=new CodeNamespace();result.Name=name;
+result.Imports.AddRange(imports);result.Types.AddRange(types);result.Comments.AddRange(comments);return result;}private static CodeTypeDeclaration _TypeDeclaration(
+string name,bool isClass,bool isEnum,bool isInterface,bool isStruct,bool isPartial,MemberAttributes attributes,TypeAttributes typeAttributes,CodeTypeParameter[]
+typeParameters,CodeTypeReference[]baseTypes,CodeTypeMember[]members,CodeCommentStatement[]comments,CodeAttributeDeclaration[]customAttributes,CodeDirective[]
+startDirectives,CodeDirective[]endDirectives,CodeLinePragma linePragma){CodeTypeDeclaration result=new CodeTypeDeclaration(name);result.IsClass=isClass;
+result.IsEnum=isEnum;result.IsInterface=isInterface;result.IsStruct=isStruct;result.IsPartial=isPartial;result.Attributes=attributes;result.TypeAttributes
+=typeAttributes;result.TypeParameters.AddRange(typeParameters);result.BaseTypes.AddRange(baseTypes);result.Members.AddRange(members);result.Comments.AddRange(comments);
 result.CustomAttributes.AddRange(customAttributes);result.StartDirectives.AddRange(startDirectives);result.EndDirectives.AddRange(endDirectives);result.LinePragma
-=linePragma;return result;}private static CodeMemberMethod _MemberMethod(CodeTypeReference returnType,string name,MemberAttributes attributes,CodeParameterDeclarationExpression[]
-parameters,CodeStatement[]statements,CodeTypeReference[]implementationTypes,CodeTypeReference privateImplementationType,CodeCommentStatement[]comments,
-CodeAttributeDeclaration[]customAttributes,CodeAttributeDeclaration[]returnTypeCustomAttributes,CodeDirective[]startDirectives,CodeDirective[]endDirectives,
-CodeLinePragma linePragma){CodeMemberMethod result=new CodeMemberMethod();result.ReturnType=returnType;result.Name=name;result.Attributes=attributes;result.Parameters.AddRange(parameters);
-result.Statements.AddRange(statements);result.ImplementationTypes.AddRange(implementationTypes);result.PrivateImplementationType=privateImplementationType;
-result.Comments.AddRange(comments);result.CustomAttributes.AddRange(customAttributes);result.ReturnTypeCustomAttributes.AddRange(returnTypeCustomAttributes);
+=linePragma;return result;}private static CodeMemberField _MemberField(CodeTypeReference type,string name,CodeExpression initExpression,MemberAttributes
+ attributes,CodeCommentStatement[]comments,CodeAttributeDeclaration[]customAttributes,CodeDirective[]startDirectives,CodeDirective[]endDirectives,CodeLinePragma
+ linePragma){CodeMemberField result=new CodeMemberField(type,name);result.InitExpression=initExpression;result.Attributes=attributes;result.Comments.AddRange(comments);
+result.CustomAttributes.AddRange(customAttributes);result.StartDirectives.AddRange(startDirectives);result.EndDirectives.AddRange(endDirectives);result.LinePragma
+=linePragma;return result;}private static CodeMemberProperty _MemberProperty(CodeTypeReference type,string name,MemberAttributes attributes,CodeParameterDeclarationExpression[]
+parameters,CodeStatement[]getStatements,CodeStatement[]setStatements,CodeTypeReference[]implementationTypes,CodeTypeReference privateImplementationType,
+CodeCommentStatement[]comments,CodeAttributeDeclaration[]customAttributes,CodeDirective[]startDirectives,CodeDirective[]endDirectives,CodeLinePragma linePragma)
+{CodeMemberProperty result=new CodeMemberProperty();result.Type=type;result.Name=name;result.Attributes=attributes;result.Parameters.AddRange(parameters);
+result.GetStatements.AddRange(getStatements);result.SetStatements.AddRange(setStatements);result.ImplementationTypes.AddRange(implementationTypes);result.PrivateImplementationType
+=privateImplementationType;result.Comments.AddRange(comments);result.CustomAttributes.AddRange(customAttributes);result.StartDirectives.AddRange(startDirectives);
+result.EndDirectives.AddRange(endDirectives);result.LinePragma=linePragma;return result;}private static CodeMemberMethod _MemberMethod(CodeTypeReference
+ returnType,string name,MemberAttributes attributes,CodeParameterDeclarationExpression[]parameters,CodeStatement[]statements,CodeTypeReference[]implementationTypes,
+CodeTypeReference privateImplementationType,CodeCommentStatement[]comments,CodeAttributeDeclaration[]customAttributes,CodeAttributeDeclaration[]returnTypeCustomAttributes,
+CodeDirective[]startDirectives,CodeDirective[]endDirectives,CodeLinePragma linePragma){CodeMemberMethod result=new CodeMemberMethod();result.ReturnType
+=returnType;result.Name=name;result.Attributes=attributes;result.Parameters.AddRange(parameters);result.Statements.AddRange(statements);result.ImplementationTypes.AddRange(implementationTypes);
+result.PrivateImplementationType=privateImplementationType;result.Comments.AddRange(comments);result.CustomAttributes.AddRange(customAttributes);result.ReturnTypeCustomAttributes.AddRange(returnTypeCustomAttributes);
 result.StartDirectives.AddRange(startDirectives);result.EndDirectives.AddRange(endDirectives);result.LinePragma=linePragma;return result;}public static
  System.CodeDom.CodeCompileUnit FAMatch{get{return DeslangedString._CompileUnit(new string[]{"System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"},
 new CodeNamespace[]{DeslangedString._Namespace("",new CodeNamespaceImport[0],new CodeTypeDeclaration[]{DeslangedString._TypeDeclaration("FAMatch",false,

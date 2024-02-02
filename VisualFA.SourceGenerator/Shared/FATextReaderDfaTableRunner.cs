@@ -23,7 +23,6 @@
         {
             Advance();
         }
-        int len = 0;
         long cursor_pos = position;
         int line = this.line;
         int column = this.column;
@@ -143,7 +142,7 @@
             }
             Advance();
         }
-        if (len == 0)
+        if (capture.Length == 0)
         {
             return FAMatch.Create(-2, null, 0, 0, 0);
         }

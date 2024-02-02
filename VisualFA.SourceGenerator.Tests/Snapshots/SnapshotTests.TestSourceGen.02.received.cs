@@ -1,4 +1,5 @@
 ﻿//HintName: FARunnerMethods.g.cs
+#nullable disable
 namespace Tests
 {
     partial class TestSource
@@ -15,7 +16,7 @@ namespace Tests
         // [LexRule(@"%", Id = 9, Symbol = @"modulo")]
         internal static partial FATextReaderDfaTableRunner Calc(System.IO.TextReader text)
         {
-            var result = new FATextReaderDfaTableRunner(
+            var result = new Tests.FATextReaderDfaTableRunner(
                 new int[] { -1, 
                     9, 
                     46, 
