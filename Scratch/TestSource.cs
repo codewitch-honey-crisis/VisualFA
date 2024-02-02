@@ -9,6 +9,10 @@ namespace Tests
  
     partial class TestSource
     {
+        // Declare a lexer. Here we specify the rules and the type of lexer
+        // as indicated by FARule attributes and the return type
+        // shared dependency code is automatically generated as needed.
+        // It won't be generated if your code references VisualFA.
         [FARule(@"\/\*",Symbol="commentBlock",BlockEnd=@"\*\/")]
         [FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
         [FARule(@"[ \t\r\n]+", Symbol = "whiteSpace")]
@@ -19,7 +23,6 @@ namespace Tests
         [FARule(@"\*", Symbol = "multiply")]
         [FARule(@"\/", Symbol = "divide")]
         [FARule(@"%", Symbol = "modulo")]
-        internal static partial VisualFA.FATextReaderDfaTableRunner Calc(TextReader text);
-        //public partial static FAStringRunner CalcRunner(string text);
+        internal static partial FATextReaderRunner Calc(TextReader text);
     }
 }

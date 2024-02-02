@@ -11,7 +11,7 @@ partial struct FAMatch
     /// <summary>
     /// The matched value
     /// </summary>
-    public string? Value;
+    public string Value;
     /// <summary>
     /// The position of the match within the codepoint series - this may not be the same as the character position due to surrogates
     /// </summary>
@@ -73,7 +73,7 @@ partial struct FAMatch
     /// <param name="column">The column</param>
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static FAMatch Create(int symbolId, string? value, long position, int line, int column)
+    public static FAMatch Create(int symbolId, string value, long position, int line, int column)
     {
         FAMatch result = default(FAMatch);
         result.SymbolId = symbolId;

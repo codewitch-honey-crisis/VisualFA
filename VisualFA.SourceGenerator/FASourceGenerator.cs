@@ -13,7 +13,10 @@ namespace VisualFA
     [Generator]
     public class FASourceGenerator : IIncrementalGenerator
     {
-        public const string AttributeImpl = @"namespace VisualFA
+        const string NullableOff = @"#nullable disable
+";
+        const string AttributeImpl = @"#nullable disable
+namespace VisualFA
 {
     [System.AttributeUsage(System.AttributeTargets.Method,AllowMultiple = true,Inherited = false)]
     class FARuleAttribute : System.Attribute
@@ -608,6 +611,7 @@ namespace VisualFA
         }
         static void _Execute(Compilation compilation, ImmutableArray<MethodDeclarationSyntax> methods, SourceProductionContext context)
         {
+            
             if (methods.IsDefaultOrEmpty)
             {
                 // nothing to do yet
@@ -916,6 +920,7 @@ namespace VisualFA
                 var clstab = "";
                 var mtab = "    ";
                 var sb = new StringBuilder();
+                sb.Append(NullableOff);
                 var trailingBrace= false;
                 for(int i = 0;i<methodsToGenerate.Count;++i)
                 {
@@ -1064,6 +1069,7 @@ namespace VisualFA
                 if (sharedNsMap.Count > 0)
                 {
                     var nssb = new StringBuilder();
+                    nssb.Append(NullableOff);
                     foreach (var kvp in sharedNsMap)
                     {
                         if (!string.IsNullOrEmpty(kvp.Key))
@@ -1077,6 +1083,7 @@ namespace VisualFA
                             nssb.AppendLine(kvp.Value.ToString());
                         }
                     }
+                    
                     context.AddSource("FARunnerShared.g.cs", SourceText.From(nssb.ToString(), Encoding.UTF8));
                 }
                 

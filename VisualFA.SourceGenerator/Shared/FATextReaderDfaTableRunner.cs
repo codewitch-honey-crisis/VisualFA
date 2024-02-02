@@ -1,8 +1,8 @@
 ﻿partial class FATextReaderDfaTableRunner : FATextReaderRunner
 {
     private readonly int[] _dfa;
-    private readonly int[][]? _blockEnds;
-    public FATextReaderDfaTableRunner(int[] dfa, int[][]? blockEnds = null)
+    private readonly int[][] _blockEnds;
+    public FATextReaderDfaTableRunner(int[] dfa, int[][] blockEnds = null)
     {
         _dfa = dfa;
         _blockEnds = blockEnds;
@@ -60,7 +60,7 @@
         if (acc != -1)
         {
             int sym = acc;
-            int[]? be = (_blockEnds != null && _blockEnds.Length > acc) ? _blockEnds[acc] : null;
+            int[] be = (_blockEnds != null && _blockEnds.Length > acc) ? _blockEnds[acc] : null;
             if (be != null)
             {
                 state = 0;

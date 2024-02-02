@@ -9,8 +9,6 @@
 	<ItemGroup>
 
 		<ProjectReference Include="..\VisualFA.SourceGenerator\VisualFA.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-
-		<ProjectReference Include="..\VisualFA\VisualFA.csproj" />
 	</ItemGroup>
   <ItemGroup>
     <Compile Update="TestSource.cs">
