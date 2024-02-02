@@ -638,65 +638,72 @@ namespace VisualFA
   
             if (!vfaReffed)
             {
-                IEnumerable<SyntaxNode> allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
-                foreach (var node in allNodes)
+                var vfarunner = compilation.GetTypeByMetadataName(FARunnerFullName);
+                if (vfarunner == null)
                 {
-                    if (node.IsKind(SyntaxKind.ClassDeclaration))
+                    IEnumerable<SyntaxNode> allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
+                    foreach (var node in allNodes)
                     {
-                        var classDecl = node as ClassDeclarationSyntax;
-                        if (classDecl!.Identifier.Text == FAStringRunnerName)
+                        if (node.IsKind(SyntaxKind.ClassDeclaration))
                         {
-                            var ns = _GetNamespace(classDecl);
-                            if (ns == "VisualFA")
+                            var classDecl = node as ClassDeclarationSyntax;
+                            if (classDecl!.Identifier.Text == FAStringRunnerName)
                             {
-                                vfaReffed = true;
-                                sharedCodeReaderNS = null;
-                                sharedCodeStringNS = null;
-                                sharedCodeRunnerNS = null;
-                                sharedCodeStringTableNS = null;
-                                sharedCodeReaderTableNS = null;
+                                var ns = _GetNamespace(classDecl);
+                                if (ns == "VisualFA")
+                                {
+                                    vfaReffed = true;
+                                    sharedCodeReaderNS = null;
+                                    sharedCodeStringNS = null;
+                                    sharedCodeRunnerNS = null;
+                                    sharedCodeStringTableNS = null;
+                                    sharedCodeReaderTableNS = null;
+                                    break;
+                                }
+                                sharedCodeStringNS = ns;
                                 break;
                             }
-                            sharedCodeStringNS = ns;
-                            break;
-                        }
-                        else if (classDecl!.Identifier.Text == FATextReaderRunnerName)
-                        {
-                            var ns = _GetNamespace(classDecl);
-                            if (ns == "VisualFA")
+                            else if (classDecl!.Identifier.Text == FATextReaderRunnerName)
                             {
-                                vfaReffed = true;
-                                sharedCodeReaderNS = null;
-                                sharedCodeStringNS = null;
-                                sharedCodeRunnerNS = null;
-                                sharedCodeStringTableNS = null;
-                                sharedCodeReaderTableNS = null;
+                                var ns = _GetNamespace(classDecl);
+                                if (ns == "VisualFA")
+                                {
+                                    vfaReffed = true;
+                                    sharedCodeReaderNS = null;
+                                    sharedCodeStringNS = null;
+                                    sharedCodeRunnerNS = null;
+                                    sharedCodeStringTableNS = null;
+                                    sharedCodeReaderTableNS = null;
+                                    break;
+                                }
+                                sharedCodeReaderNS = ns;
                                 break;
                             }
-                            sharedCodeReaderNS = ns;
-                            break;
-                        }
-                        else if (classDecl!.Identifier.Text == FARunnerName)
-                        {
-                            var ns = _GetNamespace(classDecl);
-                            if (ns == "VisualFA")
+                            else if (classDecl!.Identifier.Text == FARunnerName)
                             {
-                                vfaReffed = true;
-                                sharedCodeReaderNS = null;
-                                sharedCodeStringNS = null;
-                                sharedCodeRunnerNS = null;
-                                sharedCodeStringTableNS = null;
-                                sharedCodeReaderTableNS = null;
+                                var ns = _GetNamespace(classDecl);
+                                if (ns == "VisualFA")
+                                {
+                                    vfaReffed = true;
+                                    sharedCodeReaderNS = null;
+                                    sharedCodeStringNS = null;
+                                    sharedCodeRunnerNS = null;
+                                    sharedCodeStringTableNS = null;
+                                    sharedCodeReaderTableNS = null;
+                                    break;
+                                }
+                                sharedCodeRunnerNS = ns;
                                 break;
                             }
-                            sharedCodeRunnerNS = ns;
-                            break;
-                        }
-                        if (sharedCodeStringNS != null && sharedCodeReaderNS != null && sharedCodeRunnerNS!=null)
-                        {
-                            break;
+                            if (sharedCodeStringNS != null && sharedCodeReaderNS != null && sharedCodeRunnerNS != null)
+                            {
+                                break;
+                            }
                         }
                     }
+                } else
+                {
+                    vfaReffed = true;
                 }
                 if (sharedCodeRunnerNS==null)
                 {

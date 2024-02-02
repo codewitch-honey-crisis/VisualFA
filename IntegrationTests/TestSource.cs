@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using VisualFA;
+﻿using VisualFA;
 namespace IntegrationTests
 {
 
@@ -53,7 +48,11 @@ namespace IntegrationTests
         [FARule(@"\/", Symbol = "divide")]
         [FARule(@"%", Symbol = "modulo")]
         internal static partial FAStringDfaTableRunner CalcStringTableRunner(string text);
-
+        public static bool CompareResults(FARunner runner, KeyValuePair<string, FAMatch[]> test)
+        {
+            var list = new List<FAMatch>(runner);
+            return EqualsMatches(list, test.Value);
+        }
         public static bool EqualsMatch(FAMatch lhs, FAMatch rhs)
         {
             if (lhs.SymbolId != rhs.SymbolId) return false;

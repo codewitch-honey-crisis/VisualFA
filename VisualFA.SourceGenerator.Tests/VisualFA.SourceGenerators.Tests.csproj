@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\VisualFA.brick.cs" Link="VisualFA.brick.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="TestSource.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -44,6 +40,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VisualFA.SourceGenerator\VisualFA.SourceGenerator.csproj" />
+    <ProjectReference Include="..\VisualFA\VisualFA.csproj" />
   </ItemGroup>
 
   <ItemGroup>
