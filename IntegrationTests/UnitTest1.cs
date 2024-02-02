@@ -1,7 +1,7 @@
 namespace IntegrationTests; 
 using Xunit;
 
-public class EnumExtensionsTests
+public class GeneratedRunnerTests
 {
     [Theory]
     [InlineData("the 10 quick brown #@%$! foxes jumped over 1.5 lazy dogs")]
