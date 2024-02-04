@@ -64,7 +64,7 @@ The base class of your lexer can be one of several values each providing a consi
 1. `FAStringRunner` - a compiled tokenizer/lexer that works on strings
 2. `FATextReaderRunner` - a compiled tokenizer/lexer that works on TextReaders
 3. `FAStringDfaTableRunner` - a table driven tokenizer/lexer that works on strings
-4. `FATextReaderDfaTableRunner` - a table driven tokenizer/lexer that works on strings
+4. `FATextReaderDfaTableRunner` - a table driven tokenizer/lexer that works on TextReaders
 
 The other alternative is to use `[FARule(...}]` on a partial method. This will create the runner for you, and implement its class behind the scenes
 
