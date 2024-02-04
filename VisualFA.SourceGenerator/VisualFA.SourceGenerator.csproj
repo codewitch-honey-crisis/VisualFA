@@ -29,6 +29,7 @@
 		<AssemblyVersion>1.1.0.0</AssemblyVersion>
 		<FileVersion>$(AssemblyVersion)</FileVersion>
 		<Version>$(AssemblyVersion)</Version>
+		<PackageProjectUrl>https://www.codeproject.com/Articles/5376805/Visual-FA-Part-4-Generating-matchers-and-lexers-wi</PackageProjectUrl>
 	</PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
 
@@ -68,10 +69,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="..\VisualFA_icon.jpg">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -87,5 +84,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>
