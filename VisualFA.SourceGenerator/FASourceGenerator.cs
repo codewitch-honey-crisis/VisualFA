@@ -688,16 +688,13 @@ namespace VisualFA
 
             string sharedCodeRunnerNS, sharedCodeStringNS, sharedCodeStringTableNS, sharedCodeReaderNS, sharedCodeReaderTableNS, faMatch;
             Dictionary<string, StringBuilder> sharedNsMap;
-            _ProcessExistingSharedCode(compilation, 
-                ref members, 
-                ref vfaReffed, 
-                out sharedCodeRunnerNS, 
-                out sharedCodeStringNS, 
-                out sharedCodeStringTableNS, 
-                out sharedCodeReaderNS, 
-                out sharedCodeReaderTableNS, 
-                out faMatch, 
-                out sharedNsMap);
+            sharedCodeRunnerNS = null;
+            sharedCodeStringNS = null;
+            sharedCodeStringTableNS = null;
+            sharedCodeReaderNS = null;
+            sharedCodeReaderTableNS = null;
+            faMatch = null;
+            sharedNsMap = new Dictionary<string, StringBuilder>();
 
             // Create a dummy diagnostic, just for demonstration purposes
             // context.ReportDiagnostic(CreateDiagnostic(enums[0]));
@@ -1107,130 +1104,6 @@ namespace VisualFA
                     context.AddSource("FARunnerMethods.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
                 }
                 
-            }
-        }
-
-        private static void _ProcessExistingSharedCode(Compilation compilation, ref ImmutableArray<MemberDeclarationSyntax> members, ref bool vfaReffed, out string sharedCodeRunnerNS, out string sharedCodeStringNS, out string sharedCodeStringTableNS, out string sharedCodeReaderNS, out string sharedCodeReaderTableNS, out string faMatch, out Dictionary<string, StringBuilder> sharedNsMap)
-        {
-            
-            sharedCodeRunnerNS = null;
-            sharedCodeStringNS = null;
-            sharedCodeStringTableNS = null;
-            sharedCodeReaderNS = null;
-            sharedCodeReaderTableNS = null;
-            faMatch = null;
-            sharedNsMap = new Dictionary<string, StringBuilder>();
-            return;
-            if (!vfaReffed)
-            {
-                var vfarunner = compilation.GetTypeByMetadataName(FARunnerFullName);
-                if (vfarunner == null)
-                {
-                    IEnumerable<SyntaxNode> allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
-                    foreach (var node in allNodes)
-                    {
-                        if (node.IsKind(SyntaxKind.ClassDeclaration))
-                        {
-                            var classDecl = node as ClassDeclarationSyntax;
-                            if (classDecl!.Identifier.Text == FAStringRunnerName)
-                            {
-                                var ns = _GetNamespace(classDecl);
-                                if (ns == "VisualFA")
-                                {
-                                    vfaReffed = true;
-                                    sharedCodeReaderNS = null;
-                                    sharedCodeStringNS = null;
-                                    sharedCodeRunnerNS = null;
-                                    sharedCodeStringTableNS = null;
-                                    sharedCodeReaderTableNS = null;
-                                    break;
-                                }
-                                sharedCodeStringNS = ns;
-                                break;
-                            }
-                            else if (classDecl!.Identifier.Text == FATextReaderRunnerName)
-                            {
-                                var ns = _GetNamespace(classDecl);
-                                if (ns == "VisualFA")
-                                {
-                                    vfaReffed = true;
-                                    sharedCodeReaderNS = null;
-                                    sharedCodeStringNS = null;
-                                    sharedCodeRunnerNS = null;
-                                    sharedCodeStringTableNS = null;
-                                    sharedCodeReaderTableNS = null;
-                                    break;
-                                }
-                                sharedCodeReaderNS = ns;
-                                break;
-                            }
-                            else if (classDecl!.Identifier.Text == FARunnerName)
-                            {
-                                var ns = _GetNamespace(classDecl);
-                                if (ns == "VisualFA")
-                                {
-                                    vfaReffed = true;
-                                    sharedCodeReaderNS = null;
-                                    sharedCodeStringNS = null;
-                                    sharedCodeRunnerNS = null;
-                                    sharedCodeStringTableNS = null;
-                                    sharedCodeReaderTableNS = null;
-                                    break;
-                                }
-                                sharedCodeRunnerNS = ns;
-                                break;
-                            }
-                            if (sharedCodeStringNS != null && sharedCodeReaderNS != null && sharedCodeRunnerNS != null)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    vfaReffed = true;
-                }
-                
-                if (sharedCodeRunnerNS == null)
-                {
-                    var bt = members[0] as BaseTypeDeclarationSyntax;
-                    if (bt != null)
-                    {
-                        var ns = _GetNamespace(bt);
-                        StringBuilder sharedSb;
-                        sharedNsMap.TryGetValue(ns, out sharedSb);
-                        if (sharedSb == null)
-                        {
-                            sharedSb = new StringBuilder();
-                            sharedNsMap.Add(ns, sharedSb);
-                        }
-                        sharedCodeRunnerNS = ns;
-                        var tab = "";
-                        if (!string.IsNullOrEmpty(ns))
-                        {
-                            tab = "    ";
-                        }
-                        using (var sr = _GetResource("FAMatch.cs"))
-                        {
-                            string line;
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                sharedSb.AppendLine(tab + line);
-                            }
-                        }
-                        using (var sr = _GetResource("FARunner.cs"))
-                        {
-                            string line;
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                sharedSb.AppendLine(tab + line);
-                            }
-                        }
-                        faMatch = string.IsNullOrEmpty(ns) ? FAMatchName : ns + "." + FAMatchName;
-                    }
-
-                }
             }
         }
 
