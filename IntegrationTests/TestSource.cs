@@ -1,6 +1,21 @@
 ﻿using VisualFA;
 namespace IntegrationTests
 {
+    
+    [FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
+    [FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
+    [FARule(@"[ \t\r\n]+", Symbol = "whiteSpace")]
+    [FARule(@"[A-Za-z_][A-Za-z0-9_]*", Symbol = "identifier")]
+    [FARule(@"(0|([1-9][0-9]*))((\.[0-9]+[Ee]\-?[1-9][0-9]*)?|\.[0-9]+)", Symbol = "number")]
+    [FARule(@"\+", Symbol = "plus")]
+    [FARule(@"\-", Symbol = "minus")]
+    [FARule(@"\*", Symbol = "multiply")]
+    [FARule(@"\/", Symbol = "divide")]
+    [FARule(@"%", Symbol = "modulo")]
+    partial class FooLexer : FAStringDfaTableRunner
+    {
+
+    }
 
     partial class TestSource
     {
@@ -74,7 +89,7 @@ namespace IntegrationTests
             }
             return true;
         }
-        public static readonly KeyValuePair<string, FAMatch[]> Test1 = new KeyValuePair<string, FAMatch[]>("the 10 quick brown #@%$! foxes jumped over 1.5 lazy dogs",new FAMatch[] {
+        public static readonly KeyValuePair<string, FAMatch[]> Test1 = new KeyValuePair<string, FAMatch[]>("the 10 quick brown #@%$! foxes jumped over 1.5 lazy dogs", new FAMatch[] {
                 FAMatch.Create(3,"the",0,1,1),
                 FAMatch.Create(2," ",3,1,4),
                 FAMatch.Create(4,"10",4,1,5),

@@ -41,11 +41,9 @@ namespace Example {
             goto q0;
         }
         public override FAMatch NextMatch() {
-            int ch;
             int p;
             int l;
             int c;
-            ch = -1;
             this.capture.Clear();
             if ((this.current == -2)) {
                 this.Advance();

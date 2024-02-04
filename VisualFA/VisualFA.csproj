@@ -6,6 +6,21 @@
     <Nullable>disable</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+    <Title>Visual FA</Title>
+    <Authors>honey the codewitch</Authors>
+    <Product>$(Title)</Product>
+    <Description>A DFA based regular expression library, lexer engine, compiler, and code generator</Description>
+    <Copyright>Copyright (C) 2024 by honey the codewitch</Copyright>
+    <PackageProjectUrl>https://www.codeproject.com/Articles/5375797/Visual-FA-Part-1-Understanding-Finite-Automata</PackageProjectUrl>
+    <PackageIcon>VisualFA_icon.jpg</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/codewitch-honey-crisis/VisualFA</RepositoryUrl>
+    <PackageTags>dfa; regex; fa;</PackageTags>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <Version>$(AssemblyVersion)</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,5 +34,20 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="&quot;$(SolutionDir)csbrick.exe&quot; &quot;$(ProjectDir)VisualFA.csproj&quot; /output &quot;$(SolutionDir)VisualFA.brick.cs&quot;" />
   </Target>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\VisualFA_icon.jpg">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
