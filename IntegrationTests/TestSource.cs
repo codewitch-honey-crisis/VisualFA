@@ -12,7 +12,7 @@ namespace IntegrationTests
     [FARule(@"\*", Symbol = "multiply")]
     [FARule(@"\/", Symbol = "divide")]
     [FARule(@"%", Symbol = "modulo")]
-    partial class FooLexer : FAStringDfaTableRunner
+    partial class FooLexer : FAStringRunner
     {
 
     }
