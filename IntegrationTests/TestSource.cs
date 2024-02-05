@@ -12,6 +12,7 @@ namespace IntegrationTests
     [FARule(@"\*", Symbol = "multiply")]
     [FARule(@"\/", Symbol = "divide")]
     [FARule(@"%", Symbol = "modulo")]
+    [FARule("\"([^\\n\"\\\\]|\\\\([btrnf\"\\\\/]|(u[0-9A-Fa-f]{4})))*\"", Symbol = "string")]
     partial class FooLexer : FAStringRunner
     {
 
@@ -29,6 +30,7 @@ namespace IntegrationTests
         [FARule(@"\*", Symbol = "multiply")]
         [FARule(@"\/", Symbol = "divide")]
         [FARule(@"%", Symbol = "modulo")]
+        [FARule("\"([^\\n\"\\\\]|\\\\([btrnf\"\\\\/]|(u[0-9A-Fa-f]{4})))*\"", Symbol = "string")]
         internal static partial FATextReaderRunner CalcTextReaderRunner(TextReader text);
         [FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
         [FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
@@ -40,6 +42,7 @@ namespace IntegrationTests
         [FARule(@"\*", Symbol = "multiply")]
         [FARule(@"\/", Symbol = "divide")]
         [FARule(@"%", Symbol = "modulo")]
+        [FARule("\"([^\\n\"\\\\]|\\\\([btrnf\"\\\\/]|(u[0-9A-Fa-f]{4})))*\"", Symbol = "string")]
         internal static partial FAStringRunner CalcStringRunner(string text);
         [FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
         [FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
@@ -51,6 +54,7 @@ namespace IntegrationTests
         [FARule(@"\*", Symbol = "multiply")]
         [FARule(@"\/", Symbol = "divide")]
         [FARule(@"%", Symbol = "modulo")]
+        [FARule("\"([^\\n\"\\\\]|\\\\([btrnf\"\\\\/]|(u[0-9A-Fa-f]{4})))*\"", Symbol = "string")]
         internal static partial FATextReaderDfaTableRunner CalcTextReaderTableRunner(TextReader text);
         [FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
         [FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
@@ -62,6 +66,7 @@ namespace IntegrationTests
         [FARule(@"\*", Symbol = "multiply")]
         [FARule(@"\/", Symbol = "divide")]
         [FARule(@"%", Symbol = "modulo")]
+        [FARule("\"([^\\n\"\\\\]|\\\\([btrnf\"\\\\/]|(u[0-9A-Fa-f]{4})))*\"", Symbol = "string")]
         internal static partial FAStringDfaTableRunner CalcStringTableRunner(string text);
         public static bool CompareResults(FARunner runner, KeyValuePair<string, FAMatch[]> test)
         {

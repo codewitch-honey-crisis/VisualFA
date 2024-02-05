@@ -179,7 +179,7 @@ namespace VisualFA
             var s= sb.ToString();
             if(_IsKeyword(s))
             {
-                return "@" + s;
+                return "_" + s;
             }
             return s;
         }
