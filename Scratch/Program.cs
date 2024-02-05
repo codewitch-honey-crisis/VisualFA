@@ -3,8 +3,10 @@ namespace Scratch
 {
     internal class Program
     {
+
         static void Main(string[] args)
         {
+          
             var exp = "the 10 quick brown #@%$! foxes jumped over 1.5 lazy dogs";
             foreach (var match in TestSource.Calc(new StringReader(exp)))
             {

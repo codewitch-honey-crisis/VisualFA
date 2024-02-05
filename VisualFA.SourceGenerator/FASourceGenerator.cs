@@ -51,6 +51,35 @@ namespace VisualFA
         private const string TextReaderName = "TextReader";
         private const string TextReaderFullName = "System.IO.TextReader";
         private const string StringFullName = "string";
+        private static readonly string[][] _keywords = new string[9][] {
+    new string[] {"as", "do", "if", "is" },
+    new string[] {"for", "get", "int", "new", "out", "ref", "set", "try", "var" },
+    new string[] {"base", "bool", "byte", "case", "char", "else", "enum", "goto", "lock", "long", "null", "this", "true", "uint", "void" },
+    new string[] {"async", "await", "break", "catch", "class", "const", "event", "false", "fixed", "float", "sbyte", "short", "throw", "ulong", "using", "while", "yield" },
+    new string[] {"double", "equals", "extern", "global", "object", "params", "public", "return", "sealed", "sizeof", "static", "string", "struct", "switch", "typeof", "unsafe", "ushort" },
+    new string[] {"checked", "decimal", "default", "dynamic", "finally", "foreach", "partial", "private", "virtual" },
+    new string[] {"abstract", "continue", "delegate", "explicit", "implicit", "internal", "operator", "override", "readonly", "volatile" },
+    new string[] {"ascending", "interface", "namespace", "protected", "unchecked" },
+    new string[] {"descending", "stackalloc" }
+};
+        static bool _IsKeyword(string ident)
+        {
+            if (string.IsNullOrWhiteSpace(ident)) return false;
+            for (int i = 0; i < _keywords.Length; i++)
+            {
+                var ka = _keywords[i];
+                if (ka[0].Length > ident.Length) return false;
+                if (ka[0].Length == ident.Length)
+                {
+                    var idx = Array.BinarySearch<string>(ka, ident);
+                    if (idx > -1)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         static bool _IsSyntaxTargetForGeneration(SyntaxNode node)
         => ((node is MethodDeclarationSyntax m && m.AttributeLists.Count > 0)|| (node is TypeDeclarationSyntax t && t.AttributeLists.Count > 0));
         static MemberDeclarationSyntax _GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
@@ -147,7 +176,12 @@ namespace VisualFA
                 else
                     sb.Append('_');
             }
-            return sb.ToString();
+            var s= sb.ToString();
+            if(_IsKeyword(s))
+            {
+                return "@" + s;
+            }
+            return s;
         }
         static void _GenerateRangesExpression(string cmp,IList<FARange> ranges,StringBuilder sb)
         {
