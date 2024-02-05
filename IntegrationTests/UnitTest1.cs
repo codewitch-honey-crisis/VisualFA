@@ -33,6 +33,7 @@ public class GeneratedRunnerTests
     {
         var fooLexer = new FooLexer();
         fooLexer.Set(value);
+        
         Assert.True(TestSource.CompareResults(fooLexer, TestSource.Test1));
     }
 }
