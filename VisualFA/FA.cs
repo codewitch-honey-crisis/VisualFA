@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 
+using static System.Net.Mime.MediaTypeNames;
+
 namespace VisualFA
 {
 	#region FAMatch
@@ -2163,6 +2165,63 @@ namespace VisualFA
 					pairs.RemoveAt(i);
 					--i; // compensated for by ++i in for loop
 				}
+			}
+		}
+		static IEnumerable<FARange> _InvertRanges(IEnumerable<FARange> ranges)
+		{
+			if (ranges == null)
+			{
+				yield break;
+			}
+			var last = 0x10ffff;
+
+			using (var e = ranges.GetEnumerator())
+			{
+				if (!e.MoveNext())
+				{
+					FARange range;
+					range.Min = 0;
+					range.Max = 0x10ffff;
+					yield return range;
+					yield break;
+				}
+				if (e.Current.Min > 0)
+				{
+					FARange range;
+					range.Min = 0;
+					range.Max = e.Current.Min - 1;
+					yield return range;
+					last = e.Current.Max;
+					if (0x10ffff <= last)
+						yield break;
+				}
+				else if (e.Current.Min == 0)
+				{
+					last = e.Current.Max;
+					if (0x10ffff <= last)
+						yield break;
+				}
+				while (e.MoveNext())
+				{
+					if (0x10ffff <= last)
+						yield break;
+					if (unchecked(last + 1) < e.Current.Min)
+					{
+						FARange range;
+						range.Min = unchecked(last + 1);
+						range.Max = unchecked((e.Current.Min - 1));
+						yield return range;
+					}
+					last = e.Current.Max;
+				}
+				if (0x10ffff > last)
+				{
+					FARange range;
+					range.Min = unchecked((last + 1));
+					range.Max = 0x10ffff;
+					yield return range;
+				}
+
 			}
 		}
 		/// <summary>

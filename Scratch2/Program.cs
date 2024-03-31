@@ -5,18 +5,14 @@ namespace Scratch2
    {
         static void Main(string[] args)
         {
-            var commentBlock = FA.Parse(@"\/\*", 0);//, Symbol = "commentBlock", BlockEnd = @"\*\/")]
-            var commentLine = FA.Parse(@"\/\/[^\n]*", 1);
-            var whiteSpace = FA.Parse(@"[ \t\r\n]+", 2);
-            var identifier = FA.Parse(@"[A-Za-z_][A-Za-z0-9_]*", 3);
-            var number = FA.Parse(@"(0|([1-9][0-9]*))((\.[0-9]+[Ee]\-?[1-9][0-9]*)?|\.[0-9]+)", 3);
-            var plus = FA.Parse(@"\+",4);
-            var minus = FA.Parse(@"\-",5);
-            var multiply = FA.Parse(@"\*",6);
-            var divide = FA.Parse(@"\/",7);
-            var modulo = FA.Parse(@"%", 8);
-
-            Console.WriteLine("Hello, World!");
-        }
+            var number = FA.Parse(@"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?");
+            var boolean = FA.Parse("true|false");
+            var @null = FA.Parse("null");
+            var @string = FA.Parse(@"""([^\n""\\]|\\([btrnf""\\/]|(u[0-9A-Fa-f]{4})))*""");
+            var dgo = new FADotGraphOptions();
+            dgo.HideAcceptSymbolIds = true;
+			@string = @string.ToMinimizedDfa();
+			@string.RenderToFile(@"..\..\..\string.jpg", dgo);
+		}
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
 using System.IO;
 using System.Text;
 
@@ -190,7 +189,15 @@ namespace VisualFA
 					writer.Write(di.ToString());
 					writer.Write(" [label=\"");
 					var sb = new StringBuilder();
-					_AppendRangeTo(sb, rngGrp.Value);
+					var notRanges = new List<FARange>(_InvertRanges(rngGrp.Value));
+					if (notRanges.Count > rngGrp.Value.Count)
+					{
+						_AppendRangeTo(sb, rngGrp.Value);
+					} else
+					{
+						sb.Append("^");
+						_AppendRangeTo(sb, notRanges);
+					}
 					if (sb.Length != 1 || " " == sb.ToString())
 					{
 						writer.Write('[');

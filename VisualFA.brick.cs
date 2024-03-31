@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Diagnostics;
-using System.Dynamic;
 namespace VisualFA{partial class FA{public partial class CharacterClasses{public static int[][]UnicodeCategories=new int[][]{new int[]{65,90,192,214,216,
 222,256,256,258,258,260,260,262,262,264,264,266,266,268,268,270,270,272,272,274,274,276,276,278,278,280,280,282,282,284,284,286,286,288,288,290,290,292,
 292,294,294,296,296,298,298,300,300,302,302,304,304,306,306,308,308,310,310,313,313,315,315,317,317,319,319,321,321,323,323,325,325,327,327,330,330,332,
@@ -795,7 +794,8 @@ public static int[]word=new int[]{65,90,97,122,170,170,181,181,186,186,192,214,2
 xdigit=new int[]{48,48,57,57,65,65,70,70,97,97,102,102};}}}namespace VisualFA{partial class FA{public partial class CharacterClasses{static Lazy<IDictionary<string,
 int[]>>_Known=new Lazy<IDictionary<string,int[]>>(_GetKnown);static IDictionary<string,int[]>_GetKnown(){var result=new Dictionary<string,int[]>();var
  fa=typeof(CharacterClasses).GetFields();for(var i=0;i<fa.Length;i++){var f=fa[i];if(f.FieldType==typeof(int[])){var a=(int[])f.GetValue(null);System.Diagnostics.Debug.Assert(a
-!=null);result.Add(f.Name,a);}}return result;}public static IDictionary<string,int[]>Known{get{return _Known.Value;}}}}}namespace VisualFA{
+!=null);result.Add(f.Name,a);}}return result;}public static IDictionary<string,int[]>Known{get{return _Known.Value;}}}}}System.Net.Mime.MediaTypeNames;
+namespace VisualFA{
 #region FAMatch
 /// <summary>
 /// Represents a match from <code>FARunner.MatchNext()</code>
@@ -1360,7 +1360,12 @@ public IDictionary<FA,IList<FARange>>FillInputTransitionRangesGroupedByState(boo
 l;if(!result.TryGetValue(trns.To,out l)){l=new List<FARange>();result.Add(trns.To,l);}l.Add(new FARange(trns.Min,trns.Max));}foreach(var item in result)
 {((List<FARange>)item.Value).Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return c;return x.Max.CompareTo(y.Max);});_NormalizeSortedRangeList(item.Value);
 }return result;}static void _NormalizeSortedRangeList(IList<FARange>pairs){for(int i=1;i<pairs.Count;++i){if(pairs[i-1].Max+1>=pairs[i].Min){var nr=new
- FARange(pairs[i-1].Min,pairs[i].Max);pairs[i-1]=nr;pairs.RemoveAt(i);--i;}}}/// <summary>
+ FARange(pairs[i-1].Min,pairs[i].Max);pairs[i-1]=nr;pairs.RemoveAt(i);--i;}}}static IEnumerable<FARange>_InvertRanges(IEnumerable<FARange>ranges){if(ranges
+==null){yield break;}var last=0x10ffff;using(var e=ranges.GetEnumerator()){if(!e.MoveNext()){FARange range;range.Min=0;range.Max=0x10ffff;yield return
+ range;yield break;}if(e.Current.Min>0){FARange range;range.Min=0;range.Max=e.Current.Min-1;yield return range;last=e.Current.Max;if(0x10ffff<=last)yield
+ break;}else if(e.Current.Min==0){last=e.Current.Max;if(0x10ffff<=last)yield break;}while(e.MoveNext()){if(0x10ffff<=last)yield break;if(unchecked(last
++1)<e.Current.Min){FARange range;range.Min=unchecked(last+1);range.Max=unchecked((e.Current.Min-1));yield return range;}last=e.Current.Max;}if(0x10ffff
+>last){FARange range;range.Min=unchecked((last+1));range.Max=0x10ffff;yield return range;}}}/// <summary>
 /// Retrieves all transition indices given a specified UTF32 codepoint
 /// </summary>
 /// <param name="codepoint">The codepoint</param>
@@ -1604,23 +1609,24 @@ var neutrals=new List<FA>();foreach(var ffa in closure){if(ffa.IsAccepting){acce
 _Seen);}if(null!=toStates){toStates=FillEpsilonClosure(toStates,null);}else{toStates=fromStates;}int i=0;foreach(var ffa in closure){var isfrom=null!=fromStates
 &&FillEpsilonClosure(fromStates,null).Contains(ffa);var rngGrps=ffa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var istrns
 =isfrom&&null!=toStates&&options.DebugString!=null&&toStates.Contains(rngGrp.Key);var di=closure.IndexOf(rngGrp.Key);writer.Write(pfx+spfx);writer.Write(i);
-writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();_AppendRangeTo(sb,rngGrp.Value);
-if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');
-}else writer.Write(_EscapeLabel(sb.ToString()));if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach(var fat in ffa._transitions)
-{if(fat.Min==-1&&fat.Max==-1){var istrns=null!=toStates&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);writer.Write(pfx
-+spfx);writer.Write(i);writer.Write("->");writer.Write(pfx+spfx);writer.Write(closure.IndexOf(fat.To));if(!istrns){writer.WriteLine(" [style=dashed,color=gray]");
-}else{writer.WriteLine(" [style=dashed,color=green]");}}} if(hasBlockEnds&&ffa.IsAccepting&&options.BlockEnds?.Length>ffa.AcceptSymbol&&options.BlockEnds[ffa.AcceptSymbol]
-!=null){writer.Write(pfx+spfx+i.ToString()+"->");writer.Write(pfx+"blockEnd"+ffa.AcceptSymbol.ToString()+spfx+"0");writer.WriteLine(" [style=dashed,label=\".*?\"]");
-}++i;}string delim;if(hasBlockEnds){for(i=0;i<options.BlockEnds?.Length;i++){var bfa=options.BlockEnds[i];if(bfa!=null){var bclose=bfa.FillClosure();delim
-="";for(var qi=0;qi<bclose.Count;++qi){var cbfa=bclose[qi];var rngGrps=cbfa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var
- di=bclose.IndexOf(rngGrp.Key);writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());writer.Write("->");writer.Write(pfx+"blockEnd"+i.ToString()
-+spfx+di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();_AppendRangeTo(sb,rngGrp.Value);if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');
-if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');}else{writer.Write(_EscapeLabel(sb.ToString()));
-}writer.WriteLine("\"]");} foreach(var fat in cbfa._transitions){if(fat.Min==-1&&fat.Max==-1){writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());
-writer.Write("->");var di=bclose.IndexOf(fat.To);writer.Write(pfx+"blockEnd"+i.ToString()+spfx+di.ToString());writer.WriteLine(" [style=dashed,color=gray]");
-}}}for(var qi=0;qi<bclose.Count;++qi){var cbfa=bclose[qi];writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString()+" [label=<");writer.Write("<TABLE BORDER=\"0\"><TR><TD>");
-writer.Write("(be)"+spfx);writer.Write("<SUB>");writer.Write(qi);writer.Write("</SUB></TD></TR>");if(cbfa.IsAccepting&&!options.HideAcceptSymbolIds){writer.Write("<TR><TD>");
-string acc=null;if(options.AcceptSymbolNames!=null&&options.AcceptSymbolNames.Length>i){acc=options.AcceptSymbolNames[i];}if(acc==null){acc=Convert.ToString(i);
+writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();var notRanges=new List<FARange>(_InvertRanges(rngGrp.Value));
+if(notRanges.Count>rngGrp.Value.Count){_AppendRangeTo(sb,rngGrp.Value);}else{sb.Append("^");_AppendRangeTo(sb,notRanges);}if(sb.Length!=1||" "==sb.ToString())
+{writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');}else writer.Write(_EscapeLabel(sb.ToString()));
+if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach(var fat in ffa._transitions){if(fat.Min==-1&&fat.Max==-1){var istrns
+=null!=toStates&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);writer.Write(pfx+spfx);writer.Write(i);writer.Write("->");
+writer.Write(pfx+spfx);writer.Write(closure.IndexOf(fat.To));if(!istrns){writer.WriteLine(" [style=dashed,color=gray]");}else{writer.WriteLine(" [style=dashed,color=green]");
+}}} if(hasBlockEnds&&ffa.IsAccepting&&options.BlockEnds?.Length>ffa.AcceptSymbol&&options.BlockEnds[ffa.AcceptSymbol]!=null){writer.Write(pfx+spfx+i.ToString()+"->");
+writer.Write(pfx+"blockEnd"+ffa.AcceptSymbol.ToString()+spfx+"0");writer.WriteLine(" [style=dashed,label=\".*?\"]");}++i;}string delim;if(hasBlockEnds)
+{for(i=0;i<options.BlockEnds?.Length;i++){var bfa=options.BlockEnds[i];if(bfa!=null){var bclose=bfa.FillClosure();delim="";for(var qi=0;qi<bclose.Count;
+++qi){var cbfa=bclose[qi];var rngGrps=cbfa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var di=bclose.IndexOf(rngGrp.Key);
+writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());writer.Write("->");writer.Write(pfx+"blockEnd"+i.ToString()+spfx+di.ToString());writer.Write(" [label=\"");
+var sb=new StringBuilder();_AppendRangeTo(sb,rngGrp.Value);if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");
+}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');}else{writer.Write(_EscapeLabel(sb.ToString()));}writer.WriteLine("\"]");} foreach(var fat
+ in cbfa._transitions){if(fat.Min==-1&&fat.Max==-1){writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());writer.Write("->");var di=bclose.IndexOf(fat.To);
+writer.Write(pfx+"blockEnd"+i.ToString()+spfx+di.ToString());writer.WriteLine(" [style=dashed,color=gray]");}}}for(var qi=0;qi<bclose.Count;++qi){var cbfa
+=bclose[qi];writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString()+" [label=<");writer.Write("<TABLE BORDER=\"0\"><TR><TD>");writer.Write("(be)"+spfx);
+writer.Write("<SUB>");writer.Write(qi);writer.Write("</SUB></TD></TR>");if(cbfa.IsAccepting&&!options.HideAcceptSymbolIds){writer.Write("<TR><TD>");string
+ acc=null;if(options.AcceptSymbolNames!=null&&options.AcceptSymbolNames.Length>i){acc=options.AcceptSymbolNames[i];}if(acc==null){acc=Convert.ToString(i);
 }writer.Write(acc.Replace("\"","&quot;"));writer.Write("</TD></TR>");}writer.Write("</TABLE>");writer.Write(">");if(cbfa.IsAccepting)writer.Write(",shape=doublecircle");
 else if(cbfa.IsFinal||cbfa.IsNeutral){writer.Write(",color=gray");}writer.WriteLine("]");}}}}delim="";i=0;foreach(var ffa in closure){writer.Write(pfx+spfx);
 writer.Write(i);writer.Write(" [");if(null!=options.DebugString){if(null!=toStates){IList<FA>epstates=FA.FillEpsilonClosure(toStates,null);if(epstates.Contains(ffa))
