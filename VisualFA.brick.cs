@@ -794,8 +794,7 @@ public static int[]word=new int[]{65,90,97,122,170,170,181,181,186,186,192,214,2
 xdigit=new int[]{48,48,57,57,65,65,70,70,97,97,102,102};}}}namespace VisualFA{partial class FA{public partial class CharacterClasses{static Lazy<IDictionary<string,
 int[]>>_Known=new Lazy<IDictionary<string,int[]>>(_GetKnown);static IDictionary<string,int[]>_GetKnown(){var result=new Dictionary<string,int[]>();var
  fa=typeof(CharacterClasses).GetFields();for(var i=0;i<fa.Length;i++){var f=fa[i];if(f.FieldType==typeof(int[])){var a=(int[])f.GetValue(null);System.Diagnostics.Debug.Assert(a
-!=null);result.Add(f.Name,a);}}return result;}public static IDictionary<string,int[]>Known{get{return _Known.Value;}}}}}System.Net.Mime.MediaTypeNames;
-namespace VisualFA{
+!=null);result.Add(f.Name,a);}}return result;}public static IDictionary<string,int[]>Known{get{return _Known.Value;}}}}}namespace VisualFA{
 #region FAMatch
 /// <summary>
 /// Represents a match from <code>FARunner.MatchNext()</code>

@@ -7,8 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 
-using static System.Net.Mime.MediaTypeNames;
-
 namespace VisualFA
 {
 	#region FAMatch
