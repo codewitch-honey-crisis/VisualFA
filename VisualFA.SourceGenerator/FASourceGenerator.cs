@@ -185,7 +185,27 @@ namespace VisualFA
         }
         static void _GenerateRangesExpression(string cmp,IList<FARange> ranges,StringBuilder sb)
         {
-            for (int i = 0;i<ranges.Count;++i) 
+			var inverted = false;
+            var hasEof = false;
+			for(int i = 0;i<ranges.Count;++i)
+            {
+                if(ranges[i].Min==-1)
+                {
+                    hasEof = true; break;
+                }
+            }
+            if (!hasEof)
+            {
+                var notRanges = new List<FARange>(FARange.ToNotRanges(ranges));
+                if (notRanges.Count < ranges.Count)
+                {
+                    inverted = true;
+                    ranges = notRanges;
+                    sb.Append(cmp);
+                    sb.Append(" != -1 && !(");
+                }
+            }
+			for (int i = 0;i<ranges.Count;++i) 
             {
                 if (i!=0)
                 {
@@ -220,6 +240,10 @@ namespace VisualFA
                         sb.Append(')');
                         break;
                 }
+            }
+            if(inverted)
+            {
+                sb.Append(')');
             }
         }
         static void _GenerateBlockEnd(bool isReader,int accept, FA blockEnd, string faMatch, string tab, StringBuilder sb)

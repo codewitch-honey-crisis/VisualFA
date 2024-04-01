@@ -68,6 +68,7 @@ namespace IntegrationTests
         [FARule(@"%", Symbol = "modulo")]
         [FARule("\"([^\\n\"\\\\]|\\\\([btrnf\"\\\\/]|(u[0-9A-Fa-f]{4})))*\"", Symbol = "string")]
         internal static partial FAStringDfaTableRunner CalcStringTableRunner(string text);
+    
         public static bool CompareResults(FARunner runner, KeyValuePair<string, FAMatch[]> test)
         {
             var list = new List<FAMatch>(runner);
@@ -121,4 +122,5 @@ namespace IntegrationTests
             }
             );
     }
+    
 }

@@ -14,19 +14,31 @@ using System.Text;
 using VisualFA;
 
 
-[System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.1.1.0")]
 internal sealed partial class CommentRunner : FAStringRunner {
     private FAMatch _BlockEnd0(ReadOnlySpan<char> s, int cp, int len, int position, int line, int column) {
     q0:
         // [\*]
-        if ((cp == 42)) {
+        if ((((cp == -1) 
+                    == false) 
+                    && ((((cp >= 0) 
+                    && (cp <= 41)) 
+                    || ((cp >= 43) 
+                    && (cp <= 1114111))) 
+                    == false))) {
             this.Advance(s, ref cp, ref len, false);
             goto q1;
         }
         goto errorout;
     q1:
         // [\/]
-        if ((cp == 47)) {
+        if ((((cp == -1) 
+                    == false) 
+                    && ((((cp >= 0) 
+                    && (cp <= 46)) 
+                    || ((cp >= 48) 
+                    && (cp <= 1114111))) 
+                    == false))) {
             this.Advance(s, ref cp, ref len, false);
             goto q2;
         }
@@ -57,37 +69,69 @@ internal sealed partial class CommentRunner : FAStringRunner {
         this.Advance(s, ref ch, ref len, true);
         // q0:
         // [\t-\n\r ]
-        if (((((ch >= 9) 
-                    && (ch <= 10)) 
-                    || (ch == 13)) 
-                    || (ch == 32))) {
+        if ((((ch == -1) 
+                    == false) 
+                    && ((((((ch >= 0) 
+                    && (ch <= 8)) 
+                    || ((ch >= 11) 
+                    && (ch <= 12))) 
+                    || ((ch >= 14) 
+                    && (ch <= 31))) 
+                    || ((ch >= 33) 
+                    && (ch <= 1114111))) 
+                    == false))) {
             this.Advance(s, ref ch, ref len, false);
             goto q1;
         }
         // [\/]
-        if ((ch == 47)) {
+        if ((((ch == -1) 
+                    == false) 
+                    && ((((ch >= 0) 
+                    && (ch <= 46)) 
+                    || ((ch >= 48) 
+                    && (ch <= 1114111))) 
+                    == false))) {
             this.Advance(s, ref ch, ref len, false);
             goto q2;
         }
         goto errorout;
     q1:
         // [\t-\n\r ]
-        if (((((ch >= 9) 
-                    && (ch <= 10)) 
-                    || (ch == 13)) 
-                    || (ch == 32))) {
+        if ((((ch == -1) 
+                    == false) 
+                    && ((((((ch >= 0) 
+                    && (ch <= 8)) 
+                    || ((ch >= 11) 
+                    && (ch <= 12))) 
+                    || ((ch >= 14) 
+                    && (ch <= 31))) 
+                    || ((ch >= 33) 
+                    && (ch <= 1114111))) 
+                    == false))) {
             this.Advance(s, ref ch, ref len, false);
             goto q1;
         }
         return FAMatch.Create(2, s.Slice(p, len).ToString(), p, l, c);
     q2:
         // [\*]
-        if ((ch == 42)) {
+        if ((((ch == -1) 
+                    == false) 
+                    && ((((ch >= 0) 
+                    && (ch <= 41)) 
+                    || ((ch >= 43) 
+                    && (ch <= 1114111))) 
+                    == false))) {
             this.Advance(s, ref ch, ref len, false);
             goto q3;
         }
         // [\/]
-        if ((ch == 47)) {
+        if ((((ch == -1) 
+                    == false) 
+                    && ((((ch >= 0) 
+                    && (ch <= 46)) 
+                    || ((ch >= 48) 
+                    && (ch <= 1114111))) 
+                    == false))) {
             this.Advance(s, ref ch, ref len, false);
             goto q4;
         }

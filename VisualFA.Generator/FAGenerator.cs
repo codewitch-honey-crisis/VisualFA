@@ -51,6 +51,24 @@ namespace VisualFA
 		static CodeBinaryOperatorExpression _GenerateRangesExpression(CodeExpression codepoint, IList<FARange> ranges)
 		{
 			CodeBinaryOperatorExpression result = null;
+			var inverted = false;
+			var hasEof = false;
+			for (int i = 0; i < ranges.Count; ++i)
+			{
+				if (ranges[i].Min == -1)
+				{
+					hasEof = true; break;
+				}
+			}
+			if (!hasEof)
+			{
+				var notRanges = new List<FARange>(FARange.ToNotRanges(ranges));
+				if (notRanges.Count < ranges.Count)
+				{
+					inverted = true;
+					ranges = notRanges;
+				}
+			}
 			for (int i = 0; i < ranges.Count ; ++i)
 			{
 				var first = ranges[i].Min;
@@ -85,6 +103,12 @@ namespace VisualFA
 						result = new CodeBinaryOperatorExpression(result, CodeBinaryOperatorType.BooleanOr, exp);
 					}
 				}
+			}
+			if(inverted)
+			{
+				var notEof = new CodeBinaryOperatorExpression(new CodeBinaryOperatorExpression(codepoint, CodeBinaryOperatorType.ValueEquality, new CodePrimitiveExpression(-1)), CodeBinaryOperatorType.ValueEquality, new CodePrimitiveExpression(false));
+				var notResult = new CodeBinaryOperatorExpression(result, CodeBinaryOperatorType.ValueEquality, new CodePrimitiveExpression(false));
+				result = new CodeBinaryOperatorExpression(notEof, CodeBinaryOperatorType.BooleanAnd, notResult);
 			}
 			return result;
 		}
