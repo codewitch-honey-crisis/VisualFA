@@ -1413,26 +1413,27 @@ public string ClassName{get;set;}="GeneratedRunner";public string Namespace{get;
 public
 #endif
 static partial class FAGenerator{static CodeBinaryOperatorExpression _GenerateRangesExpression(CodeExpression codepoint,IList<FARange>ranges){CodeBinaryOperatorExpression
- result=null;var inverted=false;var notRanges=new List<FARange>(FARange.ToNotRanges(ranges));if(notRanges.Count<ranges.Count){inverted=true;ranges=notRanges;
-}for(int i=0;i<ranges.Count;++i){var first=ranges[i].Min;int last=ranges[i].Max;var fp=new CodePrimitiveExpression(first);if(first!=last){var lp=new CodePrimitiveExpression(last);
-var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.GreaterThanOrEqual,fp);exp=new CodeBinaryOperatorExpression(exp,CodeBinaryOperatorType.BooleanAnd,
-new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.LessThanOrEqual,lp));if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,
-CodeBinaryOperatorType.BooleanOr,exp);}}else{var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,fp);if(result==null)
-{result=exp;}else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,exp);}}}if(inverted){var notEof=new CodeBinaryOperatorExpression(new
- CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),CodeBinaryOperatorType.ValueEquality,new
- CodePrimitiveExpression(false));var notResult=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(false));
-result=new CodeBinaryOperatorExpression(notEof,CodeBinaryOperatorType.BooleanAnd,notResult);}return result;}static string _MakeSafeName(string name){StringBuilder
- sb;if(char.IsDigit(name[0])){sb=new StringBuilder(name.Length+1);sb.Append('_');}else{sb=new StringBuilder(name.Length);}for(var i=0;i<name.Length;++i)
-{var ch=name[i];if('_'==ch||char.IsLetterOrDigit(ch))sb.Append(ch);else sb.Append('_');}return sb.ToString();}static bool _HasMember(CodeTypeDeclaration
- decl,string name){for(int i=0;i<decl.Members.Count;++i){var member=decl.Members[i];if(member.Name==name){return true;}}return false;}static string _MakeUniqueName(CodeTypeDeclaration
- decl,string name){string result=name;int i=1;while(_HasMember(decl,result)){++i;result=name+i.ToString();}return result;}static void _GenerateSymbols(CodeTypeDeclaration
- decl,FAGeneratorOptions opts){if(opts.Symbols==null){return;}var tint=new CodeTypeReference(typeof(int));for(int i=0;i<opts.Symbols.Length;i++){var org
-=opts.Symbols[i];var sym=org;if(!string.IsNullOrEmpty(sym)){sym=_MakeUniqueName(decl,_MakeSafeName(sym));var field=new CodeMemberField();field.Name=sym;
-field.Type=tint;field.Attributes=MemberAttributes.Public|MemberAttributes.Const;field.InitExpression=new CodePrimitiveExpression(i);if(org!=sym){field.Comments.Add(new
- CodeCommentStatement(org));}decl.Members.Add(field);}}}static void _GenerateMatchImplBody(bool textReader,IList<FA>closure,IList<FA>blockEnds,CodeStatementCollection
- dest,FAGeneratorOptions opts){var lcapturebuffer=new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture");var lccbts=new CodeMethodInvokeExpression(
-lcapturebuffer,"ToString");var crm=new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),"Create");CodeStatement adv;CodeExpression
- tostr=null;if(!textReader){
+ result=null;var inverted=false;var hasEof=false;for(int i=0;i<ranges.Count;++i){if(ranges[i].Min==-1){hasEof=true;break;}}if(!hasEof){var notRanges=new
+ List<FARange>(FARange.ToNotRanges(ranges));if(notRanges.Count<ranges.Count){inverted=true;ranges=notRanges;}}for(int i=0;i<ranges.Count;++i){var first
+=ranges[i].Min;int last=ranges[i].Max;var fp=new CodePrimitiveExpression(first);if(first!=last){var lp=new CodePrimitiveExpression(last);var exp=new CodeBinaryOperatorExpression(codepoint,
+CodeBinaryOperatorType.GreaterThanOrEqual,fp);exp=new CodeBinaryOperatorExpression(exp,CodeBinaryOperatorType.BooleanAnd,new CodeBinaryOperatorExpression(codepoint,
+CodeBinaryOperatorType.LessThanOrEqual,lp));if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,
+exp);}}else{var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,fp);if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,
+CodeBinaryOperatorType.BooleanOr,exp);}}}if(inverted){var notEof=new CodeBinaryOperatorExpression(new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,
+new CodePrimitiveExpression(-1)),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(false));var notResult=new CodeBinaryOperatorExpression(result,
+CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(false));result=new CodeBinaryOperatorExpression(notEof,CodeBinaryOperatorType.BooleanAnd,
+notResult);}return result;}static string _MakeSafeName(string name){StringBuilder sb;if(char.IsDigit(name[0])){sb=new StringBuilder(name.Length+1);sb.Append('_');
+}else{sb=new StringBuilder(name.Length);}for(var i=0;i<name.Length;++i){var ch=name[i];if('_'==ch||char.IsLetterOrDigit(ch))sb.Append(ch);else sb.Append('_');
+}return sb.ToString();}static bool _HasMember(CodeTypeDeclaration decl,string name){for(int i=0;i<decl.Members.Count;++i){var member=decl.Members[i];if(member.Name
+==name){return true;}}return false;}static string _MakeUniqueName(CodeTypeDeclaration decl,string name){string result=name;int i=1;while(_HasMember(decl,result))
+{++i;result=name+i.ToString();}return result;}static void _GenerateSymbols(CodeTypeDeclaration decl,FAGeneratorOptions opts){if(opts.Symbols==null){return;
+}var tint=new CodeTypeReference(typeof(int));for(int i=0;i<opts.Symbols.Length;i++){var org=opts.Symbols[i];var sym=org;if(!string.IsNullOrEmpty(sym))
+{sym=_MakeUniqueName(decl,_MakeSafeName(sym));var field=new CodeMemberField();field.Name=sym;field.Type=tint;field.Attributes=MemberAttributes.Public|
+MemberAttributes.Const;field.InitExpression=new CodePrimitiveExpression(i);if(org!=sym){field.Comments.Add(new CodeCommentStatement(org));}decl.Members.Add(field);
+}}}static void _GenerateMatchImplBody(bool textReader,IList<FA>closure,IList<FA>blockEnds,CodeStatementCollection dest,FAGeneratorOptions opts){var lcapturebuffer
+=new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture");var lccbts=new CodeMethodInvokeExpression(lcapturebuffer,"ToString");var
+ crm=new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),"Create");CodeStatement adv;CodeExpression tostr=null;if(!textReader)
+{
 #if FALIB_SPANS
 if(opts.UseSpans){tostr=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeArgumentReferenceExpression("s"),
 "Slice",new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("len")),"ToString"));}
