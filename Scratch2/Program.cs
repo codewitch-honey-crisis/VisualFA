@@ -46,7 +46,7 @@ namespace Scratch2
                     result = _ParseArray(cursor);
                     break;
                 case 6: // number
-                    result = double.Parse(cursor.Current.Value);
+                    result = double.Parse(cursor.Current.Value,System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                     break;
                 case 7: // boolean
                     result = cursor.Current.Value[0] == 't';
