@@ -1,4 +1,6 @@
-﻿using VisualFA;
+﻿using System.Text;
+
+using VisualFA;
 namespace Scratch2
 {
     internal class Program
@@ -33,7 +35,7 @@ namespace Scratch2
         }
         static object _ParseAny(IEnumerator<FAMatch> cursor)
         {
-            object result = null;
+            object? result = null;
             _SkipWS(cursor);
             switch(cursor.Current.SymbolId)
             {
@@ -47,17 +49,8 @@ namespace Scratch2
                     result = double.Parse(cursor.Current.Value);
                     break;
                 case 7: // boolean
-                    if(0==string.CompareOrdinal(cursor.Current.Value,"true"))
-                    {
-                        result = true;
-                    } else if (0 == string.CompareOrdinal(cursor.Current.Value, "false"))
-                    {
-                        result = false;
-                    }
-                    else
-                    {
-                        throw new Exception("Expecting true or false");
-                    }
+                    result = cursor.Current.Value[0] == 't';
+                    
                     break;
                 case 8: // null
                     break;
@@ -68,7 +61,7 @@ namespace Scratch2
                     throw new Exception("Expecting a value");
             }
             cursor.MoveNext();
-            return result;
+            return result!;
         }
         static Dictionary<string,object> _ParseObject(IEnumerator<FAMatch> cursor)
         {
@@ -96,6 +89,121 @@ namespace Scratch2
 			}
 			return result;
         }
+        static string _EscapeString(string str)
+        {
+            var result = new StringBuilder(str.Length * 2);
+            for(int i = 0; i < str.Length; i++)
+            {
+                var c = str[i];
+                switch(c)
+                {
+                    case '\"':
+                        result.Append("\\\"");
+                        break;
+					case '\t':
+						result.Append("\\t");
+						break;
+					case '\r':
+						result.Append("\\r");
+						break;
+					case '\n':
+						result.Append("\\n");
+						break;
+					case '\b':
+						result.Append("\\b");
+						break;
+					case '\f':
+						result.Append("\\f");
+						break;
+                    default:
+                        if(((int)c)<128)
+                        {
+                            result.Append(c);
+                        } else
+                        {
+                            result.Append("\\u");
+                            result.Append(((int)c).ToString("x4"));
+                        }
+                        break;
+				}
+            }
+            return result.ToString();
+        }
+        static void _WriteValue(object value,TextWriter writer, int depth = 0)
+        {
+            if(value == null)
+            {
+                writer.Write("null");
+            } else if(value is string)
+            {
+                writer.Write("\"");
+                writer.Write(_EscapeString((string)value));
+				writer.Write("\"");
+			} else if(value is double)
+            {
+                writer.Write(((double)value).ToString("r"));
+            } else if(value is bool)
+            {
+                writer.Write(((bool)value) ? "true" : "false");
+            } else if(value is Dictionary<string,object>)
+            {
+                _WriteObject((Dictionary<string,object>)value, writer, depth);
+            } else if(value is List<object>)
+            {
+                _WriteArray((List<object>)value, writer, depth);
+            }
+            else
+            {
+                throw new NotSupportedException("The value type cannot be written");
+            }
+        }
+		static void _WriteArray(List<object> result, TextWriter writer, int depth = 0)
+		{
+			var tabs = new string(' ', 4 * depth);
+			writer.WriteLine("[");
+			var innerTabs = new string(' ', 4 * (depth + 1));
+			var c = result.Count;
+			foreach (var value in result)
+			{
+				writer.Write(innerTabs);
+				_WriteValue(value, writer, depth + 1);
+				--c;
+				if (c > 0)
+				{
+					writer.WriteLine(",");
+				}
+				else
+				{
+					writer.WriteLine();
+				}
+			}
+			writer.Write(tabs);
+			writer.Write("]");
+		}
+		static void _WriteObject(Dictionary<string,object> result, TextWriter writer, int depth = 0)
+        {
+            var tabs = new string(' ', 4 * depth);
+            writer.WriteLine("{");
+            var innerTabs = new string(' ', 4 * (depth+1));
+            var c = result.Count;
+            foreach(var field in result)
+            {
+                writer.Write(innerTabs);
+                _WriteValue(field.Key,writer,depth);
+                writer.Write(": ");
+				_WriteValue(field.Value, writer,depth+1);
+                --c;
+                if(c>0)
+                {
+                    writer.WriteLine(",");
+                } else
+                {
+                    writer.WriteLine();
+                }
+			}
+            writer.Write(tabs);
+            writer.Write("}");
+		}
         static void Main(string[] args)
         {
             int id = 0;
@@ -122,6 +230,7 @@ namespace Scratch2
                 if(cursor.MoveNext())
                 {
 					var obj = _ParseObject(cursor);
+                    _WriteObject(obj, Console.Out, 0);
                     return;
 				}
             }
