@@ -74,7 +74,7 @@ namespace Scratch2
                                 break;
                             }
                             var h = _FromHexChar(s[i++]);
-                            if(h==-1)
+                            if(h==-1) // don't technically need these checks since the lexer already ensure's it's a valid string
                             {
                                 throw new Exception("Invalid escape");
                             }
