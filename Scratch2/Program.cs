@@ -5,12 +5,111 @@ namespace Scratch2
 {
     internal class Program
    {
+        static int _FromHexChar(char c)
+        {
+            if(c >= '0' && c <='9')
+            {
+                return c - '0';
+            }
+            if(c >= 'A' && c <='F')
+            {
+                return c - 'A' + 0x10;
+            }
+			if (c >= 'a' && c <= 'f')
+			{
+				return c - 'a' + 0x10;
+			}
+            return -1;
+		}
         static string _DeescapeString(string s)
         {
             if(string.IsNullOrEmpty(s)) return s;
-            s= s.Substring(1,s.Length- 2);
-            s = s.Replace(@"\b", "\b").Replace(@"\r", "\r").Replace(@"\n", "\n").Replace(@"\t", "\t").Replace(@"\f", "\f");
-			return s;
+			
+            var result = new StringBuilder(s.Length);
+            for(int i = 0;i<s.Length;++i)
+            {
+                var c = s[i];
+                if(c=='\\')
+                {
+                    ++i;
+                    if(i>=s.Length)
+                    {
+                        result.Append('\\');
+                        break;
+                    }
+                    c = s[i];
+                    switch(c)
+                    {
+                        case '\\':
+                            result.Append('\\');
+                            break;
+                        case '\"':
+                            result.Append("\"");
+                            break;
+                        case 't':
+                            result.Append('\t');
+                            break;
+                        case 'r':
+                            result.Append('\r');
+                            break;
+                        case 'n':
+                            result.Append('\n');
+                            break;
+                        case 'f':
+                            result.Append('\f');
+                            break;
+                        case 'b':
+                            result.Append('\b');
+                            break;
+                        case 'u':
+							++i;
+							if (i >= s.Length)
+							{
+								result.Append("\\u");
+								break;
+							}
+							if(i+4>=s.Length)
+                            {
+                                result.Append(s.Substring(i));
+                                break;
+                            }
+                            var h = _FromHexChar(s[i++]);
+                            if(h==-1)
+                            {
+                                throw new Exception("Invalid escape");
+                            }
+                            var cp = h;
+                            cp <<= 8;
+                            h = _FromHexChar(s[i++]);
+							if (h == -1)
+							{
+								throw new Exception("Invalid escape");
+							}
+                            cp |= h;
+							h = _FromHexChar(s[i++]);
+							if (h == -1)
+							{
+								throw new Exception("Invalid escape");
+							}
+							cp |= h;
+							h = _FromHexChar(s[i++]);
+							if (h == -1)
+							{
+								throw new Exception("Invalid escape");
+							}
+							cp |= h;
+                            result.Append((char)cp);
+                            break;
+						default:
+							throw new Exception("Invalid escape");
+
+					}
+                } else
+                {
+                    result.Append(c);
+                }
+            }
+            return result.ToString();
         }
         static void _SkipWS(IEnumerator<FAMatch> cursor)
         {
@@ -55,7 +154,7 @@ namespace Scratch2
                 case 8: // null
                     break;
                 case 9: // string
-    				result = _DeescapeString(cursor.Current.Value);
+    				result = _DeescapeString(cursor.Current.Value.Substring(1, cursor.Current.Value.Length - 2));
 					break;
                 default:
                     throw new Exception("Expecting a value");
@@ -73,7 +172,7 @@ namespace Scratch2
             {
                 _SkipWS(cursor);
                 if(cursor.Current.SymbolId != 9) throw new Exception("Expecting a field name");
-                var name = _DeescapeString(cursor.Current.Value);
+                var name = _DeescapeString(cursor.Current.Value.Substring(1,cursor.Current.Value.Length-2));
 				_SkipWS(cursor);
 				if (!cursor.MoveNext()) throw new Exception("Unterminated JSON field");
 				if (cursor.Current.SymbolId != 4) throw new Exception("Expecting a field separator");
