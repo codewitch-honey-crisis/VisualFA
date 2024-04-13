@@ -86,19 +86,21 @@ namespace Scratch2
 								throw new Exception("Invalid escape");
 							}
                             cp |= h;
+							cp <<= 8;
 							h = _FromHexChar(s[i++]);
 							if (h == -1)
 							{
 								throw new Exception("Invalid escape");
 							}
 							cp |= h;
+							cp <<= 8;
 							h = _FromHexChar(s[i++]);
 							if (h == -1)
 							{
 								throw new Exception("Invalid escape");
 							}
 							cp |= h;
-                            result.Append((char)cp);
+							result.Append((char)cp);
                             break;
 						default:
 							throw new Exception("Invalid escape");
