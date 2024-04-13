@@ -24,7 +24,7 @@ namespace Scratch2
             if (!cursor.MoveNext()) throw new Exception("Unterminated array");
             while(cursor.Current.SymbolId != 3)
             {
-				result.Add(_ParseAny(cursor));
+				result.Add(_ParseValue(cursor));
 				_SkipWS(cursor);
 				if (cursor.Current.SymbolId == 5)
 				{
@@ -33,7 +33,7 @@ namespace Scratch2
 			}
 			return result;
         }
-        static object _ParseAny(IEnumerator<FAMatch> cursor)
+        static object _ParseValue(IEnumerator<FAMatch> cursor)
         {
             object? result = null;
             _SkipWS(cursor);
@@ -79,7 +79,7 @@ namespace Scratch2
 				if (cursor.Current.SymbolId != 4) throw new Exception("Expecting a field separator");
 				_SkipWS(cursor);
 				if (!cursor.MoveNext()) throw new Exception("JSON field missing value");
-                object value = _ParseAny(cursor);
+                object value = _ParseValue(cursor);
                 result.Add(name, value);
                 _SkipWS(cursor);
                 if(cursor.Current.SymbolId == 5)
@@ -229,8 +229,8 @@ namespace Scratch2
                 var cursor = runner.GetEnumerator();
                 if(cursor.MoveNext())
                 {
-					var obj = _ParseObject(cursor);
-                    _WriteObject(obj, Console.Out, 0);
+					var obj = _ParseValue(cursor);
+                    _WriteValue(obj, Console.Out, 0);
                     return;
 				}
             }
