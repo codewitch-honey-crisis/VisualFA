@@ -76,37 +76,18 @@ namespace Scratch2
                                 result.Append(s.Substring(i));
                                 break;
                             }
-                            var h = _FromHexChar(s[i++]);
-                            if(h==-1) // don't technically need these checks since the lexer already ensure's it's a valid string
-                            {
-                                throw new Exception("Invalid escape");
-                            }
-                            var cp = h;
-                            cp <<= 8;
-                            h = _FromHexChar(s[i++]);
-							if (h == -1)
-							{
-								throw new Exception("Invalid escape");
-							}
-                            cp |= h;
+                            
+                            var cp = _FromHexChar(s[i++]);
 							cp <<= 8;
-							h = _FromHexChar(s[i++]);
-							if (h == -1)
-							{
-								throw new Exception("Invalid escape");
-							}
-							cp |= h;
+							cp |= _FromHexChar(s[i++]);
 							cp <<= 8;
-							h = _FromHexChar(s[i++]);
-							if (h == -1)
-							{
-								throw new Exception("Invalid escape");
-							}
-							cp |= h;
+							cp |= _FromHexChar(s[i++]);
+							cp <<= 8;
+							cp |= _FromHexChar(s[i++]);
 							result.Append((char)cp);
                             break;
 						default:
-							throw new Exception("Invalid escape");
+                            break;
 
 					}
                 } else
