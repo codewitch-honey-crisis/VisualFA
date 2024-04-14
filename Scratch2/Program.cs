@@ -40,7 +40,10 @@ namespace Scratch2
                     c = s[i];
                     switch(c)
                     {
-                        case '\\':
+                        case '/':
+							result.Append('/');
+							break;
+						case '\\':
                             result.Append('\\');
                             break;
                         case '\"':
@@ -198,6 +201,7 @@ namespace Scratch2
                 var c = str[i];
                 switch(c)
                 {
+                    case '\\':
                     case '\"':
                         result.Append("\\\"");
                         break;
