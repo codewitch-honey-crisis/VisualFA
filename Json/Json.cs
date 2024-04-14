@@ -129,7 +129,7 @@ namespace Json
 		}
 		static void _SkipWS(IEnumerator<FAMatch> cursor)
 		{
-			while (cursor.Current.SymbolId == JsonStringRunner.white_space && cursor.MoveNext()) ;
+			while (cursor.Current.SymbolId == JsonStringRunner.WhiteSpace && cursor.MoveNext()) ;
 		}
 		static JsonArray _ParseArray(IEnumerator<FAMatch> cursor)
 		{
@@ -138,13 +138,13 @@ namespace Json
 			var column = cursor.Current.Column;
 			var result = new JsonArray();
 			_SkipWS(cursor);
-			if (cursor.Current.SymbolId != JsonStringRunner.array) throw new Exception("Expected an array");
+			if (cursor.Current.SymbolId != JsonStringRunner.Array) throw new Exception("Expected an array");
 			if (!cursor.MoveNext()) throw new JsonException("Unterminated array",position,line,column);
-			while (cursor.Current.SymbolId != JsonStringRunner.array_end)
+			while (cursor.Current.SymbolId != JsonStringRunner.ArrayEnd)
 			{
 				result.Add(_ParseValue(cursor));
 				_SkipWS(cursor);
-				if (cursor.Current.SymbolId == JsonStringRunner.comma)
+				if (cursor.Current.SymbolId == JsonStringRunner.Comma)
 				{
 					cursor.MoveNext();
 					_SkipWS(cursor);
@@ -162,21 +162,21 @@ namespace Json
 			_SkipWS(cursor);
 			switch (cursor.Current.SymbolId)
 			{
-				case JsonStringRunner.@object:
+				case JsonStringRunner.Object:
 					result = _ParseObject(cursor);
 					break;
-				case JsonStringRunner.array:
+				case JsonStringRunner.Array:
 					result = _ParseArray(cursor);
 					break;
-				case JsonStringRunner.number:
+				case JsonStringRunner.Number:
 					result = double.Parse(cursor.Current.Value, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 					break;
-				case JsonStringRunner.boolean:
+				case JsonStringRunner.Boolean:
 					result = cursor.Current.Value[0] == 't';
 					break;
-				case JsonStringRunner.@null:
+				case JsonStringRunner.Null:
 					break;
-				case JsonStringRunner._string:
+				case JsonStringRunner.String:
 					result = _DeescapeString(cursor.Current.Value.Substring(1, cursor.Current.Value.Length - 2));
 					break;
 				default:
@@ -193,26 +193,26 @@ namespace Json
 
 			var result = new JsonObject();
 			_SkipWS(cursor);
-			if (cursor.Current.SymbolId != JsonStringRunner.@object) throw new JsonException("Expecting a JSON object",position,line,column);
+			if (cursor.Current.SymbolId != JsonStringRunner.Object) throw new JsonException("Expecting a JSON object",position,line,column);
 			if (!cursor.MoveNext()) throw new JsonException("Unterminated JSON object", position, line, column);
-			while (cursor.Current.SymbolId != JsonStringRunner.object_end)
+			while (cursor.Current.SymbolId != JsonStringRunner.ObjectEnd)
 			{
 				_SkipWS(cursor);
 
 				position = cursor.Current.Position;
 				line = cursor.Current.Line;
 				column = cursor.Current.Column;
-				if (cursor.Current.SymbolId != JsonStringRunner._string) throw new JsonException("Expecting a field name", position, line, column);
+				if (cursor.Current.SymbolId != JsonStringRunner.String) throw new JsonException("Expecting a field name", position, line, column);
 				var name = _DeescapeString(cursor.Current.Value.Substring(1, cursor.Current.Value.Length - 2));
 				_SkipWS(cursor);
 				if (!cursor.MoveNext()) throw new JsonException("Unterminated JSON field", position, line, column);
-				if (cursor.Current.SymbolId != JsonStringRunner.field) throw new JsonException("Expecting a field separator", position, line, column);
+				if (cursor.Current.SymbolId != JsonStringRunner.FieldSeparator) throw new JsonException("Expecting a field separator", position, line, column);
 				_SkipWS(cursor);
 				if (!cursor.MoveNext()) throw new JsonException("JSON field missing value", position, line, column);
 				object value = _ParseValue(cursor);
 				result.Add(name, value);
 				_SkipWS(cursor);
-				if (cursor.Current.SymbolId == JsonStringRunner.comma)
+				if (cursor.Current.SymbolId == JsonStringRunner.Comma)
 				{
 					cursor.MoveNext();
 				}

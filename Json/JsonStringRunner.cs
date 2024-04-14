@@ -751,16 +751,16 @@ namespace Json {
         public override FAMatch NextMatch() {
             return this.NextMatchImpl(this.@string);
         }
-        public const int @object = 0;
-        public const int object_end = 1;
-        public const int array = 2;
-        public const int array_end = 3;
-        public const int field = 4;
-        public const int comma = 5;
-        public const int number = 6;
-        public const int boolean = 7;
-        public const int @null = 8;
-        public const int _string = 9;
-        public const int white_space = 10;
+        public const int Object = 0;
+        public const int ObjectEnd = 1;
+        public const int Array = 2;
+        public const int ArrayEnd = 3;
+        public const int FieldSeparator = 4;
+        public const int Comma = 5;
+        public const int Number = 6;
+        public const int Boolean = 7;
+        public const int Null = 8;
+        public const int String = 9;
+        public const int WhiteSpace = 10;
     }
 }
