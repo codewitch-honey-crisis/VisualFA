@@ -2,7 +2,6 @@
 {
 	internal static class JsonWriter
 	{
-
 		static void _WriteValue(object value, TextWriter writer, int depth = 0, bool minimized = false)
 		{
 			if (value == null)
@@ -111,6 +110,5 @@
 		{
 			_WriteValue(value, output, 0, minimized);
 		}
-
 	}
 }
