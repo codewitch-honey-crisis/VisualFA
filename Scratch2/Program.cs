@@ -83,7 +83,7 @@ namespace Scratch2
 							cp <<= 8;
 							cp |= _FromHexChar(s[i++]);
 							cp <<= 8;
-							cp |= _FromHexChar(s[i++]);
+							cp |= _FromHexChar(s[i]);
 							result.Append((char)cp);
                             break;
 						default:
