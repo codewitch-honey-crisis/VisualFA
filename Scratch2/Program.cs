@@ -11,8 +11,8 @@ namespace Scratch2
         {
             using(var reader = new StreamReader(@"..\..\..\data.json"))
             {
-                var obj = Json.JsonObject.Parse(reader);
-                Console.WriteLine(((Json.JsonObject?)obj).ToString());
+                dynamic? obj = Json.JsonObject.Parse(reader);
+                Console.WriteLine(obj!.seasons[0].ToString());
             }
 		}
     }
