@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet &quot;$(SolutionDir)LexGen.dll&quot; &quot;$(ProjectDir)json.rl&quot; /class JsonStringRunner /namespace Json /nospans /output &quot;$(ProjectDir)JsonStringRunner.cs&quot;&#xD;&#xA;dotnet &quot;$(SolutionDir)LexGen.dll&quot; &quot;$(ProjectDir)json.rl&quot; /class JsonTextReaderRunner /textreader /noshared /namespace Json /output &quot;$(ProjectDir)JsonTextReaderRunner.cs&quot;" />
+  </Target>
+
+</Project>

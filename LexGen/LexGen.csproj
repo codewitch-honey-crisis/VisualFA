@@ -26,4 +26,8 @@
     <PackageReference Include="System.CodeDom" Version="8.0.0" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(TargetDir)*.*&quot; &quot;$(SolutionDir)&quot;" />
+  </Target>
+
 </Project>

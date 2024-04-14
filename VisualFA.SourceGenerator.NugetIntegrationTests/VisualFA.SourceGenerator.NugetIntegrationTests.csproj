@@ -13,7 +13,6 @@
 		<Compile Include="..\IntegrationTests\*.cs" Link="%(Filename)%(Extension)" />
 	</ItemGroup>
 	<ItemGroup>
-
 		<ProjectReference Include="..\VisualFA.SourceGenerator\VisualFA.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 	<ItemGroup>

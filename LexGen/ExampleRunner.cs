@@ -110,10 +110,10 @@ namespace Example {
             return _BlockEnd5(p, l, c);
         q5:
             // [\0-\t\v-\x10ffff]
-            if ((((this.current >= 0) 
-                        && (this.current <= 9)) 
-                        || ((this.current >= 11) 
-                        && (this.current <= 1114111)))) {
+            if ((((this.current == -1) 
+                        == false) 
+                        && ((this.current == 10) 
+                        == false))) {
                 this.Advance();
                 goto q5;
             }
