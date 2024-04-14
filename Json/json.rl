@@ -7,5 +7,5 @@ comma = ","
 number = '-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?'
 boolean = 'true|false'
 null = "null"
-string_ = '"([^\n"\\]|\\([btrnf"\\/]|(u[0-9A-Fa-f]{4})))*"'
+_string = '"([^\n"\\]|\\([btrnf"\\/]|(u[0-9A-Fa-f]{4})))*"'
 white_space = '[ \t\r\n]+'

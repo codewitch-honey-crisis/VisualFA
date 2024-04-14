@@ -176,7 +176,7 @@ namespace Json
 					break;
 				case JsonStringRunner.@null:
 					break;
-				case JsonStringRunner.string_:
+				case JsonStringRunner._string:
 					result = _DeescapeString(cursor.Current.Value.Substring(1, cursor.Current.Value.Length - 2));
 					break;
 				default:
@@ -202,7 +202,7 @@ namespace Json
 				position = cursor.Current.Position;
 				line = cursor.Current.Line;
 				column = cursor.Current.Column;
-				if (cursor.Current.SymbolId != JsonStringRunner.string_) throw new JsonException("Expecting a field name", position, line, column);
+				if (cursor.Current.SymbolId != JsonStringRunner._string) throw new JsonException("Expecting a field name", position, line, column);
 				var name = _DeescapeString(cursor.Current.Value.Substring(1, cursor.Current.Value.Length - 2));
 				_SkipWS(cursor);
 				if (!cursor.MoveNext()) throw new JsonException("Unterminated JSON field", position, line, column);

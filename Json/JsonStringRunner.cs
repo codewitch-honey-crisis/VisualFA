@@ -760,7 +760,7 @@ namespace Json {
         public const int number = 6;
         public const int boolean = 7;
         public const int @null = 8;
-        public const int string_ = 9;
+        public const int _string = 9;
         public const int white_space = 10;
     }
 }
