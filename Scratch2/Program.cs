@@ -5,7 +5,20 @@ namespace Scratch2
 {
     internal class Program
    {
-        static int _FromHexChar(char c)
+
+		const int _object = 0;
+		const int _object_end = 1;
+		const int _array = 2;
+		const int _array_end = 3;
+		const int _field = 4;
+		const int _comma = 5;
+		const int _number = 6;
+		const int _boolean = 7;
+		const int _null = 8;
+		const int _string = 9;
+		const int _white_space = 10;
+
+		static int _FromHexChar(char c)
         {
             if(c >= '0' && c <='9')
             {
@@ -99,21 +112,22 @@ namespace Scratch2
         }
         static void _SkipWS(IEnumerator<FAMatch> cursor)
         {
-            while (cursor.Current.SymbolId == 10 && cursor.MoveNext()) ;
+            while (cursor.Current.SymbolId == _white_space && cursor.MoveNext()) ;
         }
         static List<object> _ParseArray(IEnumerator<FAMatch> cursor)
         {
             var result = new List<object>();
 			_SkipWS(cursor);
-			if (cursor.Current.SymbolId != 2) throw new Exception("Expected an array");
+			if (cursor.Current.SymbolId != _array) throw new Exception("Expected an array");
             if (!cursor.MoveNext()) throw new Exception("Unterminated array");
-            while(cursor.Current.SymbolId != 3)
+            while(cursor.Current.SymbolId != _array_end)
             {
 				result.Add(_ParseValue(cursor));
 				_SkipWS(cursor);
-				if (cursor.Current.SymbolId == 5)
+				if (cursor.Current.SymbolId == _comma)
 				{
 					cursor.MoveNext();
+					_SkipWS(cursor);
 				}
 			}
 			return result;
@@ -124,22 +138,21 @@ namespace Scratch2
             _SkipWS(cursor);
             switch(cursor.Current.SymbolId)
             {
-                case 0: // object
+                case _object:
 					result = _ParseObject(cursor);
 					break;
-				case 2: // array
+                case _array:
                     result = _ParseArray(cursor);
                     break;
-                case 6: // number
+                case _number:
                     result = double.Parse(cursor.Current.Value,System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                     break;
-                case 7: // boolean
+                case _boolean:
                     result = cursor.Current.Value[0] == 't';
-                    
                     break;
-                case 8: // null
+                case _null:
                     break;
-                case 9: // string
+                case _string:
     				result = _DeescapeString(cursor.Current.Value.Substring(1, cursor.Current.Value.Length - 2));
 					break;
                 default:
@@ -152,22 +165,22 @@ namespace Scratch2
         {
             var result = new Dictionary<string,object>();
             _SkipWS(cursor);
-            if(cursor.Current.SymbolId !=0) throw new Exception("Expecting a JSON object");
+            if(cursor.Current.SymbolId != _object) throw new Exception("Expecting a JSON object");
 			if (!cursor.MoveNext()) throw new Exception("Unterminated JSON object");
-            while(cursor.Current.SymbolId != 1)
+            while(cursor.Current.SymbolId != _object_end)
             {
                 _SkipWS(cursor);
-                if(cursor.Current.SymbolId != 9) throw new Exception("Expecting a field name");
+                if(cursor.Current.SymbolId != _string) throw new Exception("Expecting a field name");
                 var name = _DeescapeString(cursor.Current.Value.Substring(1,cursor.Current.Value.Length-2));
 				_SkipWS(cursor);
 				if (!cursor.MoveNext()) throw new Exception("Unterminated JSON field");
-				if (cursor.Current.SymbolId != 4) throw new Exception("Expecting a field separator");
+				if (cursor.Current.SymbolId != _field) throw new Exception("Expecting a field separator");
 				_SkipWS(cursor);
 				if (!cursor.MoveNext()) throw new Exception("JSON field missing value");
                 object value = _ParseValue(cursor);
                 result.Add(name, value);
                 _SkipWS(cursor);
-                if(cursor.Current.SymbolId == 5)
+                if(cursor.Current.SymbolId == _comma)
                 {
                     cursor.MoveNext();
                 }
@@ -290,20 +303,20 @@ namespace Scratch2
             writer.Write(tabs);
             writer.Write("}");
 		}
-        static void Main(string[] args)
+		static void Main(string[] args)
         {
             int id = 0;
-            var @object = FA.Parse(@"\{",id++);
-            var object_end = FA.Parse(@"\}", id++);
-			var array = FA.Parse(@"\[", id++);
-			var array_end = FA.Parse(@"\]", id++);
-            var field = FA.Parse(@":", id++);
-			var comma = FA.Parse(@",", id++);
-			var number = FA.Parse(@"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?", id++);
-            var boolean = FA.Parse("true|false", id++);
-            var @null = FA.Parse("null", id++);
-            var @string = FA.Parse(@"""([^\n""\\]|\\([btrnf""\\/]|(u[0-9A-Fa-f]{4})))*""",id++);
-            var white_space = FA.Parse(@"[ \t\r\n]+",id++);
+            var @object = FA.Parse(@"\{",_object);
+            var object_end = FA.Parse(@"\}", _object_end);
+			var array = FA.Parse(@"\[", _array);
+			var array_end = FA.Parse(@"\]", _array_end);
+            var field = FA.Parse(@":", _field);
+			var comma = FA.Parse(@",", _comma);
+			var number = FA.Parse(@"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?", _number);
+            var boolean = FA.Parse("true|false", _boolean);
+            var @null = FA.Parse("null", _null);
+            var @string = FA.Parse(@"""([^\n""\\]|\\([btrnf""\\/]|(u[0-9A-Fa-f]{4})))*""",_string);
+            var white_space = FA.Parse(@"[ \t\r\n]+",_white_space);
             var symbols = new string[] { "object", "object end", "array", "array end", "field", "comma", "number", "boolean", "null", "string" , "white space"};
             var dgo = new FADotGraphOptions();
             dgo.AcceptSymbolNames = symbols;
