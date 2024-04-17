@@ -14,7 +14,7 @@ using System.Text;
 using VisualFA;
 
 
-[System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.1.1.0")]
 internal sealed partial class TestRunner : FAStringRunner {
     private FAMatch NextMatchImpl(ReadOnlySpan<char> s) {
         int ch;
@@ -4396,5 +4396,4382 @@ internal sealed partial class TestRunner : FAStringRunner {
     }
     public override FAMatch NextMatch() {
         return this.NextMatchImpl(this.@string);
+    }
+}
+[System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.1.1.0")]
+internal sealed partial class TestTextRunner : FATextReaderRunner {
+    public override FAMatch NextMatch() {
+        int p;
+        int l;
+        int c;
+        this.capture.Clear();
+        if ((this.current == -2)) {
+            this.Advance();
+        }
+        p = this.position;
+        l = this.line;
+        c = this.column;
+        // q0:
+        // [\t-\n\r ]
+        if (((((this.current >= 9) 
+                    && (this.current <= 10)) 
+                    || (this.current == 13)) 
+                    || (this.current == 32))) {
+            this.Advance();
+            goto q1;
+        }
+        // [A-Z_hj-kmqxz]
+        if ((((((((((this.current >= 65) 
+                    && (this.current <= 90)) 
+                    || (this.current == 95)) 
+                    || (this.current == 104)) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 107))) 
+                    || (this.current == 109)) 
+                    || (this.current == 113)) 
+                    || (this.current == 120)) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q3;
+        }
+        // [b]
+        if ((this.current == 98)) {
+            this.Advance();
+            goto q22;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q31;
+        }
+        // [d]
+        if ((this.current == 100)) {
+            this.Advance();
+            goto q49;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q68;
+        }
+        // [f]
+        if ((this.current == 102)) {
+            this.Advance();
+            goto q83;
+        }
+        // [g]
+        if ((this.current == 103)) {
+            this.Advance();
+            goto q95;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q100;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q108;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q110;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q117;
+        }
+        // [p]
+        if ((this.current == 112)) {
+            this.Advance();
+            goto q130;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q143;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q149;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q169;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q174;
+        }
+        // [v]
+        if ((this.current == 118)) {
+            this.Advance();
+            goto q182;
+        }
+        // [w]
+        if ((this.current == 119)) {
+            this.Advance();
+            goto q190;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q191;
+        }
+        goto errorout;
+    q1:
+        // [\t-\n\r ]
+        if (((((this.current >= 9) 
+                    && (this.current <= 10)) 
+                    || (this.current == 13)) 
+                    || (this.current == 32))) {
+            this.Advance();
+            goto q1;
+        }
+        return FAMatch.Create(2, this.capture.ToString(), p, l, c);
+    q2:
+        // [0-9A-Z_a-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q3:
+        // [0-9A-Z_ac-rt-vx-z]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || (this.current == 97)) 
+                    || ((this.current >= 99) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 118))) 
+                    || ((this.current >= 120) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [b]
+        if ((this.current == 98)) {
+            this.Advance();
+            goto q4;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q11;
+        }
+        // [w]
+        if ((this.current == 119)) {
+            this.Advance();
+            goto q20;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q4:
+        // [0-9A-Z_a-rt-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q5;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q5:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q6;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q6:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q7;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q7:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q8;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q8:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q9;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q9:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q10:
+        // [0-9A-Z_a-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+    q11:
+        // [0-9A-Z_a-bd-xz]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 120))) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q12;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q18;
+        }
+        return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+    q12:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q13;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q13:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q14;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q14:
+        // [0-9A-Z_a-ce-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 99))) 
+                    || ((this.current >= 101) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [d]
+        if ((this.current == 100)) {
+            this.Advance();
+            goto q15;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q15:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q16;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q16:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q17;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q17:
+        // [0-9A-Z_a-fh-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 102))) 
+                    || ((this.current >= 104) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [g]
+        if ((this.current == 103)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q18:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q19;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q19:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q20:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q21;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q21:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q9;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q22:
+        // [0-9A-Z_b-np-qs-xz]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 120))) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q23;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q25;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q27;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q30;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q23:
+        // [0-9A-Z_a-rt-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q24;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q24:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q25:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q26;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q26:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q27:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q28;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q28:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q29;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q29:
+        // [0-9A-Z_a-jl-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 106))) 
+                    || ((this.current >= 108) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [k]
+        if ((this.current == 107)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q30:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q24;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q31:
+        // [0-9A-Z_b-gi-km-np-z]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 103))) 
+                    || ((this.current >= 105) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q32;
+        }
+        // [h]
+        if ((this.current == 104)) {
+            this.Advance();
+            goto q35;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q41;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q44;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q32:
+        // [0-9A-Z_a-ru-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q24;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q33;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q33:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q34;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q34:
+        // [0-9A-Z_a-gi-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 103))) 
+                    || ((this.current >= 105) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [h]
+        if ((this.current == 104)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q35:
+        // [0-9A-Z_b-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q36;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q37;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q36:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q37:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q38;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q38:
+        // [0-9A-Z_a-jl-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 106))) 
+                    || ((this.current >= 108) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [k]
+        if ((this.current == 107)) {
+            this.Advance();
+            goto q39;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q39:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q40;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q40:
+        // [0-9A-Z_a-ce-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 99))) 
+                    || ((this.current >= 101) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [d]
+        if ((this.current == 100)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q41:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q42;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q42:
+        // [0-9A-Z_a-rt-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q43;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q43:
+        // [0-9A-Z_a-rt-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q44:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q45;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q45:
+        // [0-9A-Z_a-ru-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q9;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q46;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q46:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q47;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q47:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q48;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q48:
+        // [0-9A-Z_a-tv-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q24;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q49:
+        // [0-9A-Z_a-df-np-xz]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 120))) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q50;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q61;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q64;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q50:
+        // [0-9A-Z_a-bd-eg-km-rt-z]
+        if ((((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 101))) 
+                    || ((this.current >= 103) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q51;
+        }
+        // [f]
+        if ((this.current == 102)) {
+            this.Advance();
+            goto q54;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q57;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q60;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q51:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q52;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q52:
+        // [0-9A-Z_a-ln-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 108))) 
+                    || ((this.current >= 110) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [m]
+        if ((this.current == 109)) {
+            this.Advance();
+            goto q53;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q53:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q26;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q54:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q55;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q55:
+        // [0-9A-Z_a-tv-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q56;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q56:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q9;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q57:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q58;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q58:
+        // [0-9A-Z_a-fh-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 102))) 
+                    || ((this.current >= 104) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [g]
+        if ((this.current == 103)) {
+            this.Advance();
+            goto q59;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q59:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q30;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q60:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q12;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q61:
+        // [0-9A-Z_a-tv-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q62;
+        }
+        return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+    q62:
+        // [0-9A-Z_ac-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || (this.current == 97)) 
+                    || ((this.current >= 99) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [b]
+        if ((this.current == 98)) {
+            this.Advance();
+            goto q63;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q63:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q24;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q64:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q65;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q65:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q66;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q66:
+        // [0-9A-Z_a-ln-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 108))) 
+                    || ((this.current >= 110) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [m]
+        if ((this.current == 109)) {
+            this.Advance();
+            goto q67;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q67:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q19;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q68:
+        // [0-9A-Z_a-kmo-pr-uwy-z]
+        if (((((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || (this.current == 109)) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 112))) 
+                    || ((this.current >= 114) 
+                    && (this.current <= 117))) 
+                    || (this.current == 119)) 
+                    || ((this.current >= 121) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q23;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q69;
+        }
+        // [q]
+        if ((this.current == 113)) {
+            this.Advance();
+            goto q71;
+        }
+        // [v]
+        if ((this.current == 118)) {
+            this.Advance();
+            goto q74;
+        }
+        // [x]
+        if ((this.current == 120)) {
+            this.Advance();
+            goto q76;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q69:
+        // [0-9A-Z_a-tv-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q70;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q70:
+        // [0-9A-Z_a-ln-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 108))) 
+                    || ((this.current >= 110) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [m]
+        if ((this.current == 109)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q71:
+        // [0-9A-Z_a-tv-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q72;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q72:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q73;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q73:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q43;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q74:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q75;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q75:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q9;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q76:
+        // [0-9A-Z_a-oq-su-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 111))) 
+                    || ((this.current >= 113) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [p]
+        if ((this.current == 112)) {
+            this.Advance();
+            goto q77;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q80;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q77:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q78;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q78:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q79;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q79:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q21;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q80:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q81;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q81:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q82;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q82:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q83:
+        // [0-9A-Z_b-hj-km-np-z]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q84;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q85;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q90;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q92;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q84:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q23;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q85:
+        // [0-9A-Z_a-mo-wy-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 119))) 
+                    || ((this.current >= 121) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q86;
+        }
+        // [x]
+        if ((this.current == 120)) {
+            this.Advance();
+            goto q39;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q86:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q87;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q87:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q88;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q88:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q89;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q89:
+        // [0-9A-Z_a-xz]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 120))) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q90:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q91;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q91:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q9;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q92:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q93;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q93:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q94;
+        }
+        return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+    q94:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q33;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q95:
+        // [0-9A-Z_a-df-km-np-z]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q9;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q96;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q98;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q96:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q97;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q97:
+        // [0-9A-Z_ac-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || (this.current == 97)) 
+                    || ((this.current >= 99) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [b]
+        if ((this.current == 98)) {
+            this.Advance();
+            goto q53;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q98:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q99;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q99:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q100:
+        // [0-9A-Z_a-eg-lo-rt-z]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 101))) 
+                    || ((this.current >= 103) 
+                    && (this.current <= 108))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [fs]
+        if (((this.current == 102) 
+                    || (this.current == 115))) {
+            this.Advance();
+            goto q10;
+        }
+        // [m]
+        if ((this.current == 109)) {
+            this.Advance();
+            goto q101;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q102;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q101:
+        // [0-9A-Z_a-oq-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 111))) 
+                    || ((this.current >= 113) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [p]
+        if ((this.current == 112)) {
+            this.Advance();
+            goto q77;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q102:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q103;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q103:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q104;
+        }
+        return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+    q104:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q105;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q105:
+        // [0-9A-Z_a-eg-mo-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 101))) 
+                    || ((this.current >= 103) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [f]
+        if ((this.current == 102)) {
+            this.Advance();
+            goto q106;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q53;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q106:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q107;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q107:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q24;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q108:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q109;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q109:
+        // [0-9A-Z_a-bd-mo-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q29;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q17;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q110:
+        // [0-9A-Z_b-df-tv-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q111;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q115;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q116;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q111:
+        // [0-9A-Z_a-ln-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 108))) 
+                    || ((this.current >= 110) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [m]
+        if ((this.current == 109)) {
+            this.Advance();
+            goto q112;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q112:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q113;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q113:
+        // [0-9A-Z_a-rt-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q114;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q114:
+        // [0-9A-Z_a-oq-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 111))) 
+                    || ((this.current >= 113) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [p]
+        if ((this.current == 112)) {
+            this.Advance();
+            goto q106;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q115:
+        // [0-9A-Z_a-vx-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 118))) 
+                    || ((this.current >= 120) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [w]
+        if ((this.current == 119)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q116:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q26;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q117:
+        // [0-9A-Z_ac-oq-tw-z]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || (this.current == 97)) 
+                    || ((this.current >= 99) 
+                    && (this.current <= 111))) 
+                    || ((this.current >= 113) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 119) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [b]
+        if ((this.current == 98)) {
+            this.Advance();
+            goto q118;
+        }
+        // [p]
+        if ((this.current == 112)) {
+            this.Advance();
+            goto q120;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q9;
+        }
+        // [v]
+        if ((this.current == 118)) {
+            this.Advance();
+            goto q125;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q118:
+        // [0-9A-Z_a-ik-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 105))) 
+                    || ((this.current >= 107) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [j]
+        if ((this.current == 106)) {
+            this.Advance();
+            goto q119;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q119:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q8;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q120:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q121;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q121:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q122;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q122:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q123;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q123:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q124;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q124:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q36;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q125:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q126;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q126:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q127;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q127:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q128;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q128:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q129;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q129:
+        // [0-9A-Z_a-ce-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 99))) 
+                    || ((this.current >= 101) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [d]
+        if ((this.current == 100)) {
+            this.Advance();
+            goto q24;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q130:
+        // [0-9A-Z_b-qs-tv-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q131;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q135;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q141;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q131:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q132;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q132:
+        // [0-9A-Z_b-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q133;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q134;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q133:
+        // [0-9A-Z_a-ln-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 108))) 
+                    || ((this.current >= 110) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [m]
+        if ((this.current == 109)) {
+            this.Advance();
+            goto q43;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q134:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q53;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q135:
+        // [0-9A-Z_a-hj-np-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q136;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q137;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q136:
+        // [0-9A-Z_a-uw-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 117))) 
+                    || ((this.current >= 119) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [v]
+        if ((this.current == 118)) {
+            this.Advance();
+            goto q59;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q137:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q138;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q138:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q139;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q139:
+        // [0-9A-Z_a-bd-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q140;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q140:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q39;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q141:
+        // [0-9A-Z_ac-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || (this.current == 97)) 
+                    || ((this.current >= 99) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [b]
+        if ((this.current == 98)) {
+            this.Advance();
+            goto q142;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q142:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q67;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q143:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q144;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q144:
+        // [0-9A-Z_b-eg-su-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 101))) 
+                    || ((this.current >= 103) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q145;
+        }
+        // [f]
+        if ((this.current == 102)) {
+            this.Advance();
+            goto q10;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q148;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q145:
+        // [0-9A-Z_a-ce-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 99))) 
+                    || ((this.current >= 101) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [d]
+        if ((this.current == 100)) {
+            this.Advance();
+            goto q146;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q146:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q147;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q147:
+        // [0-9A-Z_a-mo-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 109))) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q88;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q148:
+        // [0-9A-Z_a-tv-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q81;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q149:
+        // [0-9A-Z_ac-df-gj-su-vx-z]
+        if (((((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || (this.current == 97)) 
+                    || ((this.current >= 99) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 103))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 118))) 
+                    || ((this.current >= 120) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [b]
+        if ((this.current == 98)) {
+            this.Advance();
+            goto q150;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q151;
+        }
+        // [h]
+        if ((this.current == 104)) {
+            this.Advance();
+            goto q153;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q155;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q159;
+        }
+        // [w]
+        if ((this.current == 119)) {
+            this.Advance();
+            goto q167;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q150:
+        // [0-9A-Z_a-xz]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 120))) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q30;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q151:
+        // [0-9A-Z_b-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q152;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q152:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q39;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q153:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q154;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q154:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q9;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q155:
+        // [0-9A-Z_a-y]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 121)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [z]
+        if ((this.current == 122)) {
+            this.Advance();
+            goto q156;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q156:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q157;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q157:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q158;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q158:
+        // [0-9A-Z_a-eg-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 101))) 
+                    || ((this.current >= 103) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [f]
+        if ((this.current == 102)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q159:
+        // [0-9A-Z_b-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q160;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q166;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q160:
+        // [0-9A-Z_a-bd-su-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q161;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q67;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q161:
+        // [0-9A-Z_a-jl-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 106))) 
+                    || ((this.current >= 108) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [k]
+        if ((this.current == 107)) {
+            this.Advance();
+            goto q162;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q162:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q163;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q163:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q164;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q164:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q165;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q165:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q19;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q166:
+        // [0-9A-Z_a-hj-tv-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q16;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q8;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q167:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q168;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q168:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q33;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q169:
+        // [0-9A-Z_a-gi-qs-xz]
+        if (((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 103))) 
+                    || ((this.current >= 105) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 120))) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [h]
+        if ((this.current == 104)) {
+            this.Advance();
+            goto q170;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q172;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q173;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q170:
+        // [0-9A-Z_a-hj-qs-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q43;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q171;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q171:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q115;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q172:
+        // [0-9A-Z_a-tv-xz]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 120))) 
+                    || (this.current == 122))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q24;
+        }
+        // [y]
+        if ((this.current == 121)) {
+            this.Advance();
+            goto q10;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q173:
+        // [0-9A-Z_a-oq-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 111))) 
+                    || ((this.current >= 113) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [p]
+        if ((this.current == 112)) {
+            this.Advance();
+            goto q156;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q174:
+        // [0-9A-Z_a-hj-kmo-rt-z]
+        if ((((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 107))) 
+                    || (this.current == 109)) 
+                    || ((this.current >= 111) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q75;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q175;
+        }
+        // [n]
+        if ((this.current == 110)) {
+            this.Advance();
+            goto q176;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q181;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q175:
+        // [0-9A-Z_a-np-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q16;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q176:
+        // [0-9A-Z_a-bd-rt-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 98))) 
+                    || ((this.current >= 100) 
+                    && (this.current <= 114))) 
+                    || ((this.current >= 116) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [c]
+        if ((this.current == 99)) {
+            this.Advance();
+            goto q177;
+        }
+        // [s]
+        if ((this.current == 115)) {
+            this.Advance();
+            goto q179;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q177:
+        // [0-9A-Z_a-gi-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 103))) 
+                    || ((this.current >= 105) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [h]
+        if ((this.current == 104)) {
+            this.Advance();
+            goto q178;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q178:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q37;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q179:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q180;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q180:
+        // [0-9A-Z_a-eg-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 101))) 
+                    || ((this.current >= 103) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [f]
+        if ((this.current == 102)) {
+            this.Advance();
+            goto q24;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q181:
+        // [0-9A-Z_a-gj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 103))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [h]
+        if ((this.current == 104)) {
+            this.Advance();
+            goto q153;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q16;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q182:
+        // [0-9A-Z_b-hj-np-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 110))) 
+                    || ((this.current >= 112) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q36;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q183;
+        }
+        // [o]
+        if ((this.current == 111)) {
+            this.Advance();
+            goto q186;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q183:
+        // [0-9A-Z_a-qs-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 113))) 
+                    || ((this.current >= 115) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [r]
+        if ((this.current == 114)) {
+            this.Advance();
+            goto q184;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q184:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q185;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q185:
+        // [0-9A-Z_a-tv-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 116))) 
+                    || ((this.current >= 118) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [u]
+        if ((this.current == 117)) {
+            this.Advance();
+            goto q53;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q186:
+        // [0-9A-Z_a-hj-km-z]
+        if ((((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q40;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q187;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q187:
+        // [0-9A-Z_b-z]
+        if ((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 98) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [a]
+        if ((this.current == 97)) {
+            this.Advance();
+            goto q188;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q188:
+        // [0-9A-Z_a-su-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 115))) 
+                    || ((this.current >= 117) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [t]
+        if ((this.current == 116)) {
+            this.Advance();
+            goto q189;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q189:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q63;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q190:
+        // [0-9A-Z_a-gi-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 103))) 
+                    || ((this.current >= 105) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [h]
+        if ((this.current == 104)) {
+            this.Advance();
+            goto q189;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q191:
+        // [0-9A-Z_a-hj-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 104))) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [i]
+        if ((this.current == 105)) {
+            this.Advance();
+            goto q192;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q192:
+        // [0-9A-Z_a-df-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 100))) 
+                    || ((this.current >= 102) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [e]
+        if ((this.current == 101)) {
+            this.Advance();
+            goto q193;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    q193:
+        // [0-9A-Z_a-km-z]
+        if (((((((this.current >= 48) 
+                    && (this.current <= 57)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || ((this.current >= 97) 
+                    && (this.current <= 107))) 
+                    || ((this.current >= 109) 
+                    && (this.current <= 122)))) {
+            this.Advance();
+            goto q2;
+        }
+        // [l]
+        if ((this.current == 108)) {
+            this.Advance();
+            goto q40;
+        }
+        return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+    errorout:
+        if ((((((((((((((((((((((((((((((((this.current == -1) 
+                    || ((this.current >= 9) 
+                    && (this.current <= 10))) 
+                    || (this.current == 13)) 
+                    || (this.current == 32)) 
+                    || ((this.current >= 65) 
+                    && (this.current <= 90))) 
+                    || (this.current == 95)) 
+                    || (this.current == 104)) 
+                    || ((this.current >= 106) 
+                    && (this.current <= 107))) 
+                    || (this.current == 109)) 
+                    || (this.current == 113)) 
+                    || (this.current == 120)) 
+                    || (this.current == 122)) 
+                    || (this.current == 97)) 
+                    || (this.current == 98)) 
+                    || (this.current == 99)) 
+                    || (this.current == 100)) 
+                    || (this.current == 101)) 
+                    || (this.current == 102)) 
+                    || (this.current == 103)) 
+                    || (this.current == 105)) 
+                    || (this.current == 108)) 
+                    || (this.current == 110)) 
+                    || (this.current == 111)) 
+                    || (this.current == 112)) 
+                    || (this.current == 114)) 
+                    || (this.current == 115)) 
+                    || (this.current == 116)) 
+                    || (this.current == 117)) 
+                    || (this.current == 118)) 
+                    || (this.current == 119)) 
+                    || (this.current == 121))) {
+            if ((this.capture.Length == 0)) {
+                return FAMatch.Create(-2, null, 0, 0, 0);
+            }
+            return FAMatch.Create(-1, this.capture.ToString(), p, l, c);
+        }
+        this.Advance();
+        goto errorout;
     }
 }

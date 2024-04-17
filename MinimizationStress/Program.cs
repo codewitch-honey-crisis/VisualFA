@@ -22,10 +22,12 @@ dfa.RenderToFile(@"..\..\..\dfa.jpg");
 var genopts = new FAGeneratorOptions()
 {
 	StringRunnerClassName = "TestRunner",
+	TextReaderRunnerClassName = "TestTextRunner",
 	Dependencies = FAGeneratorDependencies.UseRuntime,
 	GenerateTables = false,
+	GenerateStringRunner = true,
 	Namespace = "",
-	GenerateTextReaderRunner = false,
+	GenerateTextReaderRunner = true,
 	UseSpans = true
 };
 var ccu = dfa.Generate(null, genopts);
@@ -42,37 +44,6 @@ using (var writer = new StreamWriter(@"..\..\..\TestRunner.cs"))
 	};
 	csharp.GenerateCodeFromCompileUnit(ccu, writer, opts);
 }
-var testRunner = new TestRunner();
-testRunner.Set("as case base");
-
-foreach (var m in testRunner)
-{
-	Console.WriteLine("{0}:{1} at {2}", m.SymbolId, m.Value, m.Position);
-}
-genopts = new FAGeneratorOptions()
-{
-	TextReaderRunnerClassName = "TestTextRunner",
-	Dependencies = FAGeneratorDependencies.UseRuntime,
-	GenerateTables = false,
-	Namespace = "",
-	GenerateTextReaderRunner = true,
-	UseSpans = true
-};
-ccu = dfa.Generate(null, genopts);
-
-using (var writer = new StreamWriter(@"..\..\..\TestTextRunner.cs"))
-{
-	var opts = new System.CodeDom.Compiler.CodeGeneratorOptions()
-	{
-		BlankLinesBetweenMembers = false,
-		BracingStyle = "BLOCK",
-		ElseOnClosing = true,
-		IndentString = "    ",
-		VerbatimOrder = true
-	};
-	csharp.GenerateCodeFromCompileUnit(ccu, writer, opts);
-}
-
 var testTextRunner = new TestTextRunner();
 testTextRunner.Set(new StringReader("as case base"));
 foreach (var m in testTextRunner)
