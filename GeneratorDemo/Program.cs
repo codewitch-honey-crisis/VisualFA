@@ -19,7 +19,7 @@ lexer.RenderToFile(@"..\..\..\lexer_dfa.jpg",dgo);
 var gopts = new FAGeneratorOptions();
 gopts.GenerateTables = false;
 gopts.GenerateTextReaderRunner = false;
-gopts.ClassName = "CommentRunner";
+gopts.StringRunnerClassName = "CommentRunner";
 gopts.Dependencies = FAGeneratorDependencies.UseRuntime;
 gopts.Symbols = syms;
 var ccu = lexer.Generate(new FA[] { commentEnd }, gopts);
@@ -51,14 +51,14 @@ foreach (var m in textRunner)
 }
 Console.WriteLine("---------------------");
 var genRunner = new CommentRunner();
-var map = new List<string>();
+var map = new List<string?>();
 var mia = genRunner.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
 for(int i = 0;i<mia.Length;++i)
 {
 	var mem = mia[i];
 	if(mem.FieldType==typeof(int))
 	{
-		var k = (int)mem.GetValue(null);
+		var k = (int)mem.GetValue(null)!;
 		for(int j = 0;j<=k;++j)
 		{
 			map.Add(null);

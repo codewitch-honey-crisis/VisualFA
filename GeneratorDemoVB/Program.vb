@@ -13,7 +13,7 @@ Module Program
         Dim gopts As FAGeneratorOptions = New FAGeneratorOptions()
         gopts.GenerateTables = False
         gopts.GenerateTextReaderRunner = False
-        gopts.ClassName = "CommentRunner"
+        gopts.StringRunnerClassName = "StringCommentRunner"
         gopts.UseSpans = False ' not supported by VB
         ' must generate our own shared code if we're not using spans
         ' and Visual FA's string runners are

@@ -1404,11 +1404,12 @@ UseRuntime}
 public
 #endif
 partial class FAGeneratorOptions{public FAGeneratorDependencies Dependencies{get;set;}=FAGeneratorDependencies.None;public bool GenerateTables{get;set;
-}=false;public bool GenerateTextReaderRunner{get;set;}=false;
+}=false;public bool GenerateTextReaderRunner{get;set;}=false;public bool GenerateStringRunner{get;set;}=true;
 #if FALIB_SPANS
 public bool UseSpans{get;set;}=FAStringRunner.UsingSpans;
 #endif
-public string ClassName{get;set;}="GeneratedRunner";public string Namespace{get;set;}="";public string[]Symbols{get;set;}=null;}
+[Obsolete]public string ClassName{get;set;}="GeneratedRunner";public string StringRunnerClassName{get;set;}="GeneratedStringRunner";public string TextReaderRunnerClassName
+{get;set;}="GeneratedTextReaderRunner";public string Namespace{get;set;}="";public string[]Symbols{get;set;}=null;}
 #if FALIB
 public
 #endif
@@ -1528,12 +1529,11 @@ state.Statement=retmatch;}else{dest.Add(retmatch);}}else{var gerror=new CodeGoto
 CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),new CodeStatement[]{new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new
  CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(FAMatch).Name),"Create"),new CodeExpression[]{new CodePrimitiveExpression(-1),tostr,
 position,line,column}))});error.Statement=ifEnd;dest.Add(error);dest.Add(adv);dest.Add(new CodeGotoStatement("q0"));}}}private static CodeTypeDeclaration
- _GenerateRunner(bool textReader,IList<FA>closure,IList<FA>blockEnds,FAGeneratorOptions options){var result=new CodeTypeDeclaration(options.ClassName);
+ _GenerateRunner(bool textReader,IList<FA>closure,IList<FA>blockEnds,FAGeneratorOptions options){var result=new CodeTypeDeclaration(textReader?options.TextReaderRunnerClassName:options.StringRunnerClassName);
 result.TypeAttributes=TypeAttributes.NotPublic|TypeAttributes.Sealed;result.BaseTypes.Add(new CodeTypeReference(textReader?typeof(FATextReaderRunner).Name
 :typeof(FAStringRunner).Name));result.IsClass=true;result.IsPartial=true;var nextMatch=new CodeMemberMethod();nextMatch.Name="NextMatch";nextMatch.Attributes
 =MemberAttributes.Public|MemberAttributes.Override;nextMatch.ReturnType=new CodeTypeReference(typeof(FAMatch).Name);CodeStatementCollection target;_GenerateBlockEnds(textReader,
-result,blockEnds,options);if(!options.GenerateTextReaderRunner){var nextMatchImpl=new CodeMemberMethod();nextMatchImpl.Name="NextMatchImpl";CodeTypeReference
- pt=null;
+result,blockEnds,options);if(!textReader){var nextMatchImpl=new CodeMemberMethod();nextMatchImpl.Name="NextMatchImpl";CodeTypeReference pt=null;
 #if FALIB_SPANS
 if(options.UseSpans){pt=new CodeTypeReference("ReadOnlySpan`1",new CodeTypeReference[]{new CodeTypeReference(typeof(char))});}
 #endif
@@ -1546,19 +1546,19 @@ for(int i=0;i<dfa.Length;++i){result.Initializers.Add(new CodePrimitiveExpressio
 blockEnds){var intArrays=new CodeTypeReference(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),1);var result=new CodeArrayCreateExpression(intArrays);
 var nullExp=new CodePrimitiveExpression(null);for(int i=0;i<blockEnds.Count;++i){if(blockEnds[i]==null){result.Initializers.Add(nullExp);}else{result.Initializers.Add(_CreateDfaArray(blockEnds[i]));
 }}return result;}private static CodeTypeDeclaration _GenerateTableRunner(bool textReader,IList<FA>closure,IList<FA>blockEnds,FAGeneratorOptions options)
-{var result=new CodeTypeDeclaration(options.ClassName);var hasBlockEnds=(blockEnds!=null&&blockEnds.Count>0);result.TypeAttributes=TypeAttributes.NotPublic
-|TypeAttributes.Sealed;result.BaseTypes.Add(new CodeTypeReference(textReader?typeof(FATextReaderDfaTableRunner).Name:typeof(FAStringDfaTableRunner).Name));
-var dfaField=new CodeMemberField(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),"_dfa");dfaField.Attributes=MemberAttributes.Private|MemberAttributes.Static;
-dfaField.InitExpression=_CreateDfaArray(closure[0].ToArray());result.Members.Add(dfaField);if(hasBlockEnds){var blockEndsField=new CodeMemberField(new
- CodeTypeReference(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),1),"_blockEnds");blockEndsField.Attributes=MemberAttributes.Private|MemberAttributes.Static;
-var belist=new List<int[]>(blockEnds.Count);for(int i=0;i<blockEnds.Count;++i){if(blockEnds[i]!=null){belist.Add(blockEnds[i].ToArray());}else{belist.Add(null);
-}}blockEndsField.InitExpression=_CreateBlockEndArray(belist);result.Members.Add(blockEndsField);}var ctor=new CodeConstructor();ctor.Attributes=MemberAttributes.Public;
-ctor.BaseConstructorArgs.Add(new CodeFieldReferenceExpression(null,"_dfa"));ctor.BaseConstructorArgs.Add(hasBlockEnds?(CodeExpression)new CodeFieldReferenceExpression(null,
-"_blockEnds"):(CodeExpression)new CodePrimitiveExpression(null));result.Members.Add(ctor);result.IsClass=true;result.IsPartial=true;return result;}public
- static CodeCompileUnit Generate(this FA fa,IList<FA>blockEnds=null,FAGeneratorOptions options=null,IProgress<int>progress=null){if(options==null){options
-=new FAGeneratorOptions();}if(!fa.IsDeterministic){fa=fa.ToDfa(progress);}if(blockEnds!=null){for(int i=0;i<blockEnds.Count;++i){var be=blockEnds[i];if
-(be!=null){blockEnds[i]=be.ToMinimizedDfa(progress);}}}var closure=fa.FillClosure();var result=new CodeCompileUnit();var ns=new CodeNamespace();if(options.Namespace
-!=null){ns.Name=options.Namespace;}switch(options.Dependencies){case FAGeneratorDependencies.None:result.ReferencedAssemblies.Add(typeof(WeakReference<>).Assembly.FullName);
+{var result=new CodeTypeDeclaration(textReader?options.TextReaderRunnerClassName:options.StringRunnerClassName);var hasBlockEnds=(blockEnds!=null&&blockEnds.Count
+>0);result.TypeAttributes=TypeAttributes.NotPublic|TypeAttributes.Sealed;result.BaseTypes.Add(new CodeTypeReference(textReader?typeof(FATextReaderDfaTableRunner).Name
+:typeof(FAStringDfaTableRunner).Name));var dfaField=new CodeMemberField(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),"_dfa");dfaField.Attributes
+=MemberAttributes.Private|MemberAttributes.Static;dfaField.InitExpression=_CreateDfaArray(closure[0].ToArray());result.Members.Add(dfaField);if(hasBlockEnds)
+{var blockEndsField=new CodeMemberField(new CodeTypeReference(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),1),"_blockEnds");blockEndsField.Attributes
+=MemberAttributes.Private|MemberAttributes.Static;var belist=new List<int[]>(blockEnds.Count);for(int i=0;i<blockEnds.Count;++i){if(blockEnds[i]!=null)
+{belist.Add(blockEnds[i].ToArray());}else{belist.Add(null);}}blockEndsField.InitExpression=_CreateBlockEndArray(belist);result.Members.Add(blockEndsField);
+}var ctor=new CodeConstructor();ctor.Attributes=MemberAttributes.Public;ctor.BaseConstructorArgs.Add(new CodeFieldReferenceExpression(null,"_dfa"));ctor.BaseConstructorArgs.Add(hasBlockEnds
+?(CodeExpression)new CodeFieldReferenceExpression(null,"_blockEnds"):(CodeExpression)new CodePrimitiveExpression(null));result.Members.Add(ctor);result.IsClass
+=true;result.IsPartial=true;return result;}public static CodeCompileUnit Generate(this FA fa,IList<FA>blockEnds=null,FAGeneratorOptions options=null,IProgress<int>
+progress=null){if(options==null){options=new FAGeneratorOptions();}if(!fa.IsDeterministic){fa=fa.ToDfa(progress);}if(blockEnds!=null){for(int i=0;i<blockEnds.Count;
+++i){var be=blockEnds[i];if(be!=null){blockEnds[i]=be.ToMinimizedDfa(progress);}}}var closure=fa.FillClosure();var result=new CodeCompileUnit();var ns
+=new CodeNamespace();if(options.Namespace!=null){ns.Name=options.Namespace;}switch(options.Dependencies){case FAGeneratorDependencies.None:result.ReferencedAssemblies.Add(typeof(WeakReference<>).Assembly.FullName);
 ns.Imports.AddRange(new CodeNamespaceImport[]{new CodeNamespaceImport("System"),new CodeNamespaceImport("System.IO"),new CodeNamespaceImport("System.Text"),
 new CodeNamespaceImport("System.Collections.Generic")});break;case FAGeneratorDependencies.UseRuntime:result.ReferencedAssemblies.Add(typeof(WeakReference<>).Assembly.FullName);
 result.ReferencedAssemblies.Add(typeof(FA).Assembly.FullName);ns.Imports.AddRange(new CodeNamespaceImport[]{new CodeNamespaceImport("System"),new CodeNamespaceImport("System.IO"),
@@ -1576,8 +1576,9 @@ ns.Types.AddRange(Deslanged.GetFADfaTableRunner(options.UseSpans).Namespaces[0].
 #else
 ns.Types.AddRange(Deslanged.GetFADfaTableRunner(false).Namespaces[0].Types);
 #endif
-}break;}result.Namespaces.Add(ns);CodeTypeDeclaration type;if(options.GenerateTables){type=_GenerateTableRunner(options.GenerateTextReaderRunner,closure,
-blockEnds,options);}else{type=_GenerateRunner(options.GenerateTextReaderRunner,closure,blockEnds,options);}_GenerateSymbols(type,options);ns.Types.Add(type);
-var ver=typeof(FA).Assembly.GetName().Version.ToString();var gendecl=new CodeAttributeDeclaration(new CodeTypeReference(typeof(GeneratedCodeAttribute)),
-new CodeAttributeArgument(new CodePrimitiveExpression("Visual FA")),new CodeAttributeArgument(new CodePrimitiveExpression(ver)));foreach(CodeTypeDeclaration
- t in ns.Types){t.CustomAttributes.Add(gendecl);}return result;}}}
+}break;}result.Namespaces.Add(ns);if(options.GenerateStringRunner){CodeTypeDeclaration type;if(options.GenerateTables){type=_GenerateTableRunner(false,
+closure,blockEnds,options);}else{type=_GenerateRunner(false,closure,blockEnds,options);}_GenerateSymbols(type,options);ns.Types.Add(type);}if(options.GenerateTextReaderRunner)
+{CodeTypeDeclaration type;if(options.GenerateTables){type=_GenerateTableRunner(true,closure,blockEnds,options);}else{type=_GenerateRunner(true,closure,
+blockEnds,options);}_GenerateSymbols(type,options);ns.Types.Add(type);}var ver=typeof(FA).Assembly.GetName().Version.ToString();var gendecl=new CodeAttributeDeclaration(new
+ CodeTypeReference(typeof(GeneratedCodeAttribute)),new CodeAttributeArgument(new CodePrimitiveExpression("Visual FA")),new CodeAttributeArgument(new CodePrimitiveExpression(ver)));
+foreach(CodeTypeDeclaration t in ns.Types){t.CustomAttributes.Add(gendecl);}return result;}}}

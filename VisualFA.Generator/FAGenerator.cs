@@ -35,11 +35,16 @@ namespace VisualFA
 
 		public bool GenerateTables { get; set; } = false;
 		public bool GenerateTextReaderRunner { get; set; } = false;
+		public bool GenerateStringRunner { get; set; } = true;
 		// not always supported
 #if FALIB_SPANS
 		public bool UseSpans { get; set; } = FAStringRunner.UsingSpans;
 #endif
+		[Obsolete]
 		public string ClassName { get; set; } = "GeneratedRunner";
+		public string StringRunnerClassName { get; set; } = "GeneratedStringRunner";
+
+		public string TextReaderRunnerClassName { get; set; } = "GeneratedTextReaderRunner";
 		public string Namespace { get; set; } = "";
 		public string[] Symbols { get; set; } = null;
 	}
@@ -864,7 +869,7 @@ namespace VisualFA
 
 		private static CodeTypeDeclaration _GenerateRunner(bool textReader, IList<FA> closure, IList<FA> blockEnds, FAGeneratorOptions options)
 		{
-			var result = new CodeTypeDeclaration(options.ClassName);
+			var result = new CodeTypeDeclaration(textReader?options.TextReaderRunnerClassName:options.StringRunnerClassName);
 			result.TypeAttributes = TypeAttributes.NotPublic | TypeAttributes.Sealed;
 			result.BaseTypes.Add(new CodeTypeReference(textReader ? typeof(FATextReaderRunner).Name : typeof(FAStringRunner).Name));
 			result.IsClass = true;
@@ -875,7 +880,7 @@ namespace VisualFA
 			nextMatch.ReturnType = new CodeTypeReference(typeof(FAMatch).Name);
 			CodeStatementCollection target;
 			_GenerateBlockEnds(textReader, result, blockEnds,options);
-			if (!options.GenerateTextReaderRunner)
+			if (!textReader)
 			{
 				var nextMatchImpl = new CodeMemberMethod();
 				nextMatchImpl.Name = "NextMatchImpl";
@@ -933,7 +938,7 @@ namespace VisualFA
 		}
 		private static CodeTypeDeclaration _GenerateTableRunner(bool textReader,IList<FA> closure, IList<FA> blockEnds, FAGeneratorOptions options)
 		{
-			var result = new CodeTypeDeclaration(options.ClassName);
+			var result = new CodeTypeDeclaration(textReader?options.TextReaderRunnerClassName:options.StringRunnerClassName);
 			var hasBlockEnds = (blockEnds != null && blockEnds.Count > 0);
 
 			result.TypeAttributes = TypeAttributes.NotPublic | TypeAttributes.Sealed;
@@ -1031,17 +1036,34 @@ namespace VisualFA
 					break;
 			}			
 			result.Namespaces.Add(ns);
-			CodeTypeDeclaration type;
-			if (options.GenerateTables)
+			if (options.GenerateStringRunner)
 			{
-				type = _GenerateTableRunner(options.GenerateTextReaderRunner, closure, blockEnds, options);
+				CodeTypeDeclaration type;
+				if (options.GenerateTables)
+				{
+					type = _GenerateTableRunner(false, closure, blockEnds, options);
+				}
+				else
+				{
+					type = _GenerateRunner(false, closure, blockEnds, options);
+				}
+				_GenerateSymbols(type, options);
+				ns.Types.Add(type);
 			}
-			else
+			if (options.GenerateTextReaderRunner)
 			{
-				type = _GenerateRunner(options.GenerateTextReaderRunner, closure, blockEnds, options);
+				CodeTypeDeclaration type;
+				if (options.GenerateTables)
+				{
+					type = _GenerateTableRunner(true, closure, blockEnds, options);
+				}
+				else
+				{
+					type = _GenerateRunner(true, closure, blockEnds, options);
+				}
+				_GenerateSymbols(type, options);
+				ns.Types.Add(type);
 			}
-			_GenerateSymbols(type, options);
-			ns.Types.Add(type);
 			var ver = typeof(FA).Assembly.GetName().Version.ToString();
 			var gendecl = new CodeAttributeDeclaration(new CodeTypeReference(typeof(GeneratedCodeAttribute)), new CodeAttributeArgument(new CodePrimitiveExpression("Visual FA")), new CodeAttributeArgument(new CodePrimitiveExpression(ver)));
 			foreach (CodeTypeDeclaration t in ns.Types)

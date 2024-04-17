@@ -40,6 +40,7 @@ namespace LexGen
 			bool nospans = false;
 #endif
 			bool textreader = false;
+			bool dual = false;
 			bool vertical = false;
 			int dpi = 0;
 			// our working variables
@@ -100,7 +101,18 @@ namespace LexGen
 								break;
 #endif
 							case "/textreader":
+								if(dual==true)
+								{
+									throw new ArgumentException("Either /textreader or /dual may be specified, but not both", "textreader");
+								}
 								textreader = true;
+								break;
+							case "/dual":
+								if (textreader == true)
+								{
+									throw new ArgumentException("Either /textreader or /dual may be specified, but not both", "dual");
+								}
+								dual = true;
 								break;
 							case "/nfagraph":
 								if (args.Length - 1 == i) // check if we're at the end
@@ -324,13 +336,29 @@ namespace LexGen
 						{
 							genopts.Dependencies = FAGeneratorDependencies.GenerateSharedCode;
 						}
-						genopts.ClassName = codeclass;
+						if(dual && codeclass.EndsWith("Runner"))
+						{
+							codeclass = codeclass.Substring(0, codeclass.Length - 6);
+						}
+						if(dual)
+						{
+							genopts.StringRunnerClassName = codeclass+"StringRunner";
+							genopts.TextReaderRunnerClassName = codeclass + "TextReaderRunner";
+						}
+						else if(textreader)
+						{
+							genopts.TextReaderRunnerClassName = codeclass;
+						} else
+						{
+							genopts.StringRunnerClassName = codeclass;
+						}
 						genopts.Namespace = codenamespace;
+
 #if FALIB_SPANS
 						genopts.UseSpans = !nospans;
 #endif
-						genopts.GenerateTextReaderRunner = textreader;
-
+						genopts.GenerateTextReaderRunner = textreader || dual;
+						genopts.GenerateStringRunner = textreader == false || dual;
 						genopts.GenerateTables = tables;
 
 						stderr.WriteLine("Generating code...");
@@ -441,7 +469,7 @@ namespace LexGen
 			w.WriteLine("<inputfile> [/output <outputfile>] [/class <codeclass>]");
 #endif
 			w.WriteLine("   [/namespace <codenamespace>] [/language <codelanguage>] [/tables]");
-			w.WriteLine("   [/textreader] [/ignorecase] [/noshared] [/runtime] [/ifstale]");
+			w.WriteLine("   [/textreader] [/dual] [/ignorecase] [/noshared] [/runtime] [/ifstale]");
 			w.WriteLine("   [/nfagraph <nfafile>] [/dfagraph <dfafile>] [/vertical] [/dpi <dpi>]");
 			w.WriteLine();
 			w.WriteLine(Name + " generates a lexer/scanner/tokenizer in the target .NET language");
@@ -456,6 +484,7 @@ namespace LexGen
 			w.WriteLine("   <codelanguage>   The .NET language to generate the code in - default derived from <outputfile>");
 			w.WriteLine("   <tables>         Generate lexers based on DFA tables - defaults to compiled");
 			w.WriteLine("   <textreader>     Generate lexers that stream off of TextReaders instead of strings");
+			w.WriteLine("   <dual>           Generate lexers for both strings and TextReaders");
 			w.WriteLine("   <ignorecase>     Create a case insensitive lexer - defaults to case sensitive");
 			w.WriteLine("   <noshared>       Do not generate the shared code as part of the output - defaults to generating the shared code");
 			w.WriteLine("   <runtime>        Reference the Visual FA runtime - defaults to generating the shared code");

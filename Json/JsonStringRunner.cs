@@ -763,4 +763,416 @@ namespace Json {
         public const int String = 9;
         public const int WhiteSpace = 10;
     }
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
+    internal sealed partial class JsonTextReaderRunner : FATextReaderRunner {
+        public override FAMatch NextMatch() {
+            int p;
+            int l;
+            int c;
+            this.capture.Clear();
+            if ((this.current == -2)) {
+                this.Advance();
+            }
+            p = this.position;
+            l = this.line;
+            c = this.column;
+            // q0:
+            // [\t-\n\r ]
+            if (((((this.current >= 9) 
+                        && (this.current <= 10)) 
+                        || (this.current == 13)) 
+                        || (this.current == 32))) {
+                this.Advance();
+                goto q1;
+            }
+            // [\"]
+            if ((this.current == 34)) {
+                this.Advance();
+                goto q2;
+            }
+            // [,]
+            if ((this.current == 44)) {
+                this.Advance();
+                goto q9;
+            }
+            // [\-]
+            if ((this.current == 45)) {
+                this.Advance();
+                goto q10;
+            }
+            // [0]
+            if ((this.current == 48)) {
+                this.Advance();
+                goto q11;
+            }
+            // [1-9]
+            if (((this.current >= 49) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q17;
+            }
+            // [\:]
+            if ((this.current == 58)) {
+                this.Advance();
+                goto q18;
+            }
+            // [\[]
+            if ((this.current == 91)) {
+                this.Advance();
+                goto q19;
+            }
+            // [\]]
+            if ((this.current == 93)) {
+                this.Advance();
+                goto q20;
+            }
+            // [f]
+            if ((this.current == 102)) {
+                this.Advance();
+                goto q21;
+            }
+            // [n]
+            if ((this.current == 110)) {
+                this.Advance();
+                goto q26;
+            }
+            // [t]
+            if ((this.current == 116)) {
+                this.Advance();
+                goto q30;
+            }
+            // [\{]
+            if ((this.current == 123)) {
+                this.Advance();
+                goto q32;
+            }
+            // [\}]
+            if ((this.current == 125)) {
+                this.Advance();
+                goto q33;
+            }
+            goto errorout;
+        q1:
+            // [\t-\n\r ]
+            if (((((this.current >= 9) 
+                        && (this.current <= 10)) 
+                        || (this.current == 13)) 
+                        || (this.current == 32))) {
+                this.Advance();
+                goto q1;
+            }
+            return FAMatch.Create(10, this.capture.ToString(), p, l, c);
+        q2:
+            // [\0-\t\v-!#-\[\]-\x10ffff]
+            if ((((this.current == -1) 
+                        == false) 
+                        && ((((this.current == 10) 
+                        || (this.current == 34)) 
+                        || (this.current == 92)) 
+                        == false))) {
+                this.Advance();
+                goto q2;
+            }
+            // [\"]
+            if ((this.current == 34)) {
+                this.Advance();
+                goto q3;
+            }
+            // [\\]
+            if ((this.current == 92)) {
+                this.Advance();
+                goto q4;
+            }
+            goto errorout;
+        q3:
+            return FAMatch.Create(9, this.capture.ToString(), p, l, c);
+        q4:
+            // [\"\/\\bfnrt]
+            if (((((((((this.current == 34) 
+                        || (this.current == 47)) 
+                        || (this.current == 92)) 
+                        || (this.current == 98)) 
+                        || (this.current == 102)) 
+                        || (this.current == 110)) 
+                        || (this.current == 114)) 
+                        || (this.current == 116))) {
+                this.Advance();
+                goto q2;
+            }
+            // [u]
+            if ((this.current == 117)) {
+                this.Advance();
+                goto q5;
+            }
+            goto errorout;
+        q5:
+            // [0-9A-Fa-f]
+            if (((((this.current >= 48) 
+                        && (this.current <= 57)) 
+                        || ((this.current >= 65) 
+                        && (this.current <= 70))) 
+                        || ((this.current >= 97) 
+                        && (this.current <= 102)))) {
+                this.Advance();
+                goto q6;
+            }
+            goto errorout;
+        q6:
+            // [0-9A-Fa-f]
+            if (((((this.current >= 48) 
+                        && (this.current <= 57)) 
+                        || ((this.current >= 65) 
+                        && (this.current <= 70))) 
+                        || ((this.current >= 97) 
+                        && (this.current <= 102)))) {
+                this.Advance();
+                goto q7;
+            }
+            goto errorout;
+        q7:
+            // [0-9A-Fa-f]
+            if (((((this.current >= 48) 
+                        && (this.current <= 57)) 
+                        || ((this.current >= 65) 
+                        && (this.current <= 70))) 
+                        || ((this.current >= 97) 
+                        && (this.current <= 102)))) {
+                this.Advance();
+                goto q8;
+            }
+            goto errorout;
+        q8:
+            // [0-9A-Fa-f]
+            if (((((this.current >= 48) 
+                        && (this.current <= 57)) 
+                        || ((this.current >= 65) 
+                        && (this.current <= 70))) 
+                        || ((this.current >= 97) 
+                        && (this.current <= 102)))) {
+                this.Advance();
+                goto q2;
+            }
+            goto errorout;
+        q9:
+            return FAMatch.Create(5, this.capture.ToString(), p, l, c);
+        q10:
+            // [0]
+            if ((this.current == 48)) {
+                this.Advance();
+                goto q11;
+            }
+            // [1-9]
+            if (((this.current >= 49) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q17;
+            }
+            goto errorout;
+        q11:
+            // [\.]
+            if ((this.current == 46)) {
+                this.Advance();
+                goto q12;
+            }
+            // [0-9]
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q13;
+            }
+            // [Ee]
+            if (((this.current == 69) 
+                        || (this.current == 101))) {
+                this.Advance();
+                goto q14;
+            }
+            return FAMatch.Create(6, this.capture.ToString(), p, l, c);
+        q12:
+            // [0-9]
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q13;
+            }
+            goto errorout;
+        q13:
+            // [0-9]
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q13;
+            }
+            // [Ee]
+            if (((this.current == 69) 
+                        || (this.current == 101))) {
+                this.Advance();
+                goto q14;
+            }
+            return FAMatch.Create(6, this.capture.ToString(), p, l, c);
+        q14:
+            // [\+\-]
+            if (((this.current == 43) 
+                        || (this.current == 45))) {
+                this.Advance();
+                goto q15;
+            }
+            // [0-9]
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q16;
+            }
+            goto errorout;
+        q15:
+            // [0-9]
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q16;
+            }
+            goto errorout;
+        q16:
+            // [0-9]
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q16;
+            }
+            return FAMatch.Create(6, this.capture.ToString(), p, l, c);
+        q17:
+            // [\.]
+            if ((this.current == 46)) {
+                this.Advance();
+                goto q12;
+            }
+            // [0-9]
+            if (((this.current >= 48) 
+                        && (this.current <= 57))) {
+                this.Advance();
+                goto q17;
+            }
+            // [Ee]
+            if (((this.current == 69) 
+                        || (this.current == 101))) {
+                this.Advance();
+                goto q14;
+            }
+            return FAMatch.Create(6, this.capture.ToString(), p, l, c);
+        q18:
+            return FAMatch.Create(4, this.capture.ToString(), p, l, c);
+        q19:
+            return FAMatch.Create(2, this.capture.ToString(), p, l, c);
+        q20:
+            return FAMatch.Create(3, this.capture.ToString(), p, l, c);
+        q21:
+            // [a]
+            if ((this.current == 97)) {
+                this.Advance();
+                goto q22;
+            }
+            goto errorout;
+        q22:
+            // [l]
+            if ((this.current == 108)) {
+                this.Advance();
+                goto q23;
+            }
+            goto errorout;
+        q23:
+            // [s]
+            if ((this.current == 115)) {
+                this.Advance();
+                goto q24;
+            }
+            goto errorout;
+        q24:
+            // [e]
+            if ((this.current == 101)) {
+                this.Advance();
+                goto q25;
+            }
+            goto errorout;
+        q25:
+            return FAMatch.Create(7, this.capture.ToString(), p, l, c);
+        q26:
+            // [u]
+            if ((this.current == 117)) {
+                this.Advance();
+                goto q27;
+            }
+            goto errorout;
+        q27:
+            // [l]
+            if ((this.current == 108)) {
+                this.Advance();
+                goto q28;
+            }
+            goto errorout;
+        q28:
+            // [l]
+            if ((this.current == 108)) {
+                this.Advance();
+                goto q29;
+            }
+            goto errorout;
+        q29:
+            return FAMatch.Create(8, this.capture.ToString(), p, l, c);
+        q30:
+            // [r]
+            if ((this.current == 114)) {
+                this.Advance();
+                goto q31;
+            }
+            goto errorout;
+        q31:
+            // [u]
+            if ((this.current == 117)) {
+                this.Advance();
+                goto q24;
+            }
+            goto errorout;
+        q32:
+            return FAMatch.Create(0, this.capture.ToString(), p, l, c);
+        q33:
+            return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+        errorout:
+            if ((((((((((((((((((this.current == -1) 
+                        || ((this.current >= 9) 
+                        && (this.current <= 10))) 
+                        || (this.current == 13)) 
+                        || (this.current == 32)) 
+                        || (this.current == 34)) 
+                        || (this.current == 44)) 
+                        || (this.current == 45)) 
+                        || (this.current == 48)) 
+                        || ((this.current >= 49) 
+                        && (this.current <= 57))) 
+                        || (this.current == 58)) 
+                        || (this.current == 91)) 
+                        || (this.current == 93)) 
+                        || (this.current == 102)) 
+                        || (this.current == 110)) 
+                        || (this.current == 116)) 
+                        || (this.current == 123)) 
+                        || (this.current == 125))) {
+                if ((this.capture.Length == 0)) {
+                    return FAMatch.Create(-2, null, 0, 0, 0);
+                }
+                return FAMatch.Create(-1, this.capture.ToString(), p, l, c);
+            }
+            this.Advance();
+            goto errorout;
+        }
+        public const int Object = 0;
+        public const int ObjectEnd = 1;
+        public const int Array = 2;
+        public const int ArrayEnd = 3;
+        public const int FieldSeparator = 4;
+        public const int Comma = 5;
+        public const int Number = 6;
+        public const int Boolean = 7;
+        public const int Null = 8;
+        public const int String = 9;
+        public const int WhiteSpace = 10;
+    }
 }

@@ -7,6 +7,14 @@
     <RootNamespace>VisualFA</RootNamespace>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+    <Title>Visual FA Compiler</Title>
+    <Description>Adds dynamic compilation support for the Visual FA runtime</Description>
+    <Copyright>Copyright (c) 2024 by honey the codewitch</Copyright>
+    <PackageIcon>VisualFA_icon.jpg</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/codewitch-honey-crisis/VisualFA</RepositoryUrl>
+    <PackageTags>finite automata;compiler;regex;regular expression;lexer;tokenizer</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,11 +26,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\VisualFA_icon.jpg">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\VisualFA\VisualFA.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

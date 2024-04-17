@@ -21,7 +21,7 @@ Console.WriteLine("NFA has {0} states. DFA has {1} states", nfa.FillClosure().Co
 dfa.RenderToFile(@"..\..\..\dfa.jpg");
 var genopts = new FAGeneratorOptions()
 {
-	ClassName = "TestRunner",
+	StringRunnerClassName = "TestRunner",
 	Dependencies = FAGeneratorDependencies.UseRuntime,
 	GenerateTables = false,
 	Namespace = "",
@@ -51,7 +51,7 @@ foreach (var m in testRunner)
 }
 genopts = new FAGeneratorOptions()
 {
-	ClassName = "TestTextRunner",
+	TextReaderRunnerClassName = "TestTextRunner",
 	Dependencies = FAGeneratorDependencies.UseRuntime,
 	GenerateTables = false,
 	Namespace = "",
