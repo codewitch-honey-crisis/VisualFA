@@ -448,7 +448,7 @@ namespace Json {
             }
             return FAMatch.Create(10, s.Substring(p, len), p, l, c);
         q2:
-            // [\0-\t\v-!#-\[\]-\x10ffff]
+            // [^\n\"\\]
             if ((((ch == -1) 
                         == false) 
                         && ((((ch == 10) 
@@ -863,7 +863,7 @@ namespace Json {
             }
             return FAMatch.Create(10, this.capture.ToString(), p, l, c);
         q2:
-            // [\0-\t\v-!#-\[\]-\x10ffff]
+            // [^\n\"\\]
             if ((((this.current == -1) 
                         == false) 
                         && ((((this.current == 10) 

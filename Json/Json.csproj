@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="dotnet &quot;$(SolutionDir)LexGen.dll&quot; &quot;$(ProjectDir)json.rl&quot; /class JsonRunner /dual /namespace Json /nospans /output &quot;$(ProjectDir)JsonStringRunner.cs&quot;" />
+    <Exec Command="dotnet &quot;$(SolutionDir)LexGen.dll&quot; &quot;$(ProjectDir)json.rl&quot; /class JsonRunner /dual /namespace Json /nospans /output &quot;$(ProjectDir)JsonRunners.cs&quot;" />
   </Target>
 
 </Project>

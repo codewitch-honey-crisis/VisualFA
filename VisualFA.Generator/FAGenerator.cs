@@ -53,10 +53,9 @@ namespace VisualFA
 #endif
 	static partial class FAGenerator
 	{
-		static CodeBinaryOperatorExpression _GenerateRangesExpression(CodeExpression codepoint, IList<FARange> ranges)
+		static CodeBinaryOperatorExpression _GenerateRangesExpression(CodeExpression codepoint, IList<FARange> ranges, bool inverted)
 		{
 			CodeBinaryOperatorExpression result = null;
-			var inverted = false;
 			var hasEof = false;
 			for (int i = 0; i < ranges.Count; ++i)
 			{
@@ -65,14 +64,10 @@ namespace VisualFA
 					hasEof = true; break;
 				}
 			}
-			if (!hasEof)
+			if (hasEof)
 			{
-				var notRanges = new List<FARange>(FARange.ToNotRanges(ranges));
-				if (notRanges.Count < ranges.Count)
-				{
-					inverted = true;
-					ranges = notRanges;
-				}
+				inverted = false;
+			
 			}
 			for (int i = 0; i < ranges.Count ; ++i)
 			{
@@ -465,7 +460,7 @@ namespace VisualFA
 			var ifq0match = new CodeConditionStatement(
 				_GenerateRangesExpression(
 					cmp, 
-					q0ranges.ToArray()));
+					q0ranges.ToArray(),false));
 			dest.Add(error);
 			// remember what was said about labels above
 			error.Statement = ifq0match;
@@ -631,8 +626,25 @@ namespace VisualFA
 				{
 					q0ranges.AddRange(trn.Value);
 				}
+				var test = new List<FARange>(FARange.ToNotRanges(trn.Value));
+				var hasEof = false;
+				for(int i = 0;i<trn.Value.Count;i++)
+				{
+					if (trn.Value[i].Min==-1)
+					{
+						hasEof = true;
+						break;
+					}
+				}
+				var inverted = false;
+				var ranges = trn.Value;
+				if(!hasEof && test.Count<trn.Value.Count)
+				{
+					inverted = true;
+					ranges = test;
+				}
 				var tmp = new RegexCharsetExpression();
-				foreach (var rng in trn.Value)
+				foreach (var rng in ranges)
 				{
 
 					if (rng.Min == rng.Max)
@@ -644,6 +656,8 @@ namespace VisualFA
 						tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min, rng.Max));
 					}
 				}
+				
+				tmp.HasNegatedRanges = inverted;
 				var rngcmt = new CodeCommentStatement(tmp.ToString());
 				if (!attachedlabel)
 				{
@@ -662,7 +676,7 @@ namespace VisualFA
 					dest.Add(rngcmt);
 				}
 				var iftrans = new CodeConditionStatement(
-					_GenerateRangesExpression(cmp, trn.Value));
+					_GenerateRangesExpression(cmp, ranges, inverted));
 				dest.Add(iftrans);
 
 				iftrans.TrueStatements.AddRange(
@@ -771,8 +785,16 @@ namespace VisualFA
 						var attachedlabel = false;
 						foreach (var trn in trnsgrp)
 						{
+							var test = new List<FARange>(FARange.ToNotRanges(trn.Value));
+							var ranges = trn.Value;
+							var inverted = false;
+							if(test.Count<trn.Value.Count)
+							{
+								inverted = true;
+								ranges = test;
+							}
 							var tmp = new RegexCharsetExpression();
-							foreach (var rng in trn.Value)
+							foreach (var rng in ranges)
 							{
 
 								if (rng.Min == rng.Max)
@@ -784,6 +806,7 @@ namespace VisualFA
 									tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min, rng.Max));
 								}
 							}
+							tmp.HasNegatedRanges = inverted;
 							var rngcmt = new CodeCommentStatement(tmp.ToString());
 							if (!attachedlabel)
 							{
@@ -801,7 +824,7 @@ namespace VisualFA
 							{
 								dest.Add(rngcmt);
 							}
-							var iftrans = new CodeConditionStatement(_GenerateRangesExpression(cmp, trn.Value));
+							var iftrans = new CodeConditionStatement(_GenerateRangesExpression(cmp, ranges,inverted));
 							
 							dest.Add(iftrans);
 							

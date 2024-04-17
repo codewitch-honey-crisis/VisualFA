@@ -1413,28 +1413,27 @@ public bool UseSpans{get;set;}=FAStringRunner.UsingSpans;
 #if FALIB
 public
 #endif
-static partial class FAGenerator{static CodeBinaryOperatorExpression _GenerateRangesExpression(CodeExpression codepoint,IList<FARange>ranges){CodeBinaryOperatorExpression
- result=null;var inverted=false;var hasEof=false;for(int i=0;i<ranges.Count;++i){if(ranges[i].Min==-1){hasEof=true;break;}}if(!hasEof){var notRanges=new
- List<FARange>(FARange.ToNotRanges(ranges));if(notRanges.Count<ranges.Count){inverted=true;ranges=notRanges;}}for(int i=0;i<ranges.Count;++i){var first
-=ranges[i].Min;int last=ranges[i].Max;var fp=new CodePrimitiveExpression(first);if(first!=last){var lp=new CodePrimitiveExpression(last);var exp=new CodeBinaryOperatorExpression(codepoint,
-CodeBinaryOperatorType.GreaterThanOrEqual,fp);exp=new CodeBinaryOperatorExpression(exp,CodeBinaryOperatorType.BooleanAnd,new CodeBinaryOperatorExpression(codepoint,
-CodeBinaryOperatorType.LessThanOrEqual,lp));if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,
-exp);}}else{var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,fp);if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,
-CodeBinaryOperatorType.BooleanOr,exp);}}}if(inverted){var notEof=new CodeBinaryOperatorExpression(new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,
-new CodePrimitiveExpression(-1)),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(false));var notResult=new CodeBinaryOperatorExpression(result,
-CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(false));result=new CodeBinaryOperatorExpression(notEof,CodeBinaryOperatorType.BooleanAnd,
-notResult);}return result;}static string _MakeSafeName(string name){StringBuilder sb;if(char.IsDigit(name[0])){sb=new StringBuilder(name.Length+1);sb.Append('_');
-}else{sb=new StringBuilder(name.Length);}for(var i=0;i<name.Length;++i){var ch=name[i];if('_'==ch||char.IsLetterOrDigit(ch))sb.Append(ch);else sb.Append('_');
-}return sb.ToString();}static bool _HasMember(CodeTypeDeclaration decl,string name){for(int i=0;i<decl.Members.Count;++i){var member=decl.Members[i];if(member.Name
-==name){return true;}}return false;}static string _MakeUniqueName(CodeTypeDeclaration decl,string name){string result=name;int i=1;while(_HasMember(decl,result))
-{++i;result=name+i.ToString();}return result;}static void _GenerateSymbols(CodeTypeDeclaration decl,FAGeneratorOptions opts){if(opts.Symbols==null){return;
-}var tint=new CodeTypeReference(typeof(int));for(int i=0;i<opts.Symbols.Length;i++){var org=opts.Symbols[i];var sym=org;if(!string.IsNullOrEmpty(sym))
-{sym=_MakeUniqueName(decl,_MakeSafeName(sym));var field=new CodeMemberField();field.Name=sym;field.Type=tint;field.Attributes=MemberAttributes.Public|
-MemberAttributes.Const;field.InitExpression=new CodePrimitiveExpression(i);if(org!=sym){field.Comments.Add(new CodeCommentStatement(org));}decl.Members.Add(field);
-}}}static void _GenerateMatchImplBody(bool textReader,IList<FA>closure,IList<FA>blockEnds,CodeStatementCollection dest,FAGeneratorOptions opts){var lcapturebuffer
-=new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture");var lccbts=new CodeMethodInvokeExpression(lcapturebuffer,"ToString");var
- crm=new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),"Create");CodeStatement adv;CodeExpression tostr=null;if(!textReader)
-{
+static partial class FAGenerator{static CodeBinaryOperatorExpression _GenerateRangesExpression(CodeExpression codepoint,IList<FARange>ranges,bool inverted)
+{CodeBinaryOperatorExpression result=null;var hasEof=false;for(int i=0;i<ranges.Count;++i){if(ranges[i].Min==-1){hasEof=true;break;}}if(hasEof){inverted
+=false;}for(int i=0;i<ranges.Count;++i){var first=ranges[i].Min;int last=ranges[i].Max;var fp=new CodePrimitiveExpression(first);if(first!=last){var lp
+=new CodePrimitiveExpression(last);var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.GreaterThanOrEqual,fp);exp=new CodeBinaryOperatorExpression(exp,
+CodeBinaryOperatorType.BooleanAnd,new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.LessThanOrEqual,lp));if(result==null){result=exp;}
+else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,exp);}}else{var exp=new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,
+fp);if(result==null){result=exp;}else{result=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.BooleanOr,exp);}}}if(inverted){var notEof=
+new CodeBinaryOperatorExpression(new CodeBinaryOperatorExpression(codepoint,CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),CodeBinaryOperatorType.ValueEquality,
+new CodePrimitiveExpression(false));var notResult=new CodeBinaryOperatorExpression(result,CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(false));
+result=new CodeBinaryOperatorExpression(notEof,CodeBinaryOperatorType.BooleanAnd,notResult);}return result;}static string _MakeSafeName(string name){StringBuilder
+ sb;if(char.IsDigit(name[0])){sb=new StringBuilder(name.Length+1);sb.Append('_');}else{sb=new StringBuilder(name.Length);}for(var i=0;i<name.Length;++i)
+{var ch=name[i];if('_'==ch||char.IsLetterOrDigit(ch))sb.Append(ch);else sb.Append('_');}return sb.ToString();}static bool _HasMember(CodeTypeDeclaration
+ decl,string name){for(int i=0;i<decl.Members.Count;++i){var member=decl.Members[i];if(member.Name==name){return true;}}return false;}static string _MakeUniqueName(CodeTypeDeclaration
+ decl,string name){string result=name;int i=1;while(_HasMember(decl,result)){++i;result=name+i.ToString();}return result;}static void _GenerateSymbols(CodeTypeDeclaration
+ decl,FAGeneratorOptions opts){if(opts.Symbols==null){return;}var tint=new CodeTypeReference(typeof(int));for(int i=0;i<opts.Symbols.Length;i++){var org
+=opts.Symbols[i];var sym=org;if(!string.IsNullOrEmpty(sym)){sym=_MakeUniqueName(decl,_MakeSafeName(sym));var field=new CodeMemberField();field.Name=sym;
+field.Type=tint;field.Attributes=MemberAttributes.Public|MemberAttributes.Const;field.InitExpression=new CodePrimitiveExpression(i);if(org!=sym){field.Comments.Add(new
+ CodeCommentStatement(org));}decl.Members.Add(field);}}}static void _GenerateMatchImplBody(bool textReader,IList<FA>closure,IList<FA>blockEnds,CodeStatementCollection
+ dest,FAGeneratorOptions opts){var lcapturebuffer=new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture");var lccbts=new CodeMethodInvokeExpression(
+lcapturebuffer,"ToString");var crm=new CodeMethodReferenceExpression(new CodeTypeReferenceExpression("FAMatch"),"Create");CodeStatement adv;CodeExpression
+ tostr=null;if(!textReader){
 #if FALIB_SPANS
 if(opts.UseSpans){tostr=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeArgumentReferenceExpression("s"),
 "Slice",new CodeVariableReferenceExpression("p"),new CodeVariableReferenceExpression("len")),"ToString"));}
@@ -1465,7 +1464,7 @@ new CodePrimitiveExpression(true)})));}CodeExpression cmp; if(textReader){cmp=ne
 (fromState.IsAccepting){ if(blockEnds!=null&&blockEnds.Count>fromState.AcceptSymbol&&blockEnds[fromState.AcceptSymbol]!=null){attachedlabel=_GenerateBlockEndCall(textReader,
 dest,fromState,state,attachedlabel);}else{ attachedlabel=_GenerateMatchAccept(dest,tostr,fromState,state,attachedlabel);}}else{ var gerror=new CodeGotoStatement("errorout");
 if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=gerror;}else{dest.Add(gerror);}}else{dest.Add(gerror);}}}var error=new CodeLabeledStatement("errorout");
- var ifq0match=new CodeConditionStatement(_GenerateRangesExpression(cmp,q0ranges.ToArray()));dest.Add(error); error.Statement=ifq0match;CodeExpression
+ var ifq0match=new CodeConditionStatement(_GenerateRangesExpression(cmp,q0ranges.ToArray(),false));dest.Add(error); error.Statement=ifq0match;CodeExpression
  isEmpty;if(textReader){ isEmpty=new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
 "capture"),"Length"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(0));}else{ isEmpty=new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("len"),
 CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(0));}var checkIfEnd=new CodeConditionStatement(isEmpty); checkIfEnd.TrueStatements.Add(
@@ -1487,12 +1486,14 @@ new CodeVariableReferenceExpression("len"),new CodeVariableReferenceExpression("
 }if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=retbe;}else{dest.Add(retbe);}}else{dest.Add(retbe);}return attachedlabel;}private
  static bool _GenerateTransitions(IList<FA>closure,CodeStatementCollection dest,CodeStatement adv,CodeExpression cmp,List<FARange>q0ranges,int q,FA fromState,
 CodeLabeledStatement state){var trnsgrp=fromState.FillInputTransitionRangesGroupedByState();var attachedlabel=false;foreach(var trn in trnsgrp){if(q==
-0){q0ranges.AddRange(trn.Value);}var tmp=new RegexCharsetExpression();foreach(var rng in trn.Value){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
-}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,rng.Max));}}var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel
-=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,
-trn.Value));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())});
-}return attachedlabel;}private static void _GenerateBlockEnds(bool textReader,CodeTypeDeclaration type,IList<FA>blockEnds,FAGeneratorOptions opts){if(blockEnds
-==null){return;}CodeStatement adv;CodeExpression tostr=null;if(!textReader){
+0){q0ranges.AddRange(trn.Value);}var test=new List<FARange>(FARange.ToNotRanges(trn.Value));var hasEof=false;for(int i=0;i<trn.Value.Count;i++){if(trn.Value[i].Min==-1)
+{hasEof=true;break;}}var inverted=false;var ranges=trn.Value;if(!hasEof&&test.Count<trn.Value.Count){inverted=true;ranges=test;}var tmp=new RegexCharsetExpression();
+foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,
+rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement
+=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,ranges,inverted));dest.Add(iftrans);
+iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())});}return attachedlabel;}private
+ static void _GenerateBlockEnds(bool textReader,CodeTypeDeclaration type,IList<FA>blockEnds,FAGeneratorOptions opts){if(blockEnds==null){return;}CodeStatement
+ adv;CodeExpression tostr=null;if(!textReader){
 #if FALIB_SPANS
 if(opts.UseSpans){tostr=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeArgumentReferenceExpression("s"),
 "Slice",new CodeArgumentReferenceExpression("position"),new CodeArgumentReferenceExpression("len")),"ToString"));}
@@ -1518,11 +1519,12 @@ if(mb.Parameters.Count==0){mb.Parameters.Add(new CodeParameterDeclarationExpress
 new CodeParameterDeclarationExpression(typeof(int),"column")});type.Members.Add(mb);var dest=mb.Statements;CodeExpression cmp;if(textReader){cmp=new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"current");}else{cmp=new CodeArgumentReferenceExpression("cp");}for(var q=0;q<closure.Count;++q){var fromState=closure[q];
 var state=new CodeLabeledStatement("q"+q.ToString());dest.Add(state);var trnsgrp=fromState.FillInputTransitionRangesGroupedByState();var attachedlabel
-=false;foreach(var trn in trnsgrp){var tmp=new RegexCharsetExpression();foreach(var rng in trn.Value){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
-}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,rng.Max));}}var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel
-=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,
-trn.Value));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())});
-}if(fromState.IsAccepting){var retmatch=new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(FAMatch).Name),
+=false;foreach(var trn in trnsgrp){var test=new List<FARange>(FARange.ToNotRanges(trn.Value));var ranges=trn.Value;var inverted=false;if(test.Count<trn.Value.Count)
+{inverted=true;ranges=test;}var tmp=new RegexCharsetExpression();foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
+}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());
+if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,
+ranges,inverted));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())
+});}if(fromState.IsAccepting){var retmatch=new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(FAMatch).Name),
 "Create"),new CodeExpression[]{new CodePrimitiveExpression(fromState.AcceptSymbol),tostr,position,line,column}));if(!attachedlabel){attachedlabel=true;
 state.Statement=retmatch;}else{dest.Add(retmatch);}}else{var gerror=new CodeGotoStatement("errorout");if(!attachedlabel){attachedlabel=true;state.Statement
 =gerror;}else{dest.Add(gerror);}}}var error=new CodeLabeledStatement("errorout");var ifEnd=new CodeConditionStatement(new CodeBinaryOperatorExpression(cmp,
