@@ -19,26 +19,14 @@ internal sealed partial class CommentRunner : FAStringRunner {
     private FAMatch _BlockEnd0(ReadOnlySpan<char> s, int cp, int len, int position, int line, int column) {
     q0:
         // [\*]
-        if ((((cp == -1) 
-                    == false) 
-                    && ((((cp >= 0) 
-                    && (cp <= 41)) 
-                    || ((cp >= 43) 
-                    && (cp <= 1114111))) 
-                    == false))) {
+        if ((cp == 42)) {
             this.Advance(s, ref cp, ref len, false);
             goto q1;
         }
         goto errorout;
     q1:
         // [\/]
-        if ((((cp == -1) 
-                    == false) 
-                    && ((((cp >= 0) 
-                    && (cp <= 46)) 
-                    || ((cp >= 48) 
-                    && (cp <= 1114111))) 
-                    == false))) {
+        if ((cp == 47)) {
             this.Advance(s, ref cp, ref len, false);
             goto q2;
         }
@@ -69,69 +57,37 @@ internal sealed partial class CommentRunner : FAStringRunner {
         this.Advance(s, ref ch, ref len, true);
         // q0:
         // [\t-\n\r ]
-        if ((((ch == -1) 
-                    == false) 
-                    && ((((((ch >= 0) 
-                    && (ch <= 8)) 
-                    || ((ch >= 11) 
-                    && (ch <= 12))) 
-                    || ((ch >= 14) 
-                    && (ch <= 31))) 
-                    || ((ch >= 33) 
-                    && (ch <= 1114111))) 
-                    == false))) {
+        if (((((ch >= 9) 
+                    && (ch <= 10)) 
+                    || (ch == 13)) 
+                    || (ch == 32))) {
             this.Advance(s, ref ch, ref len, false);
             goto q1;
         }
         // [\/]
-        if ((((ch == -1) 
-                    == false) 
-                    && ((((ch >= 0) 
-                    && (ch <= 46)) 
-                    || ((ch >= 48) 
-                    && (ch <= 1114111))) 
-                    == false))) {
+        if ((ch == 47)) {
             this.Advance(s, ref ch, ref len, false);
             goto q2;
         }
         goto errorout;
     q1:
         // [\t-\n\r ]
-        if ((((ch == -1) 
-                    == false) 
-                    && ((((((ch >= 0) 
-                    && (ch <= 8)) 
-                    || ((ch >= 11) 
-                    && (ch <= 12))) 
-                    || ((ch >= 14) 
-                    && (ch <= 31))) 
-                    || ((ch >= 33) 
-                    && (ch <= 1114111))) 
-                    == false))) {
+        if (((((ch >= 9) 
+                    && (ch <= 10)) 
+                    || (ch == 13)) 
+                    || (ch == 32))) {
             this.Advance(s, ref ch, ref len, false);
             goto q1;
         }
         return FAMatch.Create(2, s.Slice(p, len).ToString(), p, l, c);
     q2:
         // [\*]
-        if ((((ch == -1) 
-                    == false) 
-                    && ((((ch >= 0) 
-                    && (ch <= 41)) 
-                    || ((ch >= 43) 
-                    && (ch <= 1114111))) 
-                    == false))) {
+        if ((ch == 42)) {
             this.Advance(s, ref ch, ref len, false);
             goto q3;
         }
         // [\/]
-        if ((((ch == -1) 
-                    == false) 
-                    && ((((ch >= 0) 
-                    && (ch <= 46)) 
-                    || ((ch >= 48) 
-                    && (ch <= 1114111))) 
-                    == false))) {
+        if ((ch == 47)) {
             this.Advance(s, ref ch, ref len, false);
             goto q4;
         }
@@ -163,6 +119,109 @@ internal sealed partial class CommentRunner : FAStringRunner {
     }
     public override FAMatch NextMatch() {
         return this.NextMatchImpl(this.@string);
+    }
+    public const int commentBlock = 0;
+    public const int commentLine = 1;
+    public const int whitespace = 2;
+}
+[System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.1.1.0")]
+internal sealed partial class CommentTextRunner : FATextReaderRunner {
+    private FAMatch _BlockEnd0(int position, int line, int column) {
+    q0:
+        // [\*]
+        if ((this.current == 42)) {
+            this.Advance();
+            goto q1;
+        }
+        goto errorout;
+    q1:
+        // [\/]
+        if ((this.current == 47)) {
+            this.Advance();
+            goto q2;
+        }
+        goto errorout;
+    q2:
+        return FAMatch.Create(0, this.capture.ToString(), position, line, column);
+    errorout:
+        if ((this.current == -1)) {
+            return FAMatch.Create(-1, this.capture.ToString(), position, line, column);
+        }
+        this.Advance();
+        goto q0;
+    }
+    public override FAMatch NextMatch() {
+        int p;
+        int l;
+        int c;
+        this.capture.Clear();
+        if ((this.current == -2)) {
+            this.Advance();
+        }
+        p = this.position;
+        l = this.line;
+        c = this.column;
+        // q0:
+        // [\t-\n\r ]
+        if (((((this.current >= 9) 
+                    && (this.current <= 10)) 
+                    || (this.current == 13)) 
+                    || (this.current == 32))) {
+            this.Advance();
+            goto q1;
+        }
+        // [\/]
+        if ((this.current == 47)) {
+            this.Advance();
+            goto q2;
+        }
+        goto errorout;
+    q1:
+        // [\t-\n\r ]
+        if (((((this.current >= 9) 
+                    && (this.current <= 10)) 
+                    || (this.current == 13)) 
+                    || (this.current == 32))) {
+            this.Advance();
+            goto q1;
+        }
+        return FAMatch.Create(2, this.capture.ToString(), p, l, c);
+    q2:
+        // [\*]
+        if ((this.current == 42)) {
+            this.Advance();
+            goto q3;
+        }
+        // [\/]
+        if ((this.current == 47)) {
+            this.Advance();
+            goto q4;
+        }
+        goto errorout;
+    q3:
+        return _BlockEnd0(p, l, c);
+    q4:
+        // [\0-\x10ffff]
+        if (((this.current >= 0) 
+                    && (this.current <= 1114111))) {
+            this.Advance();
+            goto q4;
+        }
+        return FAMatch.Create(1, this.capture.ToString(), p, l, c);
+    errorout:
+        if ((((((this.current == -1) 
+                    || ((this.current >= 9) 
+                    && (this.current <= 10))) 
+                    || (this.current == 13)) 
+                    || (this.current == 32)) 
+                    || (this.current == 47))) {
+            if ((this.capture.Length == 0)) {
+                return FAMatch.Create(-2, null, 0, 0, 0);
+            }
+            return FAMatch.Create(-1, this.capture.ToString(), p, l, c);
+        }
+        this.Advance();
+        goto errorout;
     }
     public const int commentBlock = 0;
     public const int commentLine = 1;

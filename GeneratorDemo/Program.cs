@@ -18,7 +18,8 @@ dgo.AcceptSymbolNames = new string[] { "block", "line", "space" };
 lexer.RenderToFile(@"..\..\..\lexer_dfa.jpg",dgo);
 var gopts = new FAGeneratorOptions();
 gopts.GenerateTables = false;
-gopts.GenerateTextReaderRunner = false;
+gopts.GenerateTextReaderRunner = true;
+gopts.TextReaderRunnerClassName = "CommentTextRunner";
 gopts.StringRunnerClassName = "CommentRunner";
 gopts.Dependencies = FAGeneratorDependencies.UseRuntime;
 gopts.Symbols = syms;
@@ -49,6 +50,7 @@ foreach (var m in textRunner)
 	//Console.WriteLine("{0}:{1} at {2}, {3}:{4}", m.SymbolId, m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
 
 }
+
 Console.WriteLine("---------------------");
 var genRunner = new CommentRunner();
 var map = new List<string?>();
@@ -74,3 +76,4 @@ foreach (var m in genRunner)
 	
 	Console.WriteLine("{0}\t{1} at {2}, {3}:{4}", m.SymbolId<0?"#error\t":map[m.SymbolId], m.Value.Replace("\r", "\\r").Replace("\n", "\\n"), m.Position, m.Line, m.Column);
 }
+

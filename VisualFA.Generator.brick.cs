@@ -1487,13 +1487,13 @@ new CodeVariableReferenceExpression("len"),new CodeVariableReferenceExpression("
  static bool _GenerateTransitions(IList<FA>closure,CodeStatementCollection dest,CodeStatement adv,CodeExpression cmp,List<FARange>q0ranges,int q,FA fromState,
 CodeLabeledStatement state){var trnsgrp=fromState.FillInputTransitionRangesGroupedByState();var attachedlabel=false;foreach(var trn in trnsgrp){if(q==
 0){q0ranges.AddRange(trn.Value);}var test=new List<FARange>(FARange.ToNotRanges(trn.Value));var hasEof=false;for(int i=0;i<trn.Value.Count;i++){if(trn.Value[i].Min==-1)
-{hasEof=true;break;}}var inverted=false;var ranges=trn.Value;if(!hasEof&&test.Count<trn.Value.Count){inverted=true;ranges=test;}var tmp=new RegexCharsetExpression();
-foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,
-rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement
-=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,ranges,inverted));dest.Add(iftrans);
-iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())});}return attachedlabel;}private
- static void _GenerateBlockEnds(bool textReader,CodeTypeDeclaration type,IList<FA>blockEnds,FAGeneratorOptions opts){if(blockEnds==null){return;}CodeStatement
- adv;CodeExpression tostr=null;if(!textReader){
+{hasEof=true;break;}}var inverted=false;var ranges=trn.Value;if(!hasEof&&test.Count>0&&test.Count<trn.Value.Count){inverted=true;ranges=test;}var tmp=
+new RegexCharsetExpression();foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));}else{tmp.Entries.Add(new
+ RegexCharsetRangeEntry(rng.Min,rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel
+=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,
+ranges,inverted));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())
+});}return attachedlabel;}private static void _GenerateBlockEnds(bool textReader,CodeTypeDeclaration type,IList<FA>blockEnds,FAGeneratorOptions opts){
+if(blockEnds==null){return;}CodeStatement adv;CodeExpression tostr=null;if(!textReader){
 #if FALIB_SPANS
 if(opts.UseSpans){tostr=new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeMethodInvokeExpression(new CodeArgumentReferenceExpression("s"),
 "Slice",new CodeArgumentReferenceExpression("position"),new CodeArgumentReferenceExpression("len")),"ToString"));}
@@ -1519,9 +1519,9 @@ if(mb.Parameters.Count==0){mb.Parameters.Add(new CodeParameterDeclarationExpress
 new CodeParameterDeclarationExpression(typeof(int),"column")});type.Members.Add(mb);var dest=mb.Statements;CodeExpression cmp;if(textReader){cmp=new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"current");}else{cmp=new CodeArgumentReferenceExpression("cp");}for(var q=0;q<closure.Count;++q){var fromState=closure[q];
 var state=new CodeLabeledStatement("q"+q.ToString());dest.Add(state);var trnsgrp=fromState.FillInputTransitionRangesGroupedByState();var attachedlabel
-=false;foreach(var trn in trnsgrp){var test=new List<FARange>(FARange.ToNotRanges(trn.Value));var ranges=trn.Value;var inverted=false;if(test.Count<trn.Value.Count)
-{inverted=true;ranges=test;}var tmp=new RegexCharsetExpression();foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
-}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());
+=false;foreach(var trn in trnsgrp){var test=new List<FARange>(FARange.ToNotRanges(trn.Value));var ranges=trn.Value;var inverted=false;if(test.Count>0&&
+test.Count<trn.Value.Count){inverted=true;ranges=test;}var tmp=new RegexCharsetExpression();foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new
+ RegexCharsetCharEntry(rng.Min));}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());
 if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,
 ranges,inverted));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())
 });}if(fromState.IsAccepting){var retmatch=new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(typeof(FAMatch).Name),

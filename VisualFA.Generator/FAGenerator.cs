@@ -638,7 +638,7 @@ namespace VisualFA
 				}
 				var inverted = false;
 				var ranges = trn.Value;
-				if(!hasEof && test.Count<trn.Value.Count)
+				if(!hasEof && test.Count>0 && test.Count<trn.Value.Count)
 				{
 					inverted = true;
 					ranges = test;
@@ -788,7 +788,7 @@ namespace VisualFA
 							var test = new List<FARange>(FARange.ToNotRanges(trn.Value));
 							var ranges = trn.Value;
 							var inverted = false;
-							if(test.Count<trn.Value.Count)
+							if(test.Count>0 && test.Count<trn.Value.Count)
 							{
 								inverted = true;
 								ranges = test;

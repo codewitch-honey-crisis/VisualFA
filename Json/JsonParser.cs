@@ -11,11 +11,11 @@ namespace Json
 		}
 		static JsonArray _ParseArray(IEnumerator<FAMatch> cursor)
 		{
+			_SkipWS(cursor);
 			var position = cursor.Current.Position;
 			var line = cursor.Current.Line;
 			var column = cursor.Current.Column;
 			var result = new JsonArray();
-			_SkipWS(cursor);
 			if (cursor.Current.SymbolId != JsonStringRunner.Array) 
 				throw new Exception("Expected an array");
 			if (!cursor.MoveNext()) 
@@ -38,6 +38,7 @@ namespace Json
 		}
 		static KeyValuePair<string,object> _ParseField(IEnumerator<FAMatch> cursor)
 		{
+			_SkipWS(cursor);
 			var position = cursor.Current.Position;
 			var line = cursor.Current.Line;
 			var column = cursor.Current.Column;
@@ -58,11 +59,11 @@ namespace Json
 		}
 		static JsonObject _ParseObject(IEnumerator<FAMatch> cursor)
 		{
+			_SkipWS(cursor);
 			var position = cursor.Current.Position;
 			var line = cursor.Current.Line;
 			var column = cursor.Current.Column;
 			var result = new JsonObject();
-			_SkipWS(cursor);
 			if (cursor.Current.SymbolId != JsonStringRunner.Object) 
 				throw new JsonException("Expecting a JSON object", position, line, column);
 			if (!cursor.MoveNext()) 
