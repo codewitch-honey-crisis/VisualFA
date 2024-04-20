@@ -1,12 +1,20 @@
 ﻿using System.Text;
 
+using VisualFA;
 
 namespace Scratch2
 {
     internal class Program
    {
-		
-		static void Main(string[] args)
+		static void Main()
+        {
+            var nfa = FA.Parse("[^za]*");
+            nfa.RenderToFile(@"..\..\..\nfa.jpg");
+            var dfa = nfa.ToMinimizedDfa();
+			dfa.RenderToFile(@"..\..\..\dfa.jpg");
+
+		}
+        static void Main2()
         {
             using(var reader = new StreamReader(@"..\..\..\data.json"))
             {

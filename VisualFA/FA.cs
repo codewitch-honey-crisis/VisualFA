@@ -200,7 +200,7 @@ namespace VisualFA
 						yield return new FARange(unchecked(last + 1), unchecked((e.Current.Min - 1)));
 					last = e.Current.Max;
 				}
-				if (0x10ffff > last)
+				if (0x10ffff >= last)
 					yield return new FARange(unchecked((last + 1)), 0x10ffff);
 
 			}
@@ -1655,6 +1655,7 @@ namespace VisualFA
 					return i;
 			}
 		}
+		
 		static KeyValuePair<bool, FARange[]> _ParseSet(StringCursor pc)
 		{
 			var result = new List<FARange>();
@@ -1662,6 +1663,11 @@ namespace VisualFA
 			pc.Expecting('[');
 			pc.Advance();
 			pc.Expecting();
+			var firstRead = true;
+			int firstChar = '\0';
+			var readFirstChar = false;
+			var wantRange = false;
+
 			var isNot = false;
 			if ('^' == pc.Codepoint)
 			{
@@ -1669,10 +1675,6 @@ namespace VisualFA
 				pc.Advance();
 				pc.Expecting();
 			}
-			var firstRead = true;
-			int firstChar = '\0';
-			var readFirstChar = false;
-			var wantRange = false;
 			while (-1 != pc.Codepoint && (firstRead || ']' != pc.Codepoint))
 			{
 				if (!wantRange)
@@ -2013,11 +2015,13 @@ namespace VisualFA
 						break;
 					case '[':
 						var seti = _ParseSet(pc);
-						IEnumerable<FARange> set;
+						//IEnumerable<FARange> set;
+						List<FARange> set = new List<FARange>(seti.Value);
+						set.Sort((x, y) => { var c = x.Min.CompareTo(y.Min); if (0 != c) return c; return x.Max.CompareTo(y.Max); });
+						_NormalizeSortedRangeList(set);
 						if (seti.Key)
-							set = FARange.ToNotRanges(seti.Value);
-						else
-							set = seti.Value;
+							set = new List<FARange>(FARange.ToNotRanges(set));
+						
 						next = FA.Set(set, accept);
 						next = _ParseModifier(next, pc, accept, compact);
 
@@ -2130,7 +2134,7 @@ namespace VisualFA
 		{
 			if (null == result)
 				result = new Dictionary<FA, IList<FARange>>();
-			
+
 			foreach (var trns in _transitions)
 			{
 				if (!includeEpsilons && (trns.Min == -1 && trns.Max == -1))

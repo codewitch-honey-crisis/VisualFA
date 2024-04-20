@@ -876,7 +876,7 @@ public static int[]ToPacked(IList<FARange>pairs){var result=new int[pairs.Count*
 public static IEnumerable<FARange>ToNotRanges(IEnumerable<FARange>ranges){ var last=0x10ffff;using(var e=ranges.GetEnumerator()){if(!e.MoveNext()){yield
  return new FARange(0x0,0x10ffff);yield break;}if(e.Current.Min>0){yield return new FARange(0,unchecked(e.Current.Min-1));last=e.Current.Max;if(0x10ffff
 <=last)yield break;}else if(e.Current.Min==0){last=e.Current.Max;if(0x10ffff<=last)yield break;}while(e.MoveNext()){if(0x10ffff<=last)yield break;if(unchecked(last
-+1)<e.Current.Min)yield return new FARange(unchecked(last+1),unchecked((e.Current.Min-1)));last=e.Current.Max;}if(0x10ffff>last)yield return new FARange(unchecked((last
++1)<e.Current.Min)yield return new FARange(unchecked(last+1),unchecked((e.Current.Min-1)));last=e.Current.Max;}if(0x10ffff>=last)yield return new FARange(unchecked((last
 +1)),0x10ffff);}}public override string ToString(){if(Min==Max){return string.Concat("[",char.ConvertFromUtf32(Min),"]");}return string.Concat("[",char.ConvertFromUtf32(Min),
 "-",char.ConvertFromUtf32(Max),"]");}public bool Equals(FARange rhs){return rhs.Min==Min&&rhs.Max==Max;}public override bool Equals(object rhs){if(ReferenceEquals(null,
 rhs))return false;if(rhs is FARange){return Equals((FARange)rhs);}return base.Equals(rhs);}public override int GetHashCode(){return Min.GetHashCode()^
@@ -1285,9 +1285,9 @@ return unchecked(b);b<<=4;b|=_FromHexChar(pc.Codepoint);return unchecked(b);case
 u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);
 u<<=4;if(-1==pc.Advance())return unchecked(u);u|=_FromHexChar(pc.Codepoint);return unchecked(u);default:int i=pc.Codepoint;pc.Advance();return i;}}static
  KeyValuePair<bool,FARange[]>_ParseSet(StringCursor pc){var result=new List<FARange>();pc.EnsureStarted();pc.Expecting('[');pc.Advance();pc.Expecting();
-var isNot=false;if('^'==pc.Codepoint){isNot=true;pc.Advance();pc.Expecting();}var firstRead=true;int firstChar='\0';var readFirstChar=false;var wantRange
-=false;while(-1!=pc.Codepoint&&(firstRead||']'!=pc.Codepoint)){if(!wantRange){ if('['==pc.Codepoint){int epos=pc.Position;pc.Advance();pc.Expecting();
-if(':'!=pc.Codepoint){firstChar='[';readFirstChar=true;}else{firstRead=false;pc.Advance();pc.Expecting();var ll=pc.CaptureBuffer.Length;if(!pc.TryReadUntil(':',
+var firstRead=true;int firstChar='\0';var readFirstChar=false;var wantRange=false;var isNot=false;if('^'==pc.Codepoint){isNot=true;pc.Advance();pc.Expecting();
+}while(-1!=pc.Codepoint&&(firstRead||']'!=pc.Codepoint)){if(!wantRange){ if('['==pc.Codepoint){int epos=pc.Position;pc.Advance();pc.Expecting();if(':'
+!=pc.Codepoint){firstChar='[';readFirstChar=true;}else{firstRead=false;pc.Advance();pc.Expecting();var ll=pc.CaptureBuffer.Length;if(!pc.TryReadUntil(':',
 false))throw new FAParseException("Expecting character class",pc.Position);pc.Expecting(':');pc.Advance();pc.Expecting(']');pc.Advance();var cls=pc.GetCapture(ll);
 int[]ranges;if(!CharacterClasses.Known.TryGetValue(cls,out ranges))throw new FAParseException("Unknown character class \""+cls+"\" specified",epos);if
 (ranges!=null){result.AddRange(FARange.ToUnpacked(ranges));}readFirstChar=false;wantRange=false;firstRead=false;continue;}}if(!readFirstChar){if('\\'==
@@ -1315,9 +1315,10 @@ accept,compact);pc.Advance();break;default:if(-1!=(ich=_ParseEscapePart(pc))){ne
 }pc.Expecting();next=_Parse(pc,accept,compact);pc.Expecting(')');pc.Advance();next=_ParseModifier(next,pc,accept,compact);if(null==result)result=next;
 else{result=FA.Concat(new FA[]{result,next},accept,compact);}break;case'|':if(-1!=pc.Advance()){System.Diagnostics.Debug.Assert(result!=null);next=_Parse(pc,
 accept,compact);result=FA.Or(new FA[]{result,next},accept,compact);}else{System.Diagnostics.Debug.Assert(result!=null);result=FA.Optional(result,accept,
-compact);}break;case'[':var seti=_ParseSet(pc);IEnumerable<FARange>set;if(seti.Key)set=FARange.ToNotRanges(seti.Value);else set=seti.Value;next=FA.Set(set,
-accept);next=_ParseModifier(next,pc,accept,compact);if(null==result)result=next;else{result=FA.Concat(new FA[]{result,next},accept,compact);}break;default:
-ich=pc.Codepoint;next=FA.Literal(new int[]{ich},accept,compact);pc.Advance();next=_ParseModifier(next,pc,accept,compact);if(null==result)result=next;else
+compact);}break;case'[':var seti=_ParseSet(pc); List<FARange>set=new List<FARange>(seti.Value);set.Sort((x,y)=>{var c=x.Min.CompareTo(y.Min);if(0!=c)return
+ c;return x.Max.CompareTo(y.Max);});_NormalizeSortedRangeList(set);if(seti.Key)set=new List<FARange>(FARange.ToNotRanges(set));next=FA.Set(set,accept);
+next=_ParseModifier(next,pc,accept,compact);if(null==result)result=next;else{result=FA.Concat(new FA[]{result,next},accept,compact);}break;default:ich
+=pc.Codepoint;next=FA.Literal(new int[]{ich},accept,compact);pc.Advance();next=_ParseModifier(next,pc,accept,compact);if(null==result)result=next;else
 {result=FA.Concat(new FA[]{result,next},accept,compact);}break;}}}public static FA Parse(string text,int accept=0,bool compact=true){StringCursor pc=new
  StringCursor();pc.Input=text;return _Parse(pc,accept,compact);}
 #endregion // Parse

@@ -8,7 +8,7 @@ using System.Diagnostics.SymbolStore;
 var exp = "/* foo */\r\n/*baz*/\r\n&%^ the quick /*bar */#(@*$//brown fox /* tricky */ jumped over the -10 $#(%*& lazy dog ^%$@@";
 var commentStart = FA.Parse(@"\/\*", 0, false);
 var commentEnd = FA.Parse(@"\*\/", 0, false);
-var commentLine = FA.Parse(@"\/\/[^\r\n]*", 1, false);
+var commentLine = FA.Parse(@"\/\/[^\n]*", 1, false);
 var whitespace = FA.Parse(@"[ \r\n\t]+",2,false);
 var syms = new string[] { "commentBlock", "commentLine", "whitespace" };
 var lexer = FA.ToLexer(new FA[] { commentStart , commentLine, whitespace }, true);
