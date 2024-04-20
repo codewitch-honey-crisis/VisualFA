@@ -448,13 +448,15 @@ namespace Json {
             }
             return FAMatch.Create(10, s.Substring(p, len), p, l, c);
         q2:
-            // [^\n\"\\]
-            if ((((ch == -1) 
-                        == false) 
-                        && ((((ch == 10) 
-                        || (ch == 34)) 
-                        || (ch == 92)) 
-                        == false))) {
+            // [\0-\t\v-!#-\[\]-\x10ffff]
+            if ((((((ch >= 0) 
+                        && (ch <= 9)) 
+                        || ((ch >= 11) 
+                        && (ch <= 33))) 
+                        || ((ch >= 35) 
+                        && (ch <= 91))) 
+                        || ((ch >= 93) 
+                        && (ch <= 1114111)))) {
                 this.Advance(s, ref ch, ref len, false);
                 goto q2;
             }
@@ -863,13 +865,15 @@ namespace Json {
             }
             return FAMatch.Create(10, this.capture.ToString(), p, l, c);
         q2:
-            // [^\n\"\\]
-            if ((((this.current == -1) 
-                        == false) 
-                        && ((((this.current == 10) 
-                        || (this.current == 34)) 
-                        || (this.current == 92)) 
-                        == false))) {
+            // [\0-\t\v-!#-\[\]-\x10ffff]
+            if ((((((this.current >= 0) 
+                        && (this.current <= 9)) 
+                        || ((this.current >= 11) 
+                        && (this.current <= 33))) 
+                        || ((this.current >= 35) 
+                        && (this.current <= 91))) 
+                        || ((this.current >= 93) 
+                        && (this.current <= 1114111)))) {
                 this.Advance();
                 goto q2;
             }

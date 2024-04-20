@@ -8,7 +8,7 @@ namespace Scratch2
    {
 		static void Main()
         {
-            var nfa = FA.Parse("[^za]*");
+            var nfa = FA.Parse("[^\r\n]*",0, false);
             nfa.RenderToFile(@"..\..\..\nfa.jpg");
             var dfa = nfa.ToMinimizedDfa();
 			dfa.RenderToFile(@"..\..\..\dfa.jpg");
