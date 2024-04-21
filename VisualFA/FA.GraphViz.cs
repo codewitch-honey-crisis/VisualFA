@@ -719,6 +719,10 @@ namespace VisualFA
 				case ']':
 				case '^':
 				case '-':
+				case '(':
+				case ')':
+				case '{':
+				case '}':
 				case '\\':
 					builder.Append('\\');
 					builder.Append(char.ConvertFromUtf32(rangeChar));
