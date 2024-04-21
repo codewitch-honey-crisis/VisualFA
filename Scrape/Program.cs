@@ -1,5 +1,5 @@
 ﻿using VisualFA;
-var expr = FA.Parse(@"https?\://[^\"";\)]+");
+var expr = FA.Parse(@"https?\://[^"";\)]+");
 var client = new HttpClient();
 using (var msg = new HttpRequestMessage(HttpMethod.Get, "https://www.google.com"))
 {
