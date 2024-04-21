@@ -371,3 +371,16 @@ FodyWeavers.xsd
 /LexGen/Example_nfa.jpg
 /MinimizationStress/dfa.jpg
 /Scratch2/lexer.jpg
+/GeneratorDemo/lexer_dfa.jpg
+/Scratch2/nfa.jpg
+/Scratch2/dfa.jpg
+/Scratch2/url.jpg
+/SimpleStuff/clexer_compact_nfa.jpg
+/SimpleStuff/clexer_dfa.jpg
+/SimpleStuff/clexer_minimized_dfa.jpg
+/SimpleStuff/clexer_nfa.jpg
+/SimpleStuff/dfa_subset.jpg
+/SimpleStuff/lexer_dfa.jpg
+/SimpleStuff/mdfa.png
+/SimpleStuff/mdfa2.png
+/SimpleStuff/testFa.png
