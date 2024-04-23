@@ -31,7 +31,7 @@ namespace VisualFA
 #endif
 	partial class FAGeneratorOptions
 	{
-		private string _className;
+		private string _className = "GeneratedRunner";
 		public FAGeneratorDependencies Dependencies { get; set; } = FAGeneratorDependencies.None;
 
 		public bool GenerateTables { get; set; } = false;
