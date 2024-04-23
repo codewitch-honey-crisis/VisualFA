@@ -2991,7 +2991,7 @@ namespace VisualFA
 		/// <param name="string">The string to evaluate</param>
 		/// <param name="blockEnds">The block end expressions</param>
 		/// <returns>A new runner that can match strings given the current instance</returns>
-		public FARunner Run(string @string, FA[] blockEnds = null)
+		public FAStringStateRunner Run(string @string, FA[] blockEnds = null)
 		{
 			var result = new FAStringStateRunner(this, blockEnds);
 			result.Set(@string);
@@ -3003,7 +3003,7 @@ namespace VisualFA
 		/// <param name="reader">The text to evaluate</param>
 		/// <param name="blockEnds">The block end expressions</param>
 		/// <returns>A new runner that can match text given the current instance</returns>
-		public FARunner Run(TextReader reader, FA[] blockEnds = null)
+		public FATextReaderStateRunner Run(TextReader reader, FA[] blockEnds = null)
 		{
 			var result = new FATextReaderStateRunner(this, blockEnds);
 			result.Set(reader);
@@ -3017,7 +3017,7 @@ namespace VisualFA
 		/// <param name="dfa">The dfa array to use</param>
 		/// <param name="blockEnds">The block end expression arrays</param>
 		/// <returns>A new runner that can match strings given the current instance</returns>
-		public static FARunner Run(string @string, int[] dfa, int[][] blockEnds = null)
+		public static FAStringDfaTableRunner Run(string @string, int[] dfa, int[][] blockEnds = null)
 		{
 			var result = new FAStringDfaTableRunner(dfa, blockEnds);
 			result.Set(@string);
@@ -3031,7 +3031,7 @@ namespace VisualFA
 		/// <param name="dfa">The dfa array to use</param>
 		/// <param name="blockEnds">The block end expression arrays</param>
 		/// <returns>A new runner that can match strings given the current instance</returns>
-		public static FARunner Run(TextReader reader, int[] dfa, int[][] blockEnds = null)
+		public static FATextReaderDfaTableRunner Run(TextReader reader, int[] dfa, int[][] blockEnds = null)
 		{
 			var result = new FATextReaderDfaTableRunner(dfa, blockEnds);
 			result.Set(reader);
