@@ -31,6 +31,7 @@ namespace VisualFA
 #endif
 	partial class FAGeneratorOptions
 	{
+		private string _className;
 		public FAGeneratorDependencies Dependencies { get; set; } = FAGeneratorDependencies.None;
 
 		public bool GenerateTables { get; set; } = false;
@@ -41,7 +42,33 @@ namespace VisualFA
 		public bool UseSpans { get; set; } = FAStringRunner.UsingSpans;
 #endif
 		[Obsolete]
-		public string ClassName { get; set; } = "GeneratedRunner";
+		public string ClassName { 
+			get
+			{
+				return _className;
+			}
+			set
+			{
+				_className = value;
+				if(ClassName.EndsWith("StringRunner"))
+				{
+					StringRunnerClassName = _className;
+					TextReaderRunnerClassName = _className.Substring(0, _className.Length - 12) + "TextReaderRunner";
+				} else if(ClassName.EndsWith("TextReaderRunner"))
+				{
+					TextReaderRunnerClassName = _className;
+					StringRunnerClassName = _className.Substring(0, _className.Length - 16) + "StringRunner";
+				} else if(ClassName.EndsWith("Runner"))
+				{
+					TextReaderRunnerClassName = _className.Substring(0,_className.Length-6)+"TextReaderRunner";
+					StringRunnerClassName = _className.Substring(0, _className.Length - 6) + "StringRunner";
+				} else
+				{
+					TextReaderRunnerClassName = _className+ "TextReaderRunner";
+					StringRunnerClassName = _className+ "StringRunner";
+				}
+			}
+		}
 		public string StringRunnerClassName { get; set; } = "GeneratedStringRunner";
 
 		public string TextReaderRunnerClassName { get; set; } = "GeneratedTextReaderRunner";
