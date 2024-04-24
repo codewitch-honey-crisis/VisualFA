@@ -9,6 +9,14 @@ internal partial struct FAMatch
 	private int _line;
 	private int _column;
 	/// <summary>
+	/// Indicates the symbol id for an error token
+	/// </summary>
+	public const int Error = -1;
+	/// <summary>
+	/// Indicates the symbol id for end of input
+	/// </summary>
+	public const int EndOfInput = -2;
+	/// <summary>
 	/// The matched symbol - this is the accept id
 	/// </summary>
 	public int SymbolId { get { return _symbolId; } }

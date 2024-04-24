@@ -36,7 +36,7 @@ namespace Scratch2
 		}
         static bool _IsMatch(FARunner runner)
         {
-			return runner.NextMatch().IsSuccess && runner.NextMatch().SymbolId == -2;
+			return runner.NextMatch().IsSuccess && runner.NextMatch().SymbolId == FAMatch.EndOfInput;
 		}
 		static void Main()
         {
@@ -57,7 +57,6 @@ namespace Scratch2
 		}
         static void Main2()
         {
-            
             using(var reader = new StreamReader(@"..\..\..\data.json"))
             {
                 dynamic? obj = Json.JsonObject.Parse(reader);

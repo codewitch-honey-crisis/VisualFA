@@ -52,6 +52,9 @@
     <Compile Include="..\VisualFA\FA.GraphViz.cs">
       <Link>FA.GraphViz.cs</Link>
     </Compile>
+    <Compile Include="..\VisualFA\FA.ToString.cs">
+      <Link>FA.ToString.cs</Link>
+    </Compile>
     <Compile Include="..\VisualFA\FARunner.cs">
       <Link>FARunner.cs</Link>
     </Compile>

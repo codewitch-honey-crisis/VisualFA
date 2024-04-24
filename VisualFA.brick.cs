@@ -803,6 +803,12 @@ int[]>>_Known=new Lazy<IDictionary<string,int[]>>(_GetKnown);static IDictionary<
 public
 #endif
 partial struct FAMatch{/// <summary>
+/// Indicates the symbol id for an error token
+/// </summary>
+public const int Error=-1;/// <summary>
+/// Indicates the symbol id for end of input
+/// </summary>
+public const int EndOfInput=-2;/// <summary>
 /// The matched symbol - this is the accept id, or less than zero if the text did not match an expression
 /// </summary>
 public int SymbolId;/// <summary>
@@ -1350,6 +1356,12 @@ public FA ToMinimizedDfa(IProgress<int>progress=null){return _Minimize(this,prog
 /// <returns>The index of the matching transition or a negative number if no match was found.</returns>
 public int FindFirstTransitionIndex(int codepoint){for(var i=0;i<_transitions.Count;++i){var t=_transitions[i];if(t.Min==-1&&t.Max==-1){continue;}if(t.Min
 >codepoint){return-1;}if(t.Max>=codepoint){return i;}}return-1;}/// <summary>
+/// Returns the NFA equivelent of this DFA
+/// </summary>
+/// <param name="compact">True to produce a compact NFA, false to produce an expanded NFA</param>
+/// <returns>A new NFA state machine that is the equivelent of this in machine</returns>
+/// <remarks>This will flatten a lexer</remarks>
+public FA ToNfa(bool compact=true){return FA.Parse(_ToExpression(this),FA.GetFirstAcceptSymbol(new FA[]{this}),compact);}/// <summary>
 /// Computes a dictionary keyed by states, whose values are the ranges that lead to that state packed as an integer array.
 /// </summary>
 /// <param name="includeEpsilons">Indicates that epsilon transitions should be included in the result</param>

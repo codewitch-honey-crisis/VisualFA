@@ -4,10 +4,18 @@
 /// </summary>
 partial struct FAMatch
 {
-    /// <summary>
-    /// The matched symbol - this is the accept id, or less than zero if the text did not match an expression
-    /// </summary>
-    public int SymbolId;
+	/// <summary>
+	/// Indicates the symbol id for an error token
+	/// </summary>
+	public const int Error = -1;
+	/// <summary>
+	/// Indicates the symbol id for end of input
+	/// </summary>
+	public const int EndOfInput = -2;
+	/// <summary>
+	/// The matched symbol - this is the accept id, or less than zero if the text did not match an expression
+	/// </summary>
+	public int SymbolId;
     /// <summary>
     /// The matched value
     /// </summary>

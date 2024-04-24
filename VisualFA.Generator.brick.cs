@@ -78,29 +78,35 @@ new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0]
 "_position",null,MemberAttributes.Private,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),
 DeslangedSpan._MemberField(new CodeTypeReference(typeof(int)),"_line",null,MemberAttributes.Private,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
 new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberField(new CodeTypeReference(typeof(int)),"_column",null,MemberAttributes.Private,
-new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(int)),
-"SymbolId",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_symbolId"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
-{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The matched symbol - this is the accept id",true),new CodeCommentStatement(" </summary>",
-true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(string)),
-"Value",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_value"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
-{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The matched value",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],
-new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(long)),"Position",(MemberAttributes.Final|MemberAttributes.
-Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
-"_position"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The position of the match within the input",
+new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberField(new CodeTypeReference(typeof(int)),
+"Error",new CodePrimitiveExpression(-1),(MemberAttributes.Const|MemberAttributes.Public),new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
+true),new CodeCommentStatement(" Indicates the symbol id for an error token",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],
+new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberField(new CodeTypeReference(typeof(int)),"EndOfInput",new CodePrimitiveExpression(-2),
+(MemberAttributes.Const|MemberAttributes.Public),new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates the symbol id for end of input",
 true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new
- CodeTypeReference(typeof(int)),"Line",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{
-new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_line"))},new CodeStatement[0],new CodeTypeReference[0],
-null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The one based line number",true),new CodeCommentStatement(" </summary>",
+ CodeTypeReference(typeof(int)),"SymbolId",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]
+{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_symbolId"))},new CodeStatement[0],new CodeTypeReference[0],
+null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The matched symbol - this is the accept id",true),
+new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new
+ CodeTypeReference(typeof(string)),"Value",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]
+{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_value"))},new CodeStatement[0],new CodeTypeReference[0],
+null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The matched value",true),new CodeCommentStatement(" </summary>",
+true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(long)),
+"Position",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
+ CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_position"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
+{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The position of the match within the input",true),new CodeCommentStatement(" </summary>",
 true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(int)),
-"Column",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_column"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
-{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The one based column",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],
-new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(bool)),"IsSuccess",(MemberAttributes.Final|
-MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeBinaryOperatorExpression(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_symbolId"),CodeBinaryOperatorType.GreaterThan,new CodePrimitiveExpression(-1)))},new
- CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates whether the text matched the expression",
+"Line",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
+ CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_line"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
+{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The one based line number",true),new CodeCommentStatement(" </summary>",true)},
+new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(int)),"Column",
+(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new
+ CodeThisReferenceExpression(),"_column"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
+true),new CodeCommentStatement(" The one based column",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],
+new CodeDirective[0],null),DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(bool)),"IsSuccess",(MemberAttributes.Final|MemberAttributes.Public),
+new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new
+ CodeThisReferenceExpression(),"_symbolId"),CodeBinaryOperatorType.GreaterThan,new CodePrimitiveExpression(-1)))},new CodeStatement[0],new CodeTypeReference[0],
+null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates whether the text matched the expression",
 true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <remarks>Non matches are returned with negative accept symbols. You can use this"
 +" property to determine if the text therein was part of a match.</remarks>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
 null),DeslangedSpan._MemberMethod(new CodeTypeReference(typeof(string)),"ToString",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],
@@ -756,30 +762,35 @@ null,MemberAttributes.Private,new CodeCommentStatement[0],new CodeAttributeDecla
  CodeTypeReference(typeof(long)),"_position",null,MemberAttributes.Private,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],
 new CodeDirective[0],null),DeslangedString._MemberField(new CodeTypeReference(typeof(int)),"_line",null,MemberAttributes.Private,new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberField(new CodeTypeReference(typeof(int)),"_column",
-null,MemberAttributes.Private,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new
- CodeTypeReference(typeof(int)),"SymbolId",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]
-{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_symbolId"))},new CodeStatement[0],new CodeTypeReference[0],
-null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The matched symbol - this is the accept id",true),
-new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new
- CodeTypeReference(typeof(string)),"Value",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]
-{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_value"))},new CodeStatement[0],new CodeTypeReference[0],
-null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The matched value",true),new CodeCommentStatement(" </summary>",
-true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(long)),
-"Position",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_position"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
-{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The position of the match within the input",true),new CodeCommentStatement(" </summary>",
+null,MemberAttributes.Private,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberField(new
+ CodeTypeReference(typeof(int)),"Error",new CodePrimitiveExpression(-1),(MemberAttributes.Const|MemberAttributes.Public),new CodeCommentStatement[]{new
+ CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates the symbol id for an error token",true),new CodeCommentStatement(" </summary>",
+true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberField(new CodeTypeReference(typeof(int)),
+"EndOfInput",new CodePrimitiveExpression(-2),(MemberAttributes.Const|MemberAttributes.Public),new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
+true),new CodeCommentStatement(" Indicates the symbol id for end of input",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],
+new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(int)),"SymbolId",(MemberAttributes.Final|
+MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new
+ CodeThisReferenceExpression(),"_symbolId"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
+true),new CodeCommentStatement(" The matched symbol - this is the accept id",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],
+new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(string)),"Value",(MemberAttributes.Final|
+MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new
+ CodeThisReferenceExpression(),"_value"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
+true),new CodeCommentStatement(" The matched value",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],
+new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(long)),"Position",(MemberAttributes.Final|MemberAttributes.Public),
+new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+"_position"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The position of the match within the input",
+true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new
+ CodeTypeReference(typeof(int)),"Line",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{
+new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_line"))},new CodeStatement[0],new CodeTypeReference[0],
+null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The one based line number",true),new CodeCommentStatement(" </summary>",
 true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(int)),
-"Line",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
- CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_line"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
-{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The one based line number",true),new CodeCommentStatement(" </summary>",true)},
-new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(int)),"Column",
-(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new
- CodeThisReferenceExpression(),"_column"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",
-true),new CodeCommentStatement(" The one based column",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],
-new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(bool)),"IsSuccess",(MemberAttributes.Final|MemberAttributes.Public),
-new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new
- CodeThisReferenceExpression(),"_symbolId"),CodeBinaryOperatorType.GreaterThan,new CodePrimitiveExpression(-1)))},new CodeStatement[0],new CodeTypeReference[0],
-null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates whether the text matched the expression",
+"Column",(MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
+ CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_column"))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]
+{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" The one based column",true),new CodeCommentStatement(" </summary>",true)},new CodeAttributeDeclaration[0],
+new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberProperty(new CodeTypeReference(typeof(bool)),"IsSuccess",(MemberAttributes.Final
+|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new CodeBinaryOperatorExpression(new
+ CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"_symbolId"),CodeBinaryOperatorType.GreaterThan,new CodePrimitiveExpression(-1)))},new
+ CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[]{new CodeCommentStatement(" <summary>",true),new CodeCommentStatement(" Indicates whether the text matched the expression",
 true),new CodeCommentStatement(" </summary>",true),new CodeCommentStatement(" <remarks>Non matches are returned with negative accept symbols. You can use this"
 +" property to determine if the text therein was part of a match.</remarks>",true)},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
 null),DeslangedString._MemberMethod(new CodeTypeReference(typeof(string)),"ToString",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],
@@ -1403,8 +1414,8 @@ UseRuntime}
 #if FALIB
 public
 #endif
-partial class FAGeneratorOptions{private string _className;public FAGeneratorDependencies Dependencies{get;set;}=FAGeneratorDependencies.None;public bool
- GenerateTables{get;set;}=false;public bool GenerateTextReaderRunner{get;set;}=false;public bool GenerateStringRunner{get;set;}=true;
+partial class FAGeneratorOptions{private string _className="GeneratedRunner";public FAGeneratorDependencies Dependencies{get;set;}=FAGeneratorDependencies.None;
+public bool GenerateTables{get;set;}=false;public bool GenerateTextReaderRunner{get;set;}=false;public bool GenerateStringRunner{get;set;}=true;
 #if FALIB_SPANS
 public bool UseSpans{get;set;}=FAStringRunner.UsingSpans;
 #endif

@@ -121,6 +121,14 @@ namespace VisualFA {
                                                     DeslangedString._MemberField(new CodeTypeReference(typeof(long)), "_position", null, MemberAttributes.Private, new CodeCommentStatement[0], new CodeAttributeDeclaration[0], new CodeDirective[0], new CodeDirective[0], null),
                                                     DeslangedString._MemberField(new CodeTypeReference(typeof(int)), "_line", null, MemberAttributes.Private, new CodeCommentStatement[0], new CodeAttributeDeclaration[0], new CodeDirective[0], new CodeDirective[0], null),
                                                     DeslangedString._MemberField(new CodeTypeReference(typeof(int)), "_column", null, MemberAttributes.Private, new CodeCommentStatement[0], new CodeAttributeDeclaration[0], new CodeDirective[0], new CodeDirective[0], null),
+                                                    DeslangedString._MemberField(new CodeTypeReference(typeof(int)), "Error", new CodePrimitiveExpression(-1), (MemberAttributes.Const | MemberAttributes. Public), new CodeCommentStatement[] {
+                                                                new CodeCommentStatement(" <summary>", true),
+                                                                new CodeCommentStatement(" Indicates the symbol id for an error token", true),
+                                                                new CodeCommentStatement(" </summary>", true)}, new CodeAttributeDeclaration[0], new CodeDirective[0], new CodeDirective[0], null),
+                                                    DeslangedString._MemberField(new CodeTypeReference(typeof(int)), "EndOfInput", new CodePrimitiveExpression(-2), (MemberAttributes.Const | MemberAttributes. Public), new CodeCommentStatement[] {
+                                                                new CodeCommentStatement(" <summary>", true),
+                                                                new CodeCommentStatement(" Indicates the symbol id for end of input", true),
+                                                                new CodeCommentStatement(" </summary>", true)}, new CodeAttributeDeclaration[0], new CodeDirective[0], new CodeDirective[0], null),
                                                     DeslangedString._MemberProperty(new CodeTypeReference(typeof(int)), "SymbolId", (MemberAttributes.Final | MemberAttributes. Public), new CodeParameterDeclarationExpression[0], new CodeStatement[] {
                                                                 new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), "_symbolId"))}, new CodeStatement[0], new CodeTypeReference[0], null, new CodeCommentStatement[] {
                                                                 new CodeCommentStatement(" <summary>", true),
