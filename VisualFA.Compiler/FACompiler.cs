@@ -833,7 +833,7 @@ namespace VisualFA
 		/// <param name="blockEnds">The block end expressions</param>
 		/// <param name="compiled">Indicates whether or not this expression should be compiled</param>
 		/// <returns>A new runner that can match strings given the current instance</returns>
-		public static FARunner Run(this FA fa, string @string, FA[] blockEnds, bool compiled)
+		public static FAStringRunner Run(this FA fa, string @string, FA[] blockEnds, bool compiled)
 		{
 			if(compiled)
 			{
@@ -854,7 +854,7 @@ namespace VisualFA
 		/// <param name="blockEnds">The block end expressions</param>
 		/// <param name="compiled">Indicates whether or not this expression should be compiled</param>
 		/// <returns>A new runner that can match text given the current instance</returns>
-		public static FARunner Run(this FA fa, TextReader reader, FA[] blockEnds, bool compiled)
+		public static FATextReaderRunner Run(this FA fa, TextReader reader, FA[] blockEnds, bool compiled)
 		{
 			if (compiled)
 			{

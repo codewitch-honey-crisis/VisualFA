@@ -121,10 +121,10 @@ Console.WriteLine(mdfa.ToString("r"));
 
 // If you reference FA.Compiler:
 
-FARunner compiledStr = mdfa.CompileString();
+var compiledStr = mdfa.CompileString();
 compiledStr.Set(text);
 //or
-FARunner compiledRdr = mdfa.CompileTextReader();
+var compiledRdr = mdfa.CompileTextReader();
 compiledRdr.Set(text)
 // to lex (as above)
 foreach(FAMatch match in <compiledStr/compiledRdr>) {

@@ -15,6 +15,10 @@
     <RepositoryUrl>https://github.com/codewitch-honey-crisis/VisualFA</RepositoryUrl>
     <PackageTags>finite automata;compiler;regex;regular expression;lexer;tokenizer</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,6 +30,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\VisualFA_icon.jpg">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
