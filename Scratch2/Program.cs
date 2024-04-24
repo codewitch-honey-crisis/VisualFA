@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Metrics;
+﻿using System;
+using System.Diagnostics.Metrics;
 using System.Text;
 
 using VisualFA;
@@ -7,15 +8,49 @@ namespace Scratch2
 {
     internal class Program
    {
-		
+		static void _PrintStates(IEnumerable<FA> states)
+        {
+            Console.Write("{ ");
+            var delim = "";
+			foreach (var fa in states)
+			{
+				// we use the Id from SetIds() here
+				Console.Write(delim + "q" + fa.Id.ToString());
+				delim = ", ";
+			}
+			Console.WriteLine(" }");
+		}
 		static void Main()
         {
-			var email = FA.Parse(@"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])",0);
-            var phone = FA.Parse(@"(?:\+[0-9]{1,2}[ ])?\(?[0-9]{3}\)?[ \.\-][0-9]{3}[ \.\-][0-9]{4}",1);
-            var lexer = FA.ToLexer(new FA[] {email, phone});
+            var expandedNfa = FA.Parse(@"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?",0,false);
+			//expandedNfa.RenderToFile(@"..\..\..\num_xnfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
+            // set the ids, essentially marking this specific state as the root of the machine
+			expandedNfa.SetIds();
+            // print the total states
+			Console.WriteLine("Total states: {0}", expandedNfa.FillClosure().Count);
+			// run some filters
+			Console.Write("Accepting states: ");
+            _PrintStates(expandedNfa.FillFind(FA.AcceptingFilter));
+			Console.Write("Neutral states: ");
+			_PrintStates(expandedNfa.FillFind(FA.NeutralFilter));
+			Console.WriteLine("Compacting nfa");
+			var compactNfa = expandedNfa.Clone();
+			compactNfa.Compact();
+			//compactNfa.RenderToFile(@"..\..\..\num_cnfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
+			compactNfa.SetIds();
+			Console.WriteLine("Total states: {0}", compactNfa.FillClosure().Count);
+			Console.Write("Accepting states: ");
+			_PrintStates(compactNfa.FillFind(FA.AcceptingFilter));
+			Console.WriteLine("Making minimized DFA");
+			var minDfa = compactNfa.ToMinimizedDfa();
+			//minDfa.RenderToFile(@"..\..\..\num_mdfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
+			minDfa.SetIds();
+			Console.WriteLine("Total states: {0}", minDfa.FillClosure().Count);
+			Console.Write("Accepting states: ");
+			_PrintStates(minDfa.FillFind(FA.AcceptingFilter));
 
 		}
-        static void Main2()
+		static void Main2()
         {
             using(var reader = new StreamReader(@"..\..\..\data.json"))
             {
