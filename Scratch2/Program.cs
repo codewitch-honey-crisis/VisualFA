@@ -51,6 +51,7 @@ namespace Scratch2
 			_RunIdents(tableRunner, idents);
 			var fa = FA.FromArray(_StateTable);
             fa.RenderToFile(@"..\..\..\ident.jpg");
+			fa.ToNfa(false).RenderToFile(@"..\..\..\ident_nfa.jpg");
 			Console.WriteLine(fa.ToString("e"));
 			var stateRunner = new FAStringStateRunner(fa);
             _RunIdents(stateRunner, idents);

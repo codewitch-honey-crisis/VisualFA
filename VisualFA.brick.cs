@@ -1361,7 +1361,8 @@ public int FindFirstTransitionIndex(int codepoint){for(var i=0;i<_transitions.Co
 /// <param name="compact">True to produce a compact NFA, false to produce an expanded NFA</param>
 /// <returns>A new NFA state machine that is the equivelent of this in machine</returns>
 /// <remarks>This will flatten a lexer</remarks>
-public FA ToNfa(bool compact=true){return FA.Parse(_ToExpression(this),FA.GetFirstAcceptSymbol(new FA[]{this}),compact);}/// <summary>
+public FA ToNfa(bool compact=true){var exp=_ToExpression(this);var accept=FA.GetFirstAcceptSymbol(FillClosure());return FA.Parse(exp,accept,compact);}
+/// <summary>
 /// Computes a dictionary keyed by states, whose values are the ranges that lead to that state packed as an integer array.
 /// </summary>
 /// <param name="includeEpsilons">Indicates that epsilon transitions should be included in the result</param>

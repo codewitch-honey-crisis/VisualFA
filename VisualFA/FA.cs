@@ -2140,7 +2140,9 @@ namespace VisualFA
 		/// <remarks>This will flatten a lexer</remarks>
 		public FA ToNfa(bool compact = true)
 		{
-			return FA.Parse(_ToExpression(this), FA.GetFirstAcceptSymbol(new FA[] { this }), compact);
+			var exp = _ToExpression(this);
+			var accept = FA.GetFirstAcceptSymbol(FillClosure() );
+			return FA.Parse(exp, accept, compact);
 		}
 		/// <summary>
 		/// Computes a dictionary keyed by states, whose values are the ranges that lead to that state packed as an integer array.
