@@ -26,7 +26,7 @@
 	<PropertyGroup>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<AssemblyVersion>1.2.1.0</AssemblyVersion>
+		<AssemblyVersion>1.3.0.0</AssemblyVersion>
 		<FileVersion>$(AssemblyVersion)</FileVersion>
 		<Version>$(AssemblyVersion)</Version>
 		<PackageProjectUrl>https://www.codeproject.com/Articles/5376805/Visual-FA-Part-4-Generating-matchers-and-lexers-wi</PackageProjectUrl>

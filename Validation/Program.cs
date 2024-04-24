@@ -1,5 +1,15 @@
 ﻿using VisualFA;
-
+static int _Match(FARunner runner)
+{
+	var match = runner.NextMatch();
+	if (match.IsSuccess && 
+		runner.NextMatch().SymbolId == 
+			FAMatch.EndOfInput)
+	{
+		return match.SymbolId;
+	}
+	return -1;
+}
 static void _RunStrings(FAStringRunner runner, string[] strings)
 {
 	for (int i = 0; i < strings.Length; i++)
@@ -19,16 +29,8 @@ static void _RunStrings(FAStringRunner runner, string[] strings)
 		
 	}
 }
-static int _Match(FARunner runner)
-{
-	var match = runner.NextMatch();
-	if(match.IsSuccess && runner.NextMatch().SymbolId == FAMatch.EndOfInput)
-	{
-		return match.SymbolId;
-	}
-	return -1;
-}
-var idents = new string[]
+
+var strings = new string[]
 			{
 				"foo",
 				"",
@@ -39,4 +41,4 @@ var email = FA.Parse(@"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`
 var phone = FA.Parse(@"(?:\+[0-9]{1,2}[ ])?\(?[0-9]{3}\)?[ \.\-][0-9]{3}[ \.\-][0-9]{4}", 1);
 var lexer = FA.ToLexer(new FA[] { email, phone });
 var runner = new FAStringStateRunner(lexer);
-_RunStrings(runner, idents);
+_RunStrings(runner, strings);
