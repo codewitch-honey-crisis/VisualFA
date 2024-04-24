@@ -60,6 +60,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualFA.SourceGenerator.NugetIntegrationTests", "VisualFA.SourceGenerator.NugetIntegrationTests\VisualFA.SourceGenerator.NugetIntegrationTests.csproj", "{0ABAF612-AFA1-476B-8310-19AD7BA16496}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Json", "Json\Json.csproj", "{59089D00-E309-41EC-B71A-B7F8F4919350}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2E312C15-BDA8-4095-998C-04F3CE67523D} = {2E312C15-BDA8-4095-998C-04F3CE67523D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrape", "Scrape\Scrape.csproj", "{4A1D5C13-4D35-48C9-8AF5-9038998E6CA8}"
 EndProject
