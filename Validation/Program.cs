@@ -1,9 +1,5 @@
 ﻿using VisualFA;
-int[] _StateTable = new int[] {
-	-1, 1, 10, 3, 65, 90, 95, 95, 97, 122,
-	0, 1, 10, 4, 48, 57, 65, 90, 95, 95,
-	97, 122
-};
+
 static void _RunStrings(FAStringRunner runner, string[] strings)
 {
 	for (int i = 0; i < strings.Length; i++)
