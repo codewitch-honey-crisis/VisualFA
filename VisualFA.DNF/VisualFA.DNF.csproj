@@ -46,14 +46,29 @@
     <Compile Include="..\VisualFA\FA.CharacterClasses.Known.cs">
       <Link>FA.CharacterClasses.Known.cs</Link>
     </Compile>
+    <Compile Include="..\VisualFA\FA.Compute.cs">
+      <Link>FA.Compute.cs</Link>
+    </Compile>
     <Compile Include="..\VisualFA\FA.cs">
       <Link>FA.cs</Link>
     </Compile>
     <Compile Include="..\VisualFA\FA.GraphViz.cs">
       <Link>FA.GraphViz.cs</Link>
     </Compile>
+    <Compile Include="..\VisualFA\FA.Parse.cs">
+      <Link>FA.Parse.cs</Link>
+    </Compile>
+    <Compile Include="..\VisualFA\FA.Thompson.cs">
+      <Link>FA.Thompson.cs</Link>
+    </Compile>
     <Compile Include="..\VisualFA\FA.ToString.cs">
       <Link>FA.ToString.cs</Link>
+    </Compile>
+    <Compile Include="..\VisualFA\FAMatch.cs">
+      <Link>FAMatch.cs</Link>
+    </Compile>
+    <Compile Include="..\VisualFA\FARange.cs">
+      <Link>FARange.cs</Link>
     </Compile>
     <Compile Include="..\VisualFA\FARunner.cs">
       <Link>FARunner.cs</Link>
