@@ -633,6 +633,16 @@ namespace VisualFA
 		{
 			Compact(FillClosure());
 		}
+		/// <summary>
+		/// Collapses epsilons in a copy of the current state machine.
+		/// </summary>
+		/// <returns>A copy of the current state machine with epsilons collapsed</returns>
+		public FA ToCompact()
+		{
+			var result = Clone();
+			result.Compact();
+			return result;
+		}
 		#endregion // Compact()
 		#region _Determinize()
 		private static FA _Determinize(FA fa, IProgress<int> progress)
