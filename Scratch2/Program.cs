@@ -34,8 +34,7 @@ namespace Scratch2
 			Console.Write("Neutral states: ");
 			_PrintStates(expandedNfa.FillFind(FA.NeutralFilter));
 			Console.WriteLine("Compacting nfa");
-			var compactNfa = expandedNfa.Clone();
-			compactNfa.Compact();
+			var compactNfa = expandedNfa.ToCompact();
 			//compactNfa.RenderToFile(@"..\..\..\num_cnfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
 			compactNfa.SetIds();
 			Console.WriteLine("Total states: {0}", compactNfa.FillClosure().Count);
