@@ -1,8 +1,15 @@
 ﻿using VisualFA;
 namespace IntegrationTests
 {
-    
-    [FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
+	//[FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
+	[FARule("foo", Symbol = "bar")]
+	partial class TestLexer : FAStringRunner
+	{
+
+	}
+
+
+	[FARule(@"\/\*", Symbol = "commentBlock", BlockEnd = @"\*\/")]
     [FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
     [FARule(@"[ \t\r\n]+", Symbol = "whiteSpace")]
     [FARule(@"[A-Za-z_][A-Za-z0-9_]*", Symbol = "identifier")]

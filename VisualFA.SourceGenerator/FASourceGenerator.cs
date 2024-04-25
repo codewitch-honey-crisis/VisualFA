@@ -349,6 +349,10 @@ namespace VisualFA
         {
             int maxBe;
             FA lexer = _MethodToLexer(member, out maxBe);
+            if(lexer == null)
+            {
+                return;
+            }
             var closure = lexer.FillClosure();
             var sb = new StringBuilder();
             var ns = _GetNamespace(member.TypeDecl);
@@ -360,12 +364,17 @@ namespace VisualFA
                 sb.AppendLine("{");
             }
             var name = member.MethodDecl != null ? member.QName + (member.IsReader ? "TextReader" : "String") + "Runner" : member.QName;
-            //var name = member.QName + (member.IsReader ? "TextReader" : "String") + "Runner";
-            sb.AppendLine(tab + "partial class " + name);
+            if(name == null) {
+                name = "Error";
+            }
+            System.Diagnostics.Debug.Assert(member.Rules != null, "Rules was null");
+			//var name = member.QName + (member.IsReader ? "TextReader" : "String") + "Runner";
+			sb.AppendLine(tab + "partial class " + name);
             sb.AppendLine(tab + "    : " + faRunnerBase);
             sb.AppendLine(tab + "{");
             for (int i = 0; i < member.Rules.Length; i++)
             {
+                
                 var rule = member.Rules[i];
                 if (!string.IsNullOrEmpty(rule.Symbol))
                 {
@@ -379,13 +388,20 @@ namespace VisualFA
                     sb.AppendLine(tab + "    public const int " + _MakeSafeName(rule.Symbol!) + " = " + rule.Id.ToString() + ";");
                 }
             }
-            FA[] bes = _MemberToBlockEnds(member, maxBe);
-            for (int i = 0; i < bes!.Length; i++)
+            FA[] bes = null;
+            if (maxBe > 0)
             {
-                var be = bes[i];
-                if (be != null)
+                bes = _MemberToBlockEnds(member, maxBe);
+            }
+            if (bes != null)
+            {
+                for (int i = 0; i < bes!.Length; i++)
                 {
-                    _GenerateBlockEnd(member.IsReader, i, be, faMatch, tab, sb);
+                    var be = bes[i];
+                    if (be != null)
+                    {
+                       _GenerateBlockEnd(member.IsReader, i, be, faMatch, tab, sb);
+                    }
                 }
             }
             sb.AppendLine(tab + "    public override " + faMatch + " NextMatch()");

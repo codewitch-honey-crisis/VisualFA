@@ -891,33 +891,34 @@ maxi,0x10ffff));}}}
 static void _Init<T>(IList<T>list,int count){for(int i=0;i<count;++i){list.Add(default(T));}}static FA _Minimize(FA a,IProgress<int>progress){int prog
 =0;progress?.Report(prog);a=a.ToDfa(progress);var tr=a._transitions;if(1==tr.Count){FATransition t=tr[0];if(t.To==a&&t.Min==0&&t.Max==0x10ffff){return
  a;}}a.Totalize();prog=1;progress?.Report(prog); var cl=a.FillClosure();var states=new FA[cl.Count];int number=0;foreach(var q in cl){states[number]=q;
-q._Tag=number;++number;}var pp=new List<int>();for(int ic=cl.Count,i=0;i<ic;++i){var ffa=cl[i];pp.Add(0);foreach(var t in ffa._transitions){pp.Add(t.Min);
-if(t.Max<0x10ffff){pp.Add((t.Max+1));}}}var sigma=new int[pp.Count];pp.CopyTo(sigma,0);Array.Sort(sigma); var reverse=new List<List<Queue<FA>>>();foreach
-(var s in states){var v=new List<Queue<FA>>();_Init(v,sigma.Length);reverse.Add(v);}prog=2;if(progress!=null){progress.Report(prog);}var reverseNonempty
+q._MinimizationTag=number;++number;}var pp=new List<int>();for(int ic=cl.Count,i=0;i<ic;++i){var ffa=cl[i];pp.Add(0);foreach(var t in ffa._transitions)
+{pp.Add(t.Min);if(t.Max<0x10ffff){pp.Add((t.Max+1));}}}var sigma=new int[pp.Count];pp.CopyTo(sigma,0);Array.Sort(sigma); var reverse=new List<List<Queue<FA>>>();
+foreach(var s in states){var v=new List<Queue<FA>>();_Init(v,sigma.Length);reverse.Add(v);}prog=2;if(progress!=null){progress.Report(prog);}var reverseNonempty
 =new bool[states.Length,sigma.Length];var partition=new List<LinkedList<FA>>();_Init(partition,states.Length);prog=3;if(progress!=null){progress.Report(prog);
 }var block=new int[states.Length];var active=new _FList[states.Length,sigma.Length];var active2=new _FListNode[states.Length,sigma.Length];var pending
 =new Queue<KeyValuePair<int,int>>();var pending2=new bool[sigma.Length,states.Length];var split=new List<FA>();var split2=new bool[states.Length];var refine
 =new List<int>();var refine2=new bool[states.Length];var splitblock=new List<List<FA>>();_Init(splitblock,states.Length);prog=4;progress?.Report(prog);
 for(int q=0;q<states.Length;q++){splitblock[q]=new List<FA>();partition[q]=new LinkedList<FA>();for(int x=0;x<sigma.Length;x++){reverse[q][x]=new Queue<FA>();
-active[q,x]=new _FList();}} foreach(var qq in states){int j=qq.IsAccepting?0:1;partition[j]?.AddLast(qq);block[qq._Tag]=j;for(int x=0;x<sigma.Length;x++)
-{var y=sigma[x];var p=qq._Step(y);System.Diagnostics.Debug.Assert(p!=null);var pn=p._Tag;reverse[pn]?[x]?.Enqueue(qq);reverseNonempty[pn,x]=true;}++prog;
-progress?.Report(prog);} for(int j=0;j<=1;j++){for(int x=0;x<sigma.Length;x++){var part=partition[j];System.Diagnostics.Debug.Assert(part!=null);foreach
-(var qq in part){System.Diagnostics.Debug.Assert(qq!=null);if(reverseNonempty[qq._Tag,x]){active2[qq._Tag,x]=active[j,x].Add(qq);}}}++prog;progress?.Report(prog);
-} for(int x=0;x<sigma.Length;x++){int a0=active[0,x].Count;int a1=active[1,x].Count;int j=a0<=a1?0:1;pending.Enqueue(new KeyValuePair<int,int>(j,x));pending2[x,
-j]=true;} int k=2;while(pending.Count>0){KeyValuePair<int,int>ip=pending.Dequeue();int p=ip.Key;int x=ip.Value;pending2[x,p]=false; for(var m=active[p,
-x].First;m!=null;m=m.Next){System.Diagnostics.Debug.Assert(m.State!=null);foreach(var s in reverse[m.State._Tag][x]){if(!split2[s._Tag]){split2[s._Tag]
-=true;split.Add(s);int j=block[s._Tag];splitblock[j]?.Add(s);if(!refine2[j]){refine2[j]=true;refine.Add(j);}}}}++prog;if(progress!=null){progress.Report(prog);
-} foreach(int j in refine){if(splitblock[j]?.Count<partition[j]?.Count){LinkedList<FA>b1=partition[j];System.Diagnostics.Debug.Assert(b1!=null);LinkedList<FA>
-b2=partition[k];System.Diagnostics.Debug.Assert(b2!=null);var e=splitblock[j];System.Diagnostics.Debug.Assert(e!=null);foreach(var s in e){b1.Remove(s);
-b2.AddLast(s);block[s._Tag]=k;for(int c=0;c<sigma.Length;c++){_FListNode sn=active2[s._Tag,c];if(sn!=null&&sn.StateList==active[j,c]){sn.Remove();active2[s._Tag,
-c]=active[k,c].Add(s);}}} for(int c=0;c<sigma.Length;c++){int aj=active[j,c].Count;int ak=active[k,c].Count;if(!pending2[c,j]&&0<aj&&aj<=ak){pending2[c,
-j]=true;pending.Enqueue(new KeyValuePair<int,int>(j,c));}else{pending2[c,k]=true;pending.Enqueue(new KeyValuePair<int,int>(k,c));}}k++;}var sbj=splitblock[j];
-System.Diagnostics.Debug.Assert(sbj!=null);foreach(var s in sbj){split2[s._Tag]=false;}refine2[j]=false; sbj.Clear();++prog;if(progress!=null){progress.Report(prog);
-}}split.Clear();refine.Clear();}++prog;if(progress!=null){progress.Report(prog);} var newstates=new FA[k];for(int n=0;n<newstates.Length;n++){var s=new
- FA();s.IsDeterministic=true;newstates[n]=s;var pn=partition[n];System.Diagnostics.Debug.Assert(pn!=null);foreach(var q in pn){if(q==a){a=s;}s.Id=q.Id;
-s.AcceptSymbol=q.AcceptSymbol;s._Tag=q._Tag; q._Tag=n;}++prog;progress?.Report(prog);} foreach(var s in newstates){var st=states[s._Tag];s.AcceptSymbol
-=st.AcceptSymbol;foreach(var t in st._transitions){s._transitions.Add(new FATransition(newstates[t.To._Tag],t.Min,t.Max));}++prog;progress?.Report(prog);
-} foreach(var ffa in a.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns){if(null==trns.To.FindFirst(AcceptingFilter))
+active[q,x]=new _FList();}} foreach(var qq in states){int j=qq.IsAccepting?0:1;partition[j]?.AddLast(qq);block[qq._MinimizationTag]=j;for(int x=0;x<sigma.Length;
+x++){var y=sigma[x];var p=qq._Step(y);System.Diagnostics.Debug.Assert(p!=null);var pn=p._MinimizationTag;reverse[pn]?[x]?.Enqueue(qq);reverseNonempty[pn,
+x]=true;}++prog;progress?.Report(prog);} for(int j=0;j<=1;j++){for(int x=0;x<sigma.Length;x++){var part=partition[j];System.Diagnostics.Debug.Assert(part
+!=null);foreach(var qq in part){System.Diagnostics.Debug.Assert(qq!=null);if(reverseNonempty[qq._MinimizationTag,x]){active2[qq._MinimizationTag,x]=active[j,
+x].Add(qq);}}}++prog;progress?.Report(prog);} for(int x=0;x<sigma.Length;x++){int a0=active[0,x].Count;int a1=active[1,x].Count;int j=a0<=a1?0:1;pending.Enqueue(new
+ KeyValuePair<int,int>(j,x));pending2[x,j]=true;} int k=2;while(pending.Count>0){KeyValuePair<int,int>ip=pending.Dequeue();int p=ip.Key;int x=ip.Value;
+pending2[x,p]=false; for(var m=active[p,x].First;m!=null;m=m.Next){System.Diagnostics.Debug.Assert(m.State!=null);foreach(var s in reverse[m.State._MinimizationTag][x])
+{if(!split2[s._MinimizationTag]){split2[s._MinimizationTag]=true;split.Add(s);int j=block[s._MinimizationTag];splitblock[j]?.Add(s);if(!refine2[j]){refine2[j]
+=true;refine.Add(j);}}}}++prog;if(progress!=null){progress.Report(prog);} foreach(int j in refine){if(splitblock[j]?.Count<partition[j]?.Count){LinkedList<FA>
+b1=partition[j];System.Diagnostics.Debug.Assert(b1!=null);LinkedList<FA>b2=partition[k];System.Diagnostics.Debug.Assert(b2!=null);var e=splitblock[j];
+System.Diagnostics.Debug.Assert(e!=null);foreach(var s in e){b1.Remove(s);b2.AddLast(s);block[s._MinimizationTag]=k;for(int c=0;c<sigma.Length;c++){_FListNode
+ sn=active2[s._MinimizationTag,c];if(sn!=null&&sn.StateList==active[j,c]){sn.Remove();active2[s._MinimizationTag,c]=active[k,c].Add(s);}}} for(int c=0;
+c<sigma.Length;c++){int aj=active[j,c].Count;int ak=active[k,c].Count;if(!pending2[c,j]&&0<aj&&aj<=ak){pending2[c,j]=true;pending.Enqueue(new KeyValuePair<int,
+int>(j,c));}else{pending2[c,k]=true;pending.Enqueue(new KeyValuePair<int,int>(k,c));}}k++;}var sbj=splitblock[j];System.Diagnostics.Debug.Assert(sbj!=
+null);foreach(var s in sbj){split2[s._MinimizationTag]=false;}refine2[j]=false; sbj.Clear();++prog;if(progress!=null){progress.Report(prog);}}split.Clear();
+refine.Clear();}++prog;if(progress!=null){progress.Report(prog);} var newstates=new FA[k];for(int n=0;n<newstates.Length;n++){var s=new FA();s.IsDeterministic
+=true;newstates[n]=s;var pn=partition[n];System.Diagnostics.Debug.Assert(pn!=null);foreach(var q in pn){if(q==a){a=s;}s.Id=q.Id;s.AcceptSymbol=q.AcceptSymbol;
+s._MinimizationTag=q._MinimizationTag; q._MinimizationTag=n;}++prog;progress?.Report(prog);} foreach(var s in newstates){var st=states[s._MinimizationTag];
+s.AcceptSymbol=st.AcceptSymbol;foreach(var t in st._transitions){s._transitions.Add(new FATransition(newstates[t.To._MinimizationTag],t.Min,t.Max));}++prog;
+progress?.Report(prog);} foreach(var ffa in a.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns){if(null==trns.To.FindFirst(AcceptingFilter))
 {ffa._transitions.Remove(trns);}}}return a;}FA _Step(int input){for(int ic=_transitions.Count,i=0;i<ic;++i){var t=_transitions[i];if(t.Min<=input&&input
 <=t.Max)return t.To;}return null;}
 #endregion // _Minimize()
@@ -931,7 +932,11 @@ public static void Compact(IList<FA>closure){var done=false;while(!done){done=tr
 =closure[0].FillClosure();break;}fa.IsCompact=true;}}}/// <summary>
 /// Collapses the epsilons on the current state machine.
 /// </summary>
-public void Compact(){Compact(FillClosure());}
+public void Compact(){Compact(FillClosure());}/// <summary>
+/// Collapses epsilons in a copy of the current state machine.
+/// </summary>
+/// <returns>A copy of the current state machine with epsilons collapsed</returns>
+public FA ToCompact(){var result=Clone();result.Compact();return result;}
 #endregion // Compact()
 #region _Determinize()
 private static FA _Determinize(FA fa,IProgress<int>progress){ int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();fa.FillClosure(closure);
@@ -1071,7 +1076,7 @@ public bool IsCompact{get;private set;}=true;/// <summary>
 public int AcceptSymbol{get;set;}=-1;/// <summary>
 /// Indicates the identifier of the state used for debugging
 /// </summary>
-public int Id{get;set;}=-1; private int _Tag=-1;/// <summary>
+public int Id{get;set;}=-1; private int _MinimizationTag=-1;/// <summary>
 /// Indicates the NFA states this DFA was constructed from if it was the result of a subset construction
 /// </summary>
 public FA[]FromStates{get;private set;}=null;/// <summary>
@@ -1158,10 +1163,10 @@ if(fa.FindFirst((ffa)=>{return(ffa==to);})!=null){result.Add(i);}}return result.
 /// <param name="to">The state to traverse to</param>
 /// <returns>A new set of states from cloned from this machine which lead to <paramref name="to"/></returns>
 public FA ClonePathTo(FA to){var closure=FillClosure();var nclosure=new FA[closure.Count];for(var i=0;i<nclosure.Length;i++){nclosure[i]=new FA(closure[i].AcceptSymbol);
-nclosure[i]._Tag=closure[i]._Tag;nclosure[i].Id=closure[i].Id;nclosure[i].IsDeterministic=closure[i].IsDeterministic;nclosure[i].IsCompact=closure[i].IsCompact;
-nclosure[i].FromStates=closure[i].FromStates;}for(var i=0;i<nclosure.Length;i++){var t=nclosure[i]._transitions;foreach(var trns in closure[i]._transitions)
-{if(trns.To.FindFirst((fa)=>{return(fa==to);})!=null){var id=closure.IndexOf(trns.To);t.Add(new FATransition(nclosure[id],trns.Min,trns.Max));}}}return
- nclosure[0];}/// <summary>
+nclosure[i]._MinimizationTag=closure[i]._MinimizationTag;nclosure[i].Id=closure[i].Id;nclosure[i].IsDeterministic=closure[i].IsDeterministic;nclosure[i].IsCompact
+=closure[i].IsCompact;nclosure[i].FromStates=closure[i].FromStates;}for(var i=0;i<nclosure.Length;i++){var t=nclosure[i]._transitions;foreach(var trns
+ in closure[i]._transitions){if(trns.To.FindFirst((fa)=>{return(fa==to);})!=null){var id=closure.IndexOf(trns.To);t.Add(new FATransition(nclosure[id],
+trns.Min,trns.Max));}}}return nclosure[0];}/// <summary>
 /// Creates a deep copy of the current machine
 /// </summary>
 /// <returns>A new machine that is a duplicate of this machine</returns>
@@ -1171,8 +1176,8 @@ public FA Clone(){return Clone(FillClosure());}object ICloneable.Clone(){return 
 /// <param name="closure">The closure to copy</param>
 /// <returns>A new machine that has a deep copy of the given closure</returns>
 public static FA Clone(IList<FA>closure){var nclosure=new FA[closure.Count];for(var i=0;i<nclosure.Length;i++){var fa=closure[i];var nfa=new FA();nfa.AcceptSymbol
-=fa.AcceptSymbol;nfa.IsDeterministic=fa.IsDeterministic;nfa.IsCompact=fa.IsCompact;nfa.FromStates=fa.FromStates;nfa.Id=fa.Id;nfa._Tag=fa._Tag;nclosure[i]
-=nfa;}for(var i=0;i<nclosure.Length;i++){var fa=closure[i];var nfa=nclosure[i];for(int jc=fa._transitions.Count,j=0;j<jc;++j){var fat=fa._transitions[j];
+=fa.AcceptSymbol;nfa.IsDeterministic=fa.IsDeterministic;nfa.IsCompact=fa.IsCompact;nfa.FromStates=fa.FromStates;nfa.Id=fa.Id;nfa._MinimizationTag=fa._MinimizationTag;
+nclosure[i]=nfa;}for(var i=0;i<nclosure.Length;i++){var fa=closure[i];var nfa=nclosure[i];for(int jc=fa._transitions.Count,j=0;j<jc;++j){var fat=fa._transitions[j];
 nfa._transitions.Add(new FATransition(nclosure[closure.IndexOf(fat.To)],fat.Min,fat.Max));}}return nclosure[0];}/// <summary>
 /// Converts a series of characters into a series of UTF-32 codepoints
 /// </summary>
