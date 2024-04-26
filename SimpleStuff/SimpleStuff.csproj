@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Benchmarks\Proto.cs" Link="Proto.cs" />
+    <Compile Include="..\Benchmarks\Generated.cs" Link="Generated.cs" />
   </ItemGroup>
 
   <ItemGroup>

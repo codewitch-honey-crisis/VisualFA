@@ -141,7 +141,7 @@ for (var time = 0; time < _Times; ++time)
 	_WriteProgressBar(100, true);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
 	
-	Console.Write("FAStringRunner (proto): ");
+	Console.Write("FAStringRunner (generated): ");
 	mc = 0;
 	sw.Reset();
 	_WriteProgressBar(0, false);
@@ -162,7 +162,7 @@ for (var time = 0; time < _Times; ++time)
 	_WriteProgressBar(100, true);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
 
-	Console.Write("FATextReaderRunner: (proto) ");
+	Console.Write("FATextReaderRunner: (generated) ");
 	mc = 0;
 	sw.Reset();
 	_WriteProgressBar(0, false);
