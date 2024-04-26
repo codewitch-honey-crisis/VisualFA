@@ -69,7 +69,7 @@ var delim = "";
 foreach (var ex in exprs)
 {
 	sb.Append(delim);
-	sb.Append("(?:");
+	sb.Append("(");
 	sb.Append(ex);
 	sb.Append(")");
 	delim = "|";
