@@ -63,10 +63,6 @@ var textCNfaRunner = new FATextReaderStateRunner(lexerCNfa);
 var stringDfaRunner = new FAStringStateRunner(lexerDfa);
 var textDfaRunner = new FATextReaderStateRunner(lexerDfa);
 string search = "the quick brown fox jumped over the lazy dog 23.5 times ";
-for(int i = 0;i<3;++i)
-{
-	//search += search;
-}
 
 var sb = new StringBuilder();
 var delim = "";
@@ -88,10 +84,12 @@ var compiledTextRunner = lexerDfa.CompileTextReader();
 stringRunner.Set(search);
 textRunner.Set(new StringReader(search));
 compiledStringRunner.Set(search);
-
-for (var time = 0; time < _Times; ++time)
+var time = 0;
+Console.WriteLine("Press any key to exit (will finish current pass)...");
+while(!Console.KeyAvailable)
 {
-	Console.Write("Pass {0} of {1} ", time + 1, _Times);
+	++time;
+	Console.Write("Pass {0}", time);
 	Console.WriteLine("-----------------------------------------------------------------");
 	int mc = 0;
 	var m = rx.Match(search);
