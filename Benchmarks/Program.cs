@@ -118,7 +118,7 @@ while(!Console.KeyAvailable)
 	++pass;
 	Console.Write("Pass {0}", pass);
 	Console.WriteLine("-----------------------------------------------------------------");
-	int mc = 0;
+	var mc = 0;
 	var m = rx.Match(search);
 	while (m.Success)
 	{
