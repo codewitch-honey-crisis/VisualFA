@@ -28,6 +28,34 @@ void _WriteProgressBar(int percent, bool update, TextWriter? output = null)
 	output.Write(_ProgressBuffer.ToString());
 }
 
+int _RunBench(FARunner runner, string search, Stopwatch sw)
+{
+	var mc = 0;
+	sw.Reset();
+	_WriteProgressBar(0, false);
+	for (int i = 0; i < _Iterations; ++i)
+	{
+		if (runner is FATextReaderRunner)
+		{
+			((FATextReaderRunner)runner).Set(new StringReader(search));
+		} else
+		{
+			((FAStringRunner)runner).Set(search);
+		}
+		sw.Start();
+		var match = runner.NextMatch();
+		while (match.SymbolId != -2)
+		{
+			++mc;
+			match = runner.NextMatch();
+		}
+		sw.Stop();
+		_WriteProgressBar(i / _Divisor, true);
+	}
+	_WriteProgressBar(100, true);
+	return mc;
+}
+
 #if DEBUG
 Console.WriteLine("Running debug build. Results will be noticably slower.");
 Console.WriteLine();
@@ -139,231 +167,46 @@ while(!Console.KeyAvailable)
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
 	
 	Console.Write("FAStringRunner (generated): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		stringRunner.Reset();
-		sw.Start();
-		var match = stringRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = stringRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-
-	}
-	_WriteProgressBar(100, true);
+	_RunBench(stringRunner, search, sw);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
 
 	Console.Write("FATextReaderRunner: (generated) ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		// can't reset the text runner
-		textRunner.Set(new StringReader(search));
-		sw.Start();
-		var match = textRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = textRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-	}
-	_WriteProgressBar(100,true);
+	_RunBench(textRunner, search, sw);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
 	
-	stringTableRunner.Set(search);
 	Console.Write("FAStringDfaTableRunner: ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		stringTableRunner.Reset();
-		sw.Start();
-		var match = stringTableRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = stringTableRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i / _Divisor, true);
-	}
-	_WriteProgressBar(100,true);
+	_RunBench(stringTableRunner, search, sw);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	
-	stringTableRunner.Set(search);
+
 	Console.Write("FATextReaderDfaTableRunner: ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		// reset is not supported for text reader
-		textTableRunner.Set(new StringReader(search));
-		sw.Start();
-		var match = textTableRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = textTableRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor,true);
-	}
-	_WriteProgressBar(100,true);
-	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	stringNfaRunner.Set(search);
-	Console.Write("FAStringStateRunner (NFA): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		stringNfaRunner.Reset();
-		sw.Start();
-		var match = stringNfaRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = stringNfaRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-	}
-	_WriteProgressBar(100,true);
-	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	stringCNfaRunner.Set(search);
-	Console.Write("FAStringStateRunner (Compact NFA): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		stringCNfaRunner.Reset();
-		sw.Start();
-		var match = stringCNfaRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = stringCNfaRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-	}
-	_WriteProgressBar(100,true);
-	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	textCNfaRunner.Set(new StringReader(search));
-	Console.Write("FATextReaderStateRunner (Compact NFA): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		// no reset
-		textCNfaRunner.Set(new StringReader(search));
-		sw.Start();
-		var match = textCNfaRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = textCNfaRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-	}
-	_WriteProgressBar(100, true);
-	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	stringDfaRunner.Set(search);
-	Console.Write("FAStringStateRunner (DFA): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		stringDfaRunner.Reset();
-		sw.Start();
-		var match = stringDfaRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = stringDfaRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor,true);
-	}
-	_WriteProgressBar(100,true);
-	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	textDfaRunner.Set(new StringReader(search));
-	Console.Write("FATextReaderStateRunner (DFA): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		// no reset
-		textDfaRunner.Set(new StringReader(search));
-		sw.Start();
-		var match = textDfaRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = textDfaRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-	}
-	_WriteProgressBar(100,true);
-	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	compiledStringRunner.Set(search);
-	Console.Write("FAStringRunner (Compiled): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		compiledStringRunner.Reset();
-		sw.Start();
-		var match = compiledStringRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = compiledStringRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-	}
-	_WriteProgressBar(100,true);
-	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	compiledTextRunner.Set(new StringReader(search));
-	Console.Write("FATextReaderRunner (Compiled): ");
-	mc = 0;
-	sw.Reset();
-	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
-	{
-		// no reset
-		compiledTextRunner.Set(new StringReader(search));
-		sw.Start();
-		var match = compiledTextRunner.NextMatch();
-		while (match.SymbolId != -2)
-		{
-			++mc;
-			match = compiledTextRunner.NextMatch();
-		}
-		sw.Stop();
-		_WriteProgressBar(i/_Divisor, true);
-	}
-	_WriteProgressBar(100,true);
+	_RunBench(textTableRunner, search, sw);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
 	
+	Console.Write("FAStringStateRunner (NFA): ");
+	_RunBench(stringNfaRunner, search, sw);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+	
+	Console.Write("FAStringStateRunner (Compact NFA): ");
+	_RunBench(stringCNfaRunner, search, sw);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+	
+	Console.Write("FATextReaderStateRunner (Compact NFA): ");
+	_RunBench(textCNfaRunner, search, sw);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+	
+	Console.Write("FAStringStateRunner (DFA): ");
+	_RunBench(stringDfaRunner, search, sw);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+	
+	Console.Write("FATextReaderStateRunner (DFA): ");
+	_RunBench(textDfaRunner, search, sw);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+	
+	Console.Write("FAStringRunner (Compiled): ");
+	_RunBench(compiledStringRunner, search, sw);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+	
+	Console.Write("FATextReaderRunner (Compiled): ");
+	_RunBench(compiledTextRunner, search, sw);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
 }
