@@ -33,7 +33,7 @@ int _RunBench(FARunner runner, string search, Stopwatch sw)
 	var mc = 0;
 	sw.Reset();
 	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
+	for (var i = 0; i < _Iterations; ++i)
 	{
 		if (runner is FATextReaderRunner)
 		{
@@ -67,7 +67,7 @@ string[] exprs =
 			"0|\\-?[1-9][0-9]*(\\.[0-9]+([Ee]\\-?[1-9][0-9]*)?)?",
 			"[ \\t\\r\\n]+"
 		};
-int q = 0;
+var q = 0;
 var fas = new FA[exprs.Length];
 foreach(var ex in exprs)
 {
@@ -102,15 +102,12 @@ foreach (var ex in exprs)
 	delim = "|";
 }
 var expr = sb.ToString();
-Regex rx = new Regex(expr, RegexOptions.CultureInvariant);
-Regex rxc = new Regex(expr, RegexOptions.Compiled | RegexOptions.CultureInvariant);
-BenchFAStringRunner stringRunner = new BenchFAStringRunner();
-BenchFATextReaderRunner textRunner = new BenchFATextReaderRunner();
+var rx = new Regex(expr, RegexOptions.CultureInvariant);
+var rxc = new Regex(expr, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+var stringRunner = new BenchFAStringRunner();
+var textRunner = new BenchFATextReaderRunner();
 var compiledStringRunner = lexerDfa.CompileString();
 var compiledTextRunner = lexerDfa.CompileTextReader();
-stringRunner.Set(search);
-textRunner.Set(new StringReader(search));
-compiledStringRunner.Set(search);
 var pass = 0;
 Console.WriteLine("Press any key to exit (will finish current pass)...");
 while(!Console.KeyAvailable)
@@ -125,7 +122,7 @@ while(!Console.KeyAvailable)
 		m = m.NextMatch();
 	}
 	Stopwatch sw = new Stopwatch();
-	Console.Write("Microsoft Regex \"Lexer\": ");
+	Console.Write("Microsoft Regex Lexer (simulated): ");
 	_WriteProgressBar(0, false);
 	for (int i = 0; i < _Iterations; ++i)
 	{
@@ -149,9 +146,9 @@ while(!Console.KeyAvailable)
 		m = m.NextMatch();
 	}
 	sw.Reset();
-	Console.Write("Microsoft Regex compiled \"Lexer\": ");
+	Console.Write("Microsoft Regex compiled Lexer (simulated): ");
 	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
+	for (var i = 0; i < _Iterations; ++i)
 	{
 		sw.Start();
 		m = rxc.Match(search);
