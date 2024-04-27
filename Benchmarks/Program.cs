@@ -84,12 +84,12 @@ var compiledTextRunner = lexerDfa.CompileTextReader();
 stringRunner.Set(search);
 textRunner.Set(new StringReader(search));
 compiledStringRunner.Set(search);
-var time = 0;
+var pass = 0;
 Console.WriteLine("Press any key to exit (will finish current pass)...");
 while(!Console.KeyAvailable)
 {
-	++time;
-	Console.Write("Pass {0}", time);
+	++pass;
+	Console.Write("Pass {0}", pass);
 	Console.WriteLine("-----------------------------------------------------------------");
 	int mc = 0;
 	var m = rx.Match(search);
