@@ -7,7 +7,6 @@ const char _ProgressBlock = '■';
 const string _ProgressBack = "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b";
 const int _Iterations = 10000;
 const int _Divisor = (_Iterations / 100) <= 0 ? 1 : (_Iterations / 100);
-const int _Times = 5;
 StringBuilder _ProgressBuffer = new StringBuilder();
 
 void _WriteProgressBar(int percent, bool update, TextWriter? output = null)
