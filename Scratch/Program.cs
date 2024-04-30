@@ -18,8 +18,9 @@ namespace Scratch
             {
                 Console.WriteLine("FAMatch.Create({0},\"{1}\",{2},{3},{4}),", match.SymbolId, match.Value, match.Position, match.Line, match.Column);
             }
-            var runner = new TestRunner();
+            TestRunner runner = new TestRunner();
             runner.Set(exp);
+            
             foreach(var match in runner)
             {
                 Console.WriteLine(match);
