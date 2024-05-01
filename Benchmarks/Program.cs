@@ -123,7 +123,7 @@ while(!Console.KeyAvailable)
 	var sw = new Stopwatch();
 	Console.Write("Microsoft Regex Lexer (simulated): ");
 	_WriteProgressBar(0, false);
-	for (int i = 0; i < _Iterations; ++i)
+	for (var i = 0; i < _Iterations; ++i)
 	{
 		if (Console.KeyAvailable) return;
 		sw.Start();
