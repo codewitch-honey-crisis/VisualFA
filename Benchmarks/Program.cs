@@ -88,7 +88,7 @@ var stringCNfaRunner = new FAStringStateRunner(lexerCNfa);
 var textCNfaRunner = new FATextReaderStateRunner(lexerCNfa);
 var stringDfaRunner = new FAStringStateRunner(lexerDfa);
 var textDfaRunner = new FATextReaderStateRunner(lexerDfa);
-string search = "the quick brown fox jumped over the lazy dog 23.5 times ";
+var search = "the quick brown fox jumped over the lazy dog 23.5 times ";
 
 var sb = new StringBuilder();
 var delim = "";
@@ -120,7 +120,7 @@ while(!Console.KeyAvailable)
 	{
 		m = m.NextMatch();
 	}
-	Stopwatch sw = new Stopwatch();
+	var sw = new Stopwatch();
 	Console.Write("Microsoft Regex Lexer (simulated): ");
 	_WriteProgressBar(0, false);
 	for (int i = 0; i < _Iterations; ++i)
