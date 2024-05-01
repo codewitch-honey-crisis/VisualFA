@@ -47,7 +47,10 @@ int _RunBench(FARunner runner, string search, Stopwatch sw)
 		var match = runner.NextMatch();
 		while (match.SymbolId != -2)
 		{
-			++mc;
+			if (match.IsSuccess)
+			{
+				++mc;
+			}
 			match = runner.NextMatch();
 		}
 		sw.Stop();
