@@ -10,7 +10,7 @@ namespace Tests
 	[FARule(@"\/\/[^\n]*", Symbol = "lineComment")]
 	[FARule(@"[ \t\r\n]+", Symbol = "whiteSpace")]
 	[FARule(@"[A-Za-z_][A-Za-z0-9_]*", Symbol = "identifier")]
-	partial class TestRunner : FAStringRunner
+	partial class TestRunner : FATextReaderRunner
     {
         
     }

@@ -434,7 +434,7 @@ namespace VisualFA
             sb.AppendLine(tab + "        c = column;");
             if (!member.IsReader)
             {
-                sb.AppendLine(tab + "        Advance(@string, ref ch, ref len, true);");
+                sb.AppendLine(tab + "        Advance(input_string, ref ch, ref len, true);");
             }
             var q0ranges = new List<FARange>();
             q0ranges.Add(new FARange(-1, -1));
@@ -488,7 +488,7 @@ namespace VisualFA
                     }
                     else
                     {
-                        sb.AppendLine(tab + "            Advance(@string, ref ch, ref len, false);");
+                        sb.AppendLine(tab + "            Advance(input_string, ref ch, ref len, false);");
                     }
                     sb.AppendLine(tab + "            goto q" + closure.IndexOf(rnggrp.Key).ToString() + ";");
                     sb.AppendLine(tab + "        }");
@@ -504,7 +504,7 @@ namespace VisualFA
                         }
                         else
                         {
-                            sb.AppendLine(tab + "        return _BlockEnd" + q.AcceptSymbol.ToString() + "(@string, ch, len, p, l, c);");
+                            sb.AppendLine(tab + "        return _BlockEnd" + q.AcceptSymbol.ToString() + "(input_string, ch, len, p, l, c);");
                         }
                     }
                     else
@@ -515,7 +515,7 @@ namespace VisualFA
                         }
                         else
                         {
-                            sb.AppendLine(tab + "        return " + faMatch + ".Create(" + q.AcceptSymbol.ToString() + ", @string.Substring(p,len), p, l, c);");
+                            sb.AppendLine(tab + "        return " + faMatch + ".Create(" + q.AcceptSymbol.ToString() + ", input_string.Substring(p,len), p, l, c);");
                         }
                     }
                 }
@@ -547,7 +547,7 @@ namespace VisualFA
             }
             else
             {
-                sb.AppendLine(tab + "            return " + faMatch + ".Create(-1, @string.Substring(p, len), p, l, c);");
+                sb.AppendLine(tab + "            return " + faMatch + ".Create(-1, input_string.Substring(p, len), p, l, c);");
             }
             sb.AppendLine(tab + "        }");
             if (member.IsReader)
@@ -556,7 +556,7 @@ namespace VisualFA
             }
             else
             {
-                sb.AppendLine(tab + "        Advance(@string, ref ch, ref len, false);");
+                sb.AppendLine(tab + "        Advance(input_string, ref ch, ref len, false);");
             }
             sb.AppendLine(tab + "        goto errorout;");
             sb.AppendLine(tab + "    }");

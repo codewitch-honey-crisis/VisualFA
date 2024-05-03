@@ -109,10 +109,10 @@ internal abstract partial class FARunner : Object, IEnumerable<FAMatch>
 internal abstract partial class FAStringRunner : FARunner
 {
 	public static bool UsingSpans { get { return false; } }
-	protected string @string;
+	protected string input_string;
 	public void Set(string @string)
 	{
-		this.@string = @string;
+		this.input_string = @string;
 		position = -1;
 		line = 1;
 		column = 1;
@@ -180,7 +180,7 @@ internal abstract partial class FAStringRunner : FARunner
 }
 internal abstract partial class FATextReaderRunner : FARunner
 {
-	protected TextReader reader;
+	protected TextReader input_reader;
 	protected StringBuilder capture;
 	protected int current;
 	protected FATextReaderRunner()
@@ -189,7 +189,7 @@ internal abstract partial class FATextReaderRunner : FARunner
 	}
 	public void Set(TextReader reader)
 	{
-		this.reader = reader;
+		this.input_reader = reader;
 		current = -2;
 		position = -1;
 		line = 1;
@@ -223,7 +223,7 @@ internal abstract partial class FATextReaderRunner : FARunner
 		{
 			capture.Append(char.ConvertFromUtf32(current));
 		}
-		current = reader.Read();
+		current = input_reader.Read();
 		if (current == -1)
 		{
 			return;
@@ -232,7 +232,7 @@ internal abstract partial class FATextReaderRunner : FARunner
 		char ch1 = Convert.ToChar(current);
 		if (char.IsHighSurrogate(ch1))
 		{
-			current = reader.Read();
+			current = input_reader.Read();
 			if (current == -1)
 			{
 				ThrowUnicode(position);

@@ -21,7 +21,7 @@ internal partial class FAStringDfaTableRunner : FAStringRunner
 	}
 	public override FAMatch NextMatch()
 	{
-		return _NextImpl(@string);
+		return _NextImpl(input_string);
 	}
 	private FAMatch _NextImpl(ReadOnlySpan<char> span)
 	{

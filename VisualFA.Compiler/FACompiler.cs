@@ -36,7 +36,7 @@ namespace VisualFA
 		}*/
 #endif
 		static readonly MethodInfo _RocharspanCnv = typeof(string).GetMethod("op_Implicit", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
-		static readonly FieldInfo _string = typeof(FAStringRunner).GetField("string", BindingFlags.GetField | BindingFlags.NonPublic | BindingFlags.Instance);
+		static readonly FieldInfo _string = typeof(FAStringRunner).GetField("input_string", BindingFlags.GetField | BindingFlags.NonPublic | BindingFlags.Instance);
 		static readonly MethodInfo _advStr = typeof(FAStringRunner).GetMethod("Advance", BindingFlags.NonPublic | BindingFlags.Instance);
 		static readonly MethodInfo _advRdr = typeof(FATextReaderRunner).GetMethod("Advance", BindingFlags.NonPublic | BindingFlags.Instance);
 		static readonly FieldInfo _pos = typeof(FARunner).GetField("position", BindingFlags.NonPublic | BindingFlags.Instance);

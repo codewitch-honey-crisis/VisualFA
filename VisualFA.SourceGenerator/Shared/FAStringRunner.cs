@@ -1,11 +1,11 @@
 ﻿abstract partial class FAStringRunner : FARunner
 {
     public static readonly bool UsingSpans = false;
-    protected string @string = "";
+    protected string input_string = "";
     public void Set(string @string)
     {
         if (@string == null) throw new ArgumentNullException(nameof(@string));
-        this.@string = @string;
+        this.input_string = @string;
         position = -1;
         line = 1;
         column = 1;

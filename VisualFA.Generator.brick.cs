@@ -264,10 +264,10 @@ true,(MemberAttributes.Final|MemberAttributes.Private),(((TypeAttributes.AutoLay
 new CodeTypeParameter[0],new CodeTypeReference[]{new CodeTypeReference("FARunner")},new CodeTypeMember[]{DeslangedSpan._MemberProperty(new CodeTypeReference(typeof(bool)),
 "UsingSpans",(MemberAttributes.Static|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
  CodePrimitiveExpression(true))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],
-new CodeDirective[0],null),DeslangedSpan._MemberField(new CodeTypeReference(typeof(string)),"string",null,MemberAttributes.Family,new CodeCommentStatement[0],
+new CodeDirective[0],null),DeslangedSpan._MemberField(new CodeTypeReference(typeof(string)),"input_string",null,MemberAttributes.Family,new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberMethod(new CodeTypeReference(typeof(void)),"Set",
 (MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)),
-"string")},new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"string"),new CodeArgumentReferenceExpression("string")),
+"string")},new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_string"),new CodeArgumentReferenceExpression("string")),
 new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position"),new CodePrimitiveExpression(-1)),new CodeAssignStatement(new
  CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"line"),new CodePrimitiveExpression(1)),new CodeAssignStatement(new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"column"),new CodePrimitiveExpression(1))},new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
@@ -323,7 +323,7 @@ new CodeAttributeDeclaration[]{new CodeAttributeDeclaration(new CodeTypeReferenc
 "AggressiveInlining"))})},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
 new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._TypeDeclaration("FATextReaderRunner",true,false,false,false,true,(MemberAttributes.Final
 |MemberAttributes.Private),(((TypeAttributes.AutoLayout|TypeAttributes.AnsiClass)|TypeAttributes.Class)|TypeAttributes.Abstract),new CodeTypeParameter[0],
-new CodeTypeReference[]{new CodeTypeReference("FARunner")},new CodeTypeMember[]{DeslangedSpan._MemberField(new CodeTypeReference("TextReader"),"reader",
+new CodeTypeReference[]{new CodeTypeReference("FARunner")},new CodeTypeMember[]{DeslangedSpan._MemberField(new CodeTypeReference("TextReader"),"input_reader",
 null,MemberAttributes.Family,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberField(new
  CodeTypeReference("StringBuilder"),"capture",null,MemberAttributes.Family,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],
 new CodeDirective[0],null),DeslangedSpan._MemberField(new CodeTypeReference(typeof(int)),"current",null,MemberAttributes.Family,new CodeCommentStatement[0],
@@ -332,8 +332,8 @@ new CodeExpression[0],new CodeExpression[0],new CodeStatement[]{new CodeAssignSt
 "capture"),new CodeObjectCreateExpression(new CodeTypeReference("StringBuilder"),new CodeExpression[0]))},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
 new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberMethod(new CodeTypeReference(typeof(void)),"Set",(MemberAttributes.Final|MemberAttributes.
 Public),new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new CodeTypeReference("TextReader"),"reader")},new CodeStatement[]
-{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"reader"),new CodeArgumentReferenceExpression("reader")),new
- CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),new CodePrimitiveExpression(-2)),new CodeAssignStatement(new
+{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_reader"),new CodeArgumentReferenceExpression("reader")),
+new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),new CodePrimitiveExpression(-2)),new CodeAssignStatement(new
  CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position"),new CodePrimitiveExpression(-1)),new CodeAssignStatement(new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"line"),new CodePrimitiveExpression(1)),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
 "column"),new CodePrimitiveExpression(1))},new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],
@@ -361,7 +361,7 @@ new CodeStatement[0])})})}),new CodeConditionStatement(new CodeBinaryOperatorExp
  CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture"),"Append"),new CodeExpression[]{new CodeMethodInvokeExpression(new
  CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference(typeof(char))),"ConvertFromUtf32"),new CodeExpression[]{new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"current")})}))},new CodeStatement[0]),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
-"current"),new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"reader"),
+"current"),new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_reader"),
 "Read"),new CodeExpression[0])),new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
 "current"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),new CodeStatement[]{new CodeMethodReturnStatement(null)},new CodeStatement[0]),
 new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position"),new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new
@@ -370,7 +370,7 @@ new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceEx
 "ToChar"),new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current")})),new CodeConditionStatement(new CodeMethodInvokeExpression(new
  CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference(typeof(char))),"IsHighSurrogate"),new CodeExpression[]{new CodeVariableReferenceExpression("ch1")}),
 new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),new CodeMethodInvokeExpression(new
- CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"reader"),"Read"),new CodeExpression[0])),new CodeConditionStatement(new
+ CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_reader"),"Read"),new CodeExpression[0])),new CodeConditionStatement(new
  CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),
 new CodeStatement[]{new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference("FATextReaderRunner")),
 "ThrowUnicode"),new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position")}))},new CodeStatement[0]),new CodeVariableDeclarationStatement(new
@@ -401,7 +401,7 @@ new CodePrimitiveExpression(null))},new CodeCommentStatement[0],new CodeAttribut
 new CodeArgumentReferenceExpression("blockEnds"))},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
 null),DeslangedSpan._MemberMethod(new CodeTypeReference("FAMatch"),"NextMatch",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],
 new CodeStatement[]{new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"_NextImpl"),
-new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"string")}))},new CodeTypeReference[0],null,new CodeCommentStatement[0],
+new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_string")}))},new CodeTypeReference[0],null,new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedSpan._MemberMethod(new CodeTypeReference("FAMatch"),
 "_NextImpl",MemberAttributes.Private,new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new CodeTypeReference("ReadOnlySpan`1",
 new CodeTypeReference[]{new CodeTypeReference(typeof(char))}),"span")},new CodeStatement[]{new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(int)),
@@ -954,10 +954,10 @@ true,(MemberAttributes.Final|MemberAttributes.Private),(((TypeAttributes.AutoLay
 new CodeTypeParameter[0],new CodeTypeReference[]{new CodeTypeReference("FARunner")},new CodeTypeMember[]{DeslangedString._MemberProperty(new CodeTypeReference(typeof(bool)),
 "UsingSpans",(MemberAttributes.Static|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],new CodeStatement[]{new CodeMethodReturnStatement(new
  CodePrimitiveExpression(false))},new CodeStatement[0],new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],
-new CodeDirective[0],null),DeslangedString._MemberField(new CodeTypeReference(typeof(string)),"string",null,MemberAttributes.Family,new CodeCommentStatement[0],
+new CodeDirective[0],null),DeslangedString._MemberField(new CodeTypeReference(typeof(string)),"input_string",null,MemberAttributes.Family,new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberMethod(new CodeTypeReference(typeof(void)),"Set",
 (MemberAttributes.Final|MemberAttributes.Public),new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)),
-"string")},new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"string"),new CodeArgumentReferenceExpression("string")),
+"string")},new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_string"),new CodeArgumentReferenceExpression("string")),
 new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position"),new CodePrimitiveExpression(-1)),new CodeAssignStatement(new
  CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"line"),new CodePrimitiveExpression(1)),new CodeAssignStatement(new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"column"),new CodePrimitiveExpression(1))},new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
@@ -1013,7 +1013,7 @@ new CodeAttributeDeclaration[]{new CodeAttributeDeclaration(new CodeTypeReferenc
 "AggressiveInlining"))})},new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null)},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
 new CodeDirective[0],new CodeDirective[0],null),DeslangedString._TypeDeclaration("FATextReaderRunner",true,false,false,false,true,(MemberAttributes.Final
 |MemberAttributes.Private),(((TypeAttributes.AutoLayout|TypeAttributes.AnsiClass)|TypeAttributes.Class)|TypeAttributes.Abstract),new CodeTypeParameter[0],
-new CodeTypeReference[]{new CodeTypeReference("FARunner")},new CodeTypeMember[]{DeslangedString._MemberField(new CodeTypeReference("TextReader"),"reader",
+new CodeTypeReference[]{new CodeTypeReference("FARunner")},new CodeTypeMember[]{DeslangedString._MemberField(new CodeTypeReference("TextReader"),"input_reader",
 null,MemberAttributes.Family,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberField(new
  CodeTypeReference("StringBuilder"),"capture",null,MemberAttributes.Family,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],
 new CodeDirective[0],null),DeslangedString._MemberField(new CodeTypeReference(typeof(int)),"current",null,MemberAttributes.Family,new CodeCommentStatement[0],
@@ -1022,8 +1022,8 @@ new CodeExpression[0],new CodeExpression[0],new CodeStatement[]{new CodeAssignSt
 "capture"),new CodeObjectCreateExpression(new CodeTypeReference("StringBuilder"),new CodeExpression[0]))},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],
 new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberMethod(new CodeTypeReference(typeof(void)),"Set",(MemberAttributes.Final|MemberAttributes.
 Public),new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new CodeTypeReference("TextReader"),"reader")},new CodeStatement[]
-{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"reader"),new CodeArgumentReferenceExpression("reader")),new
- CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),new CodePrimitiveExpression(-2)),new CodeAssignStatement(new
+{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_reader"),new CodeArgumentReferenceExpression("reader")),
+new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),new CodePrimitiveExpression(-2)),new CodeAssignStatement(new
  CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position"),new CodePrimitiveExpression(-1)),new CodeAssignStatement(new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"line"),new CodePrimitiveExpression(1)),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
 "column"),new CodePrimitiveExpression(1))},new CodeTypeReference[0],null,new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],
@@ -1051,7 +1051,7 @@ new CodeStatement[0])})})}),new CodeConditionStatement(new CodeBinaryOperatorExp
  CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"capture"),"Append"),new CodeExpression[]{new CodeMethodInvokeExpression(new
  CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference(typeof(char))),"ConvertFromUtf32"),new CodeExpression[]{new CodeFieldReferenceExpression(new
  CodeThisReferenceExpression(),"current")})}))},new CodeStatement[0]),new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
-"current"),new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"reader"),
+"current"),new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_reader"),
 "Read"),new CodeExpression[0])),new CodeConditionStatement(new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
 "current"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),new CodeStatement[]{new CodeMethodReturnStatement(null)},new CodeStatement[0]),
 new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position"),new CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new
@@ -1060,7 +1060,7 @@ new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceEx
 "ToChar"),new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current")})),new CodeConditionStatement(new CodeMethodInvokeExpression(new
  CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference(typeof(char))),"IsHighSurrogate"),new CodeExpression[]{new CodeVariableReferenceExpression("ch1")}),
 new CodeStatement[]{new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),new CodeMethodInvokeExpression(new
- CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"reader"),"Read"),new CodeExpression[0])),new CodeConditionStatement(new
+ CodeMethodReferenceExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_reader"),"Read"),new CodeExpression[0])),new CodeConditionStatement(new
  CodeBinaryOperatorExpression(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"current"),CodeBinaryOperatorType.ValueEquality,new CodePrimitiveExpression(-1)),
 new CodeStatement[]{new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference("FATextReaderRunner")),
 "ThrowUnicode"),new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"position")}))},new CodeStatement[0]),new CodeVariableDeclarationStatement(new
@@ -1091,7 +1091,7 @@ new CodePrimitiveExpression(null))},new CodeCommentStatement[0],new CodeAttribut
 new CodeArgumentReferenceExpression("blockEnds"))},new CodeCommentStatement[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],
 null),DeslangedString._MemberMethod(new CodeTypeReference("FAMatch"),"NextMatch",(MemberAttributes.Override|MemberAttributes.Public),new CodeParameterDeclarationExpression[0],
 new CodeStatement[]{new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),"_NextImpl"),
-new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"string")}))},new CodeTypeReference[0],null,new CodeCommentStatement[0],
+new CodeExpression[]{new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),"input_string")}))},new CodeTypeReference[0],null,new CodeCommentStatement[0],
 new CodeAttributeDeclaration[0],new CodeAttributeDeclaration[0],new CodeDirective[0],new CodeDirective[0],null),DeslangedString._MemberMethod(new CodeTypeReference("FAMatch"),
 "_NextImpl",MemberAttributes.Private,new CodeParameterDeclarationExpression[]{new CodeParameterDeclarationExpression(new CodeTypeReference(typeof(string)),
 "str")},new CodeStatement[]{new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(int)),"tlen",null),new CodeVariableDeclarationStatement(new
@@ -1503,11 +1503,11 @@ new CodeVariableReferenceExpression("len"),new CodeVariableReferenceExpression("
  static bool _GenerateTransitions(IList<FA>closure,CodeStatementCollection dest,CodeStatement adv,CodeExpression cmp,List<FARange>q0ranges,int q,FA fromState,
 CodeLabeledStatement state){var trnsgrp=fromState.FillInputTransitionRangesGroupedByState();var attachedlabel=false;foreach(var trn in trnsgrp){if(q==
 0){q0ranges.AddRange(trn.Value);}var test=new List<FARange>(FARange.ToNotRanges(trn.Value));var hasEof=false;for(int i=0;i<trn.Value.Count;i++){if(trn.Value[i].Min==-1)
-{hasEof=true;break;}}var inverted=false;var ranges=trn.Value;if(test.Count==0){System.Diagnostics.Debugger.Break();}if(!hasEof&&test.Count>0&&test.Count<trn.Value.Count)
-{inverted=true;ranges=test;}var tmp=new RegexCharsetExpression();foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));
-}else{tmp.Entries.Add(new RegexCharsetRangeEntry(rng.Min,rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());
-if(!attachedlabel){attachedlabel=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(
-_GenerateRangesExpression(cmp,ranges,inverted));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())
+{hasEof=true;break;}}var inverted=false;var ranges=trn.Value;if(!hasEof&&test.Count>0&&test.Count<trn.Value.Count){inverted=true;ranges=test;}var tmp=
+new RegexCharsetExpression();foreach(var rng in ranges){if(rng.Min==rng.Max){tmp.Entries.Add(new RegexCharsetCharEntry(rng.Min));}else{tmp.Entries.Add(new
+ RegexCharsetRangeEntry(rng.Min,rng.Max));}}tmp.HasNegatedRanges=inverted;var rngcmt=new CodeCommentStatement(tmp.ToString());if(!attachedlabel){attachedlabel
+=true;if(state!=null){state.Statement=rngcmt;}else{dest.Add(rngcmt);}}else{dest.Add(rngcmt);}var iftrans=new CodeConditionStatement(_GenerateRangesExpression(cmp,
+ranges,inverted));dest.Add(iftrans);iftrans.TrueStatements.AddRange(new CodeStatement[]{adv,new CodeGotoStatement("q"+closure.IndexOf(trn.Key).ToString())
 });}return attachedlabel;}private static void _GenerateBlockEnds(bool textReader,CodeTypeDeclaration type,IList<FA>blockEnds,FAGeneratorOptions opts){
 if(blockEnds==null){return;}CodeStatement adv;CodeExpression tostr=null;if(!textReader){
 #if FALIB_SPANS
@@ -1558,19 +1558,19 @@ if(options.UseSpans){pt=new CodeTypeReference("ReadOnlySpan`1",new CodeTypeRefer
 if(pt==null){pt=new CodeTypeReference(typeof(string));}nextMatchImpl.Parameters.Add(new CodeParameterDeclarationExpression(pt,"s"));nextMatchImpl.ReturnType
 =new CodeTypeReference(typeof(FAMatch).Name);result.Members.Add(nextMatchImpl);target=nextMatchImpl.Statements;nextMatch.Statements.Add(new CodeMethodReturnStatement(new
  CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(),nextMatchImpl.Name),new CodeFieldReferenceExpression(new
- CodeThisReferenceExpression(),"string"))));}else{target=nextMatch.Statements;}_GenerateMatchImplBody(textReader,closure,blockEnds,target,options);result.Members.Add(nextMatch);
-return result;}private static CodeArrayCreateExpression _CreateDfaArray(int[]dfa){var result=new CodeArrayCreateExpression(new CodeTypeReference(typeof(int)));
-for(int i=0;i<dfa.Length;++i){result.Initializers.Add(new CodePrimitiveExpression(dfa[i]));}return result;}private static CodeArrayCreateExpression _CreateBlockEndArray(IList<int[]>
-blockEnds){var intArrays=new CodeTypeReference(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),1);var result=new CodeArrayCreateExpression(intArrays);
-var nullExp=new CodePrimitiveExpression(null);for(int i=0;i<blockEnds.Count;++i){if(blockEnds[i]==null){result.Initializers.Add(nullExp);}else{result.Initializers.Add(_CreateDfaArray(blockEnds[i]));
-}}return result;}private static CodeTypeDeclaration _GenerateTableRunner(bool textReader,IList<FA>closure,IList<FA>blockEnds,FAGeneratorOptions options)
-{var result=new CodeTypeDeclaration(textReader?options.TextReaderRunnerClassName:options.StringRunnerClassName);var hasBlockEnds=(blockEnds!=null&&blockEnds.Count
->0);result.TypeAttributes=TypeAttributes.NotPublic|TypeAttributes.Sealed;result.BaseTypes.Add(new CodeTypeReference(textReader?typeof(FATextReaderDfaTableRunner).Name
-:typeof(FAStringDfaTableRunner).Name));var dfaField=new CodeMemberField(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),"_dfa");dfaField.Attributes
-=MemberAttributes.Private|MemberAttributes.Static;dfaField.InitExpression=_CreateDfaArray(closure[0].ToArray());result.Members.Add(dfaField);if(hasBlockEnds)
-{var blockEndsField=new CodeMemberField(new CodeTypeReference(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),1),"_blockEnds");blockEndsField.Attributes
-=MemberAttributes.Private|MemberAttributes.Static;var belist=new List<int[]>(blockEnds.Count);for(int i=0;i<blockEnds.Count;++i){if(blockEnds[i]!=null)
-{belist.Add(blockEnds[i].ToArray());}else{belist.Add(null);}}blockEndsField.InitExpression=_CreateBlockEndArray(belist);result.Members.Add(blockEndsField);
+ CodeThisReferenceExpression(),"input_string"))));}else{target=nextMatch.Statements;}_GenerateMatchImplBody(textReader,closure,blockEnds,target,options);
+result.Members.Add(nextMatch);return result;}private static CodeArrayCreateExpression _CreateDfaArray(int[]dfa){var result=new CodeArrayCreateExpression(new
+ CodeTypeReference(typeof(int)));for(int i=0;i<dfa.Length;++i){result.Initializers.Add(new CodePrimitiveExpression(dfa[i]));}return result;}private static
+ CodeArrayCreateExpression _CreateBlockEndArray(IList<int[]>blockEnds){var intArrays=new CodeTypeReference(new CodeTypeReference(new CodeTypeReference(typeof(int)),
+1),1);var result=new CodeArrayCreateExpression(intArrays);var nullExp=new CodePrimitiveExpression(null);for(int i=0;i<blockEnds.Count;++i){if(blockEnds[i]
+==null){result.Initializers.Add(nullExp);}else{result.Initializers.Add(_CreateDfaArray(blockEnds[i]));}}return result;}private static CodeTypeDeclaration
+ _GenerateTableRunner(bool textReader,IList<FA>closure,IList<FA>blockEnds,FAGeneratorOptions options){var result=new CodeTypeDeclaration(textReader?options.TextReaderRunnerClassName:options.StringRunnerClassName);
+var hasBlockEnds=(blockEnds!=null&&blockEnds.Count>0);result.TypeAttributes=TypeAttributes.NotPublic|TypeAttributes.Sealed;result.BaseTypes.Add(new CodeTypeReference(textReader?
+typeof(FATextReaderDfaTableRunner).Name:typeof(FAStringDfaTableRunner).Name));var dfaField=new CodeMemberField(new CodeTypeReference(new CodeTypeReference(typeof(int)),
+1),"_dfa");dfaField.Attributes=MemberAttributes.Private|MemberAttributes.Static;dfaField.InitExpression=_CreateDfaArray(closure[0].ToArray());result.Members.Add(dfaField);
+if(hasBlockEnds){var blockEndsField=new CodeMemberField(new CodeTypeReference(new CodeTypeReference(new CodeTypeReference(typeof(int)),1),1),"_blockEnds");
+blockEndsField.Attributes=MemberAttributes.Private|MemberAttributes.Static;var belist=new List<int[]>(blockEnds.Count);for(int i=0;i<blockEnds.Count;++i)
+{if(blockEnds[i]!=null){belist.Add(blockEnds[i].ToArray());}else{belist.Add(null);}}blockEndsField.InitExpression=_CreateBlockEndArray(belist);result.Members.Add(blockEndsField);
 }var ctor=new CodeConstructor();ctor.Attributes=MemberAttributes.Public;ctor.BaseConstructorArgs.Add(new CodeFieldReferenceExpression(null,"_dfa"));ctor.BaseConstructorArgs.Add(hasBlockEnds
 ?(CodeExpression)new CodeFieldReferenceExpression(null,"_blockEnds"):(CodeExpression)new CodePrimitiveExpression(null));result.Members.Add(ctor);result.IsClass
 =true;result.IsPartial=true;return result;}public static CodeCompileUnit Generate(this FA fa,IList<FA>blockEnds=null,FAGeneratorOptions options=null,IProgress<int>

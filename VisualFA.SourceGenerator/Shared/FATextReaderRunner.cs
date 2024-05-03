@@ -1,12 +1,12 @@
 ﻿abstract partial class FATextReaderRunner : FARunner
 {
-    protected TextReader reader = TextReader.Null;
+    protected TextReader input_reader = TextReader.Null;
     protected System.Text.StringBuilder capture = new System.Text.StringBuilder();
     protected int current = -2;
     public void Set(TextReader reader)
     {
         if (reader == null) throw new ArgumentNullException(nameof(reader));
-        this.reader = reader;
+        this.input_reader = reader;
         current = -2;
         position = -1;
         line = 1;
@@ -41,7 +41,7 @@
         {
             capture.Append(char.ConvertFromUtf32(current));
         }
-        current = reader.Read();
+        current = input_reader.Read();
         if (current == -1)
         {
             return;
@@ -50,7 +50,7 @@
         char ch1 = unchecked((char)current);
         if (char.IsHighSurrogate(ch1))
         {
-            current = reader.Read();
+            current = input_reader.Read();
             if (current == -1)
             {
                 ThrowUnicode(position);

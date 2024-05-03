@@ -48,6 +48,8 @@ namespace Scratch2
 			Console.Write("Accepting states: ");
 			_PrintStates(minDfa.FillFind(FA.AcceptingFilter));
 
+
+
 		}
 		static void Main2()
         {

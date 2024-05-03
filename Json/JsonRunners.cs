@@ -230,9 +230,9 @@ namespace Json {
                 return false;
             }
         }
-        protected string @string;
+        protected string input_string;
         public void Set(string @string) {
-            this.@string = @string;
+            this.input_string = @string;
             this.position = -1;
             this.line = 1;
             this.column = 1;
@@ -294,14 +294,14 @@ namespace Json {
     }
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.0.0.0")]
     internal abstract partial class FATextReaderRunner : FARunner {
-        protected TextReader reader;
+        protected TextReader input_reader;
         protected StringBuilder capture;
         protected int current;
         protected FATextReaderRunner() {
             this.capture = new StringBuilder();
         }
         public void Set(TextReader reader) {
-            this.reader = reader;
+            this.input_reader = reader;
             this.current = -2;
             this.position = -1;
             this.line = 1;
@@ -335,14 +335,14 @@ namespace Json {
             if ((this.current > -1)) {
                 this.capture.Append(char.ConvertFromUtf32(this.current));
             }
-            this.current = this.reader.Read();
+            this.current = this.input_reader.Read();
             if ((this.current == -1)) {
                 return;
             }
             this.position = (this.position + 1);
             char ch1 = System.Convert.ToChar(this.current);
             if (char.IsHighSurrogate(ch1)) {
-                this.current = this.reader.Read();
+                this.current = this.input_reader.Read();
                 if ((this.current == -1)) {
                     FATextReaderRunner.ThrowUnicode(this.position);
                 }
@@ -759,7 +759,7 @@ namespace Json {
             goto errorout;
         }
         public override FAMatch NextMatch() {
-            return this.NextMatchImpl(this.@string);
+            return this.NextMatchImpl(this.input_string);
         }
         public const int Object = 0;
         public const int ObjectEnd = 1;

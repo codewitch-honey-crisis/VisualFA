@@ -19,7 +19,7 @@ namespace Scratch
                 Console.WriteLine("FAMatch.Create({0},\"{1}\",{2},{3},{4}),", match.SymbolId, match.Value, match.Position, match.Line, match.Column);
             }
             TestRunner runner = new TestRunner();
-            runner.Set(exp);
+            runner.Set(new StringReader(exp));
             
             foreach(var match in runner)
             {

@@ -665,10 +665,7 @@ namespace VisualFA
 				}
 				var inverted = false;
 				var ranges = trn.Value;
-				if (test.Count == 0)
-				{
-					System.Diagnostics.Debugger.Break();
-				}
+				
 				if (!hasEof && test.Count>0 && test.Count<trn.Value.Count)
 				{
 					inverted = true;
@@ -954,7 +951,7 @@ namespace VisualFA
 				nextMatchImpl.ReturnType = new CodeTypeReference(typeof(FAMatch).Name);
 				result.Members.Add(nextMatchImpl);
 				target = nextMatchImpl.Statements;
-				nextMatch.Statements.Add(new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), nextMatchImpl.Name), new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), "string"))));
+				nextMatch.Statements.Add(new CodeMethodReturnStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), nextMatchImpl.Name), new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), "input_string"))));
 			} else
 			{
 				target = nextMatch.Statements;
