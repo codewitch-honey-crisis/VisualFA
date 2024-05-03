@@ -12,7 +12,7 @@ partial class BenchFAStringRunner : FAStringRunner
 {
 	public override FAMatch NextMatch()
 	{
-		return _NextImpl(@string);
+		return _NextImpl(input_string);
 	}
 	private FAMatch _NextImpl(
 #if FALIB_SPANS
@@ -441,7 +441,7 @@ partial class CommentFAStringRunner : FAStringRunner
 {
 	public override FAMatch NextMatch()
 	{
-		return _NextImpl(@string);
+		return _NextImpl(input_string);
 	}
 	private FAMatch _BlockEnd0(
 #if FALIB_SPANS

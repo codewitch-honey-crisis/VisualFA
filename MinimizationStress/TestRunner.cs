@@ -4395,7 +4395,7 @@ internal sealed partial class TestRunner : FAStringRunner {
         goto errorout;
     }
     public override FAMatch NextMatch() {
-        return this.NextMatchImpl(this.@string);
+        return this.NextMatchImpl(this.input_string);
     }
 }
 [System.CodeDom.Compiler.GeneratedCodeAttribute("Visual FA", "1.1.1.0")]

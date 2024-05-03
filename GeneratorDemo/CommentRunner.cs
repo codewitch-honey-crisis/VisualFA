@@ -118,7 +118,7 @@ internal sealed partial class CommentRunner : FAStringRunner {
         goto errorout;
     }
     public override FAMatch NextMatch() {
-        return this.NextMatchImpl(this.@string);
+        return this.NextMatchImpl(this.input_string);
     }
     public const int commentBlock = 0;
     public const int commentLine = 1;

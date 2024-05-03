@@ -129,10 +129,10 @@ namespace VisualFA
 #endif
 
 
-		protected string @string;
+		protected string input_string;
 		public void Set(string @string)
 		{
-			this.@string = @string;
+			this.input_string = @string;
 			position = -1;
 			line = 1;
 			column = 1;
@@ -215,12 +215,12 @@ namespace VisualFA
 #endif
 	abstract partial class FATextReaderRunner : FARunner
 	{
-		protected TextReader reader;
+		protected TextReader input_reader;
 		protected StringBuilder capture = new StringBuilder();
 		protected int current;
 		public void Set(TextReader reader)
 		{
-			this.reader = reader;
+			this.input_reader = reader;
 			current = -2;
 			position = -1;
 			line = 1;
@@ -255,7 +255,7 @@ namespace VisualFA
 			{
 				capture.Append(char.ConvertFromUtf32(current));
 			}
-			current = reader.Read();
+			current = input_reader.Read();
 			if (current == -1)
 			{
 				return;
@@ -264,7 +264,7 @@ namespace VisualFA
 			char ch1 = unchecked((char)current);
 			if (char.IsHighSurrogate(ch1))
 			{
-				current = reader.Read();
+				current = input_reader.Read();
 				if (current == -1)
 				{
 					ThrowUnicode(position);
@@ -291,7 +291,7 @@ namespace VisualFA
 		}
 		public override FAMatch NextMatch()
 		{
-			return _NextImpl(@string);
+			return _NextImpl(input_string);
 		}
 		private FAMatch _NextImpl(
 #if FALIB_SPANS
@@ -650,7 +650,7 @@ namespace VisualFA
 		}
 		public override FAMatch NextMatch()
 		{
-			return _NextImpl(@string);
+			return _NextImpl(input_string);
 		}
 		private FAMatch _NextImpl(
 #if FALIB_SPANS

@@ -1763,8 +1763,8 @@ true;
 #else
 false;
 #endif
-protected string@string;public void Set(string@string){this.@string=@string;position=-1;line=1;column=1;}public override void Reset(){position=-1;line
-=1;column=1;}
+protected string input_string;public void Set(string@string){this.input_string=@string;position=-1;line=1;column=1;}public override void Reset(){position
+=-1;line=1;column=1;}
 #if !FALIB_SMALLER
 [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -1782,19 +1782,19 @@ string s
 #if FALIB
 public
 #endif
-abstract partial class FATextReaderRunner:FARunner{protected TextReader reader;protected StringBuilder capture=new StringBuilder();protected int current;
-public void Set(TextReader reader){this.reader=reader;current=-2;position=-1;line=1;column=1;}public override void Reset(){throw new NotSupportedException();
+abstract partial class FATextReaderRunner:FARunner{protected TextReader input_reader;protected StringBuilder capture=new StringBuilder();protected int
+ current;public void Set(TextReader reader){this.input_reader=reader;current=-2;position=-1;line=1;column=1;}public override void Reset(){throw new NotSupportedException();
 }protected void Advance(){switch(this.current){case'\n':++line;column=1;break;case'\r':column=1;break;case'\t':column=((column-1)/tabWidth)*(tabWidth+
-1);break;default:if(this.current>31){++column;}break;}if(current>-1){capture.Append(char.ConvertFromUtf32(current));}current=reader.Read();if(current==
--1){return;}++position;char ch1=unchecked((char)current);if(char.IsHighSurrogate(ch1)){current=reader.Read();if(current==-1){ThrowUnicode(position);}char
- ch2=unchecked((char)current);current=char.ConvertToUtf32(ch1,ch2);++position;}}}
+1);break;default:if(this.current>31){++column;}break;}if(current>-1){capture.Append(char.ConvertFromUtf32(current));}current=input_reader.Read();if(current
+==-1){return;}++position;char ch1=unchecked((char)current);if(char.IsHighSurrogate(ch1)){current=input_reader.Read();if(current==-1){ThrowUnicode(position);
+}char ch2=unchecked((char)current);current=char.ConvertToUtf32(ch1,ch2);++position;}}}
 #endregion // FATextReaderRunner
 #region FAStringDfaTableRunner
 #if FALIB
 public
 #endif
 partial class FAStringDfaTableRunner:FAStringRunner{private readonly int[]_dfa;private readonly int[][]_blockEnds;public FAStringDfaTableRunner(int[]dfa,
-int[][]blockEnds=null){_dfa=dfa;_blockEnds=blockEnds;}public override FAMatch NextMatch(){return _NextImpl(@string);}private FAMatch _NextImpl(
+int[][]blockEnds=null){_dfa=dfa;_blockEnds=blockEnds;}public override FAMatch NextMatch(){return _NextImpl(input_string);}private FAMatch _NextImpl(
 #if FALIB_SPANS
 ReadOnlySpan<char>s
 #else
@@ -1858,7 +1858,7 @@ public
 #endif
 partial class FAStringStateRunner:FAStringRunner{readonly FA _fa;readonly FA[]_blockEnds;readonly List<FA>_states;readonly List<FA>_nexts;readonly List<FA>
 _initial;public FAStringStateRunner(FA fa,FA[]blockEnds=null){if(null==fa){throw new ArgumentNullException(nameof(fa));}_fa=fa;_blockEnds=blockEnds;_states
-=new List<FA>();_nexts=new List<FA>();_initial=new List<FA>();}public override FAMatch NextMatch(){return _NextImpl(@string);}private FAMatch _NextImpl(
+=new List<FA>();_nexts=new List<FA>();_initial=new List<FA>();}public override FAMatch NextMatch(){return _NextImpl(input_string);}private FAMatch _NextImpl(
 #if FALIB_SPANS
 ReadOnlySpan<char>s
 #else
