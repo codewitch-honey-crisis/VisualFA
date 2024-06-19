@@ -39,6 +39,7 @@ namespace ArticleImages
 		}
 		static void Main(string[] args)
 		{
+			var jsonString = FA.Parse(@"""([^\n""\\]|\\([btrnf""\\/]|(u[0-9A-Fa-f]{4})))*""", 0, false);
 			var commentBlock = FA.Parse(@"\/\*", 0, false);
 			var commentBlockEnd = FA.Parse(@"\*\/", 0, false);
 			var commentLine = FA.Parse(@"\/\/[^\n]*", 1, false);
@@ -120,6 +121,7 @@ namespace ArticleImages
 			var ambigMdfa = ambigDfa.ToMinimizedDfa();
 			ambigMdfa.RenderCPFile(@"..\..\ambig_min_dfa.png", opts);
 
+			jsonString.RenderCPFile(@"..\..\json_string.png", opts);
 
 		}
 	}

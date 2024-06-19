@@ -189,8 +189,8 @@ namespace VisualFA
 					writer.Write(di.ToString());
 					writer.Write(" [label=\"");
 					var sb = new StringBuilder();
-					var notRanges = new List<FARange>(FARange.ToNotRanges(rngGrp.Value));
-					//var notRanges = new List<FARange>(_InvertRanges(rngGrp.Value));
+					//var notRanges = new List<FARange>(FARange.ToNotRanges(rngGrp.Value));
+					var notRanges = new List<FARange>(_InvertRanges(rngGrp.Value));
 					if (notRanges.Count > rngGrp.Value.Count)
 					{
 						_AppendRangeTo(sb, rngGrp.Value);
