@@ -1104,10 +1104,6 @@ public void AddEpsilon(FA to,bool compact=true){if(to==null)throw new ArgumentNu
 <0&&to.AcceptSymbol>-1){AcceptSymbol=to.AcceptSymbol;}}else{var found=false;int i;for(i=0;i<_transitions.Count;++i){var fat=_transitions[i]; if(fat.Min
 !=-1||fat.Max!=-1)break;if(fat.To==to){found=true;break;}}if(!found){_transitions.Insert(i,new FATransition(to));IsCompact=false;IsDeterministic=false;
 }}}/// <summary>
-/// Converts the state machine to a regular expression.
-/// </summary>
-/// <returns>The expression</returns>
-public override string ToString(){if(Id>-1){return String.Concat("q",Id.ToString());}else{return base.ToString();}}/// <summary>
 /// Adds an input transition
 /// </summary>
 /// <param name="range">The range of input codepoints to transition on</param>
@@ -1202,12 +1198,7 @@ public static int GetFirstAcceptSymbol(IList<FA>states){for(int i=0;i<states.Cou
 /// <returns>The lexer machine</returns>
 public static FA ToLexer(IEnumerable<FA>tokens,bool makeDfa=true,bool compact=true,IProgress<int>progress=null){var toks=new List<FA>(tokens);if(makeDfa)
 {for(int i=0;i<toks.Count;i++){toks[i]=toks[i].ToMinimizedDfa(progress);}}var result=new FA();for(int i=0;i<toks.Count;i++){result.AddEpsilon(toks[i],
-compact);}if(makeDfa&&!result.IsDeterministic){return result.ToDfa(progress);}else{return result;}}static IEnumerable<FARange>_InvertRanges(IEnumerable<FARange>
-ranges){if(ranges==null){yield break;}var last=0x10ffff;using(var e=ranges.GetEnumerator()){if(!e.MoveNext()){FARange range;range.Min=0;range.Max=0x10ffff;
-yield return range;yield break;}if(e.Current.Min>0){FARange range;range.Min=0;range.Max=e.Current.Min-1;yield return range;last=e.Current.Max;if(0x10ffff
-<=last)yield break;}else if(e.Current.Min==0){last=e.Current.Max;if(0x10ffff<=last)yield break;}while(e.MoveNext()){if(0x10ffff<=last)yield break;if(unchecked(last
-+1)<e.Current.Min){FARange range;range.Min=unchecked(last+1);range.Max=unchecked((e.Current.Min-1));yield return range;}last=e.Current.Max;}if(0x10ffff
->last){FARange range;range.Min=unchecked((last+1));range.Max=0x10ffff;yield return range;}}}/// <summary>
+compact);}if(makeDfa&&!result.IsDeterministic){return result.ToDfa(progress);}else{return result;}}/// <summary>
 /// Creates a packed state table as a series of integers
 /// </summary>
 /// <returns>An integer array representing the machine</returns>
@@ -1313,8 +1304,8 @@ var neutrals=new List<FA>();foreach(var ffa in closure){if(ffa.IsAccepting){acce
 _Seen);}if(null!=toStates){toStates=FillEpsilonClosure(toStates,null);}else{toStates=fromStates;}int i=0;foreach(var ffa in closure){var isfrom=null!=fromStates
 &&FillEpsilonClosure(fromStates,null).Contains(ffa);var rngGrps=ffa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var istrns
 =isfrom&&null!=toStates&&options.DebugString!=null&&toStates.Contains(rngGrp.Key);var di=closure.IndexOf(rngGrp.Key);writer.Write(pfx+spfx);writer.Write(i);
-writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();var notRanges=new List<FARange>(_InvertRanges(rngGrp.Value));
-if(notRanges.Count>rngGrp.Value.Count){_AppendRangeTo(sb,rngGrp.Value);}else{sb.Append("^");_AppendRangeTo(sb,notRanges);}if(sb.Length!=1||" "==sb.ToString())
+writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();var notRanges=new List<FARange>(FARange.ToNotRanges(rngGrp.Value));
+ if(notRanges.Count>rngGrp.Value.Count){_AppendRangeTo(sb,rngGrp.Value);}else{sb.Append("^");_AppendRangeTo(sb,notRanges);}if(sb.Length!=1||" "==sb.ToString())
 {writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');}else writer.Write(_EscapeLabel(sb.ToString()));
 if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach(var fat in ffa._transitions){if(fat.Min==-1&&fat.Max==-1){var istrns
 =null!=toStates&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);writer.Write(pfx+spfx);writer.Write(i);writer.Write("->");
@@ -1644,7 +1635,11 @@ var edge=fsmEdges[i];sb.Append(edge.Exp);}sb.Append(")");}return sb.ToString();}
 }static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if
 (edge.From==node||edge.To==node){continue;}result.Add(edge);}}public string ToString(string format,IFormatProvider provider){return ToString(format);}
 public string ToString(string format){if(string.IsNullOrEmpty(format)){return ToString();}if(format=="e"){return _ToExpression(this);}else if(format=="r")
-{return RegexExpression.FromFA(this).Reduce(1000).ToString();}throw new FormatException("Invalid format specifier");}}}namespace VisualFA{/// <summary>
+{return RegexExpression.FromFA(this).Reduce(1000).ToString();}throw new FormatException("Invalid format specifier");}/// <summary>
+/// Converts the state machine to a regular expression.
+/// </summary>
+/// <returns>The expression</returns>
+public override string ToString(){if(Id>-1){return String.Concat("q",Id.ToString());}else{return base.ToString();}}}}namespace VisualFA{/// <summary>
 /// Represents a match from <code>FARunner.MatchNext()</code>
 /// </summary>
 #if FALIB
