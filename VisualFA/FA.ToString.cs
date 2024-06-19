@@ -281,6 +281,22 @@ namespace VisualFA
 			}
 			throw new FormatException("Invalid format specifier");
 		}
-		
+		/// <summary>
+		/// Converts the state machine to a regular expression.
+		/// </summary>
+		/// <returns>The expression</returns>
+		public override string ToString()
+		{
+			if (Id > -1)
+			{
+				return String.Concat("q", Id.ToString());
+			}
+			else
+			{
+				return base.ToString();
+			}
+			//var mach = _RxMachine.FromFA(this, null);
+			//return mach.Convert();
+		}
 	}
 }

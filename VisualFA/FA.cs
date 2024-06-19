@@ -199,23 +199,6 @@ namespace VisualFA
 			}
 		}
 		/// <summary>
-		/// Converts the state machine to a regular expression.
-		/// </summary>
-		/// <returns>The expression</returns>
-		public override string ToString()
-		{
-			if (Id > -1)
-			{
-				return String.Concat("q", Id.ToString());
-			}
-			else
-			{
-				return base.ToString();
-			}
-			//var mach = _RxMachine.FromFA(this, null);
-			//return mach.Convert();
-		}
-		/// <summary>
 		/// Adds an input transition
 		/// </summary>
 		/// <param name="range">The range of input codepoints to transition on</param>
