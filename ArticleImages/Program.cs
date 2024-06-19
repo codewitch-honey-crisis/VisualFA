@@ -120,7 +120,9 @@ namespace ArticleImages
 			ambigDfa.RenderCPFile(@"..\..\ambig_dfa.png",opts);
 			var ambigMdfa = ambigDfa.ToMinimizedDfa();
 			ambigMdfa.RenderCPFile(@"..\..\ambig_min_dfa.png", opts);
-
+			opts.Vertical = true;
+			opts.DebugSourceNfa = jsonString;
+			jsonString = jsonString.ToDfa();
 			jsonString.RenderCPFile(@"..\..\json_string.png", opts);
 
 		}
