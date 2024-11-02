@@ -379,10 +379,9 @@ namespace VisualFA
 							if(j == 0 )
 							{
 								writer.Write("<TR><TD>");
-								if(j==0)
-								{
-									writer.Write("{ ");
-								}
+								
+								writer.Write("{ ");
+								
 								delim = "";
 							} else if(j % brk == 0)
 							{
@@ -391,17 +390,12 @@ namespace VisualFA
 							}
 							var fromFA = from[j];
 							writer.Write(delim);
-							if (fromFA is FA)
-							{
-								writer.Write(delim);
-								writer.Write("q<SUB>");
-								writer.Write(options.DebugSourceNfa.FillClosure().IndexOf((FA)fromFA).ToString());
-								writer.Write("</SUB>");
-								// putting a comma here is what we'd like
-								// but it breaks dot no matter how its encoded
-								delim = @" ";
-							}
-							
+							writer.Write("q<SUB>");
+							writer.Write(options.DebugSourceNfa.FillClosure().IndexOf((FA)fromFA).ToString());
+							writer.Write("</SUB>");
+							// putting a comma here is what we'd like
+							// but it breaks dot no matter how its encoded
+							delim = " ";
 							if (j==from.Length-1)
 							{
 								writer.Write(" }");
@@ -558,7 +552,7 @@ namespace VisualFA
 		/// <param name="options">The options</param>
 		public void WriteDotTo(TextWriter writer, FADotGraphOptions options = null)
 		{
-			if (options.DebugSourceNfa != null && options.DebugShowNfa)
+			if (options!=null && options.DebugSourceNfa != null && options.DebugShowNfa)
 			{
 				_WriteCompoundDotTo(FillClosure(), writer, options);
 			}

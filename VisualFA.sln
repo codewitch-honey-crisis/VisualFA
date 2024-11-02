@@ -64,9 +64,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Json", "Json\Json.csproj", 
 		{2E312C15-BDA8-4095-998C-04F3CE67523D} = {2E312C15-BDA8-4095-998C-04F3CE67523D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrape", "Scrape\Scrape.csproj", "{4A1D5C13-4D35-48C9-8AF5-9038998E6CA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrape", "Scrape\Scrape.csproj", "{4A1D5C13-4D35-48C9-8AF5-9038998E6CA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "Validation\Validation.csproj", "{6FF5AFCE-16CF-45E4-ACB5-A5C1743E54CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validation", "Validation\Validation.csproj", "{6FF5AFCE-16CF-45E4-ACB5-A5C1743E54CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{EE5E0E55-EED0-452C-99DD-69196D3C2EED}"
+	ProjectSection(SolutionItems) = preProject
+		script\package.json = script\package.json
+		script\visualfa.js = script\visualfa.js
+		script\visualfa.ts = script\visualfa.ts
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -169,6 +176,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EE5E0E55-EED0-452C-99DD-69196D3C2EED} = {DAD0136B-C492-42A8-A13D-64DA5281F8F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37AB415B-D8E8-4435-8D69-5999DAAC0297}

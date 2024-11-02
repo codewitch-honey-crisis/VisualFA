@@ -60,13 +60,11 @@ namespace VisualFA
 	#endregion // FATransition
 	
 	#region FAException
-	[Serializable]
 #if FALIB
 	public
 #endif
 	class FAException : Exception
 	{
-		public FAException(SerializationInfo serializationEntries, StreamingContext context) : base(serializationEntries, context) { }
 		public FAException(string message) : base(message)
 		{
 

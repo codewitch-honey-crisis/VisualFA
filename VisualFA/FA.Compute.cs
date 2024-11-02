@@ -308,7 +308,7 @@ namespace VisualFA
 			}
 
 			a.Totalize();
-			prog = 1;
+			++prog;
 			progress?.Report(prog);
 			// Make arrays for numbered states and effective alphabet.
 			var cl = a.FillClosure();
@@ -354,7 +354,7 @@ namespace VisualFA
 
 			var partition = new List<LinkedList<FA>>();
 			_Init(partition, states.Length);
-			prog = 3;
+			++prog;
 			if (progress != null) { progress.Report(prog); }
 			var block = new int[states.Length];
 			var active = new _FList[states.Length, sigma.Length];
@@ -368,7 +368,7 @@ namespace VisualFA
 
 			var splitblock = new List<List<FA>>();
 			_Init(splitblock, states.Length);
-			prog = 4;
+			++prog;
 			progress?.Report(prog);
 			for (int q = 0; q < states.Length; q++)
 			{

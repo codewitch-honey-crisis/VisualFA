@@ -890,14 +890,14 @@ maxi,0x10ffff));}}}
 #region _Minimize()
 static void _Init<T>(IList<T>list,int count){for(int i=0;i<count;++i){list.Add(default(T));}}static FA _Minimize(FA a,IProgress<int>progress){int prog
 =0;progress?.Report(prog);a=a.ToDfa(progress);var tr=a._transitions;if(1==tr.Count){FATransition t=tr[0];if(t.To==a&&t.Min==0&&t.Max==0x10ffff){return
- a;}}a.Totalize();prog=1;progress?.Report(prog); var cl=a.FillClosure();var states=new FA[cl.Count];int number=0;foreach(var q in cl){states[number]=q;
+ a;}}a.Totalize();++prog;progress?.Report(prog); var cl=a.FillClosure();var states=new FA[cl.Count];int number=0;foreach(var q in cl){states[number]=q;
 q._MinimizationTag=number;++number;}var pp=new List<int>();for(int ic=cl.Count,i=0;i<ic;++i){var ffa=cl[i];pp.Add(0);foreach(var t in ffa._transitions)
 {pp.Add(t.Min);if(t.Max<0x10ffff){pp.Add((t.Max+1));}}}var sigma=new int[pp.Count];pp.CopyTo(sigma,0);Array.Sort(sigma); var reverse=new List<List<Queue<FA>>>();
 foreach(var s in states){var v=new List<Queue<FA>>();_Init(v,sigma.Length);reverse.Add(v);}prog=2;if(progress!=null){progress.Report(prog);}var reverseNonempty
-=new bool[states.Length,sigma.Length];var partition=new List<LinkedList<FA>>();_Init(partition,states.Length);prog=3;if(progress!=null){progress.Report(prog);
+=new bool[states.Length,sigma.Length];var partition=new List<LinkedList<FA>>();_Init(partition,states.Length);++prog;if(progress!=null){progress.Report(prog);
 }var block=new int[states.Length];var active=new _FList[states.Length,sigma.Length];var active2=new _FListNode[states.Length,sigma.Length];var pending
 =new Queue<KeyValuePair<int,int>>();var pending2=new bool[sigma.Length,states.Length];var split=new List<FA>();var split2=new bool[states.Length];var refine
-=new List<int>();var refine2=new bool[states.Length];var splitblock=new List<List<FA>>();_Init(splitblock,states.Length);prog=4;progress?.Report(prog);
+=new List<int>();var refine2=new bool[states.Length];var splitblock=new List<List<FA>>();_Init(splitblock,states.Length);++prog;progress?.Report(prog);
 for(int q=0;q<states.Length;q++){splitblock[q]=new List<FA>();partition[q]=new LinkedList<FA>();for(int x=0;x<sigma.Length;x++){reverse[q][x]=new Queue<FA>();
 active[q,x]=new _FList();}} foreach(var qq in states){int j=qq.IsAccepting?0:1;partition[j]?.AddLast(qq);block[qq._MinimizationTag]=j;for(int x=0;x<sigma.Length;
 x++){var y=sigma[x];var p=qq._Step(y);System.Diagnostics.Debug.Assert(p!=null);var pn=p._MinimizationTag;reverse[pn]?[x]?.Enqueue(qq);reverseNonempty[pn,
@@ -1047,12 +1047,11 @@ char.ConvertFromUtf32(Min),"]-> ",To.ToString());}return string.Concat("[",char.
 return false;if(!(obj is FATransition))return false;FATransition rhs=(FATransition)obj;return To==rhs.To&&Min==rhs.Min&&Max==rhs.Max;}}
 #endregion // FATransition
 #region FAException
-[Serializable]
 #if FALIB
 public
 #endif
-class FAException:Exception{public FAException(SerializationInfo serializationEntries,StreamingContext context):base(serializationEntries,context){}public
- FAException(string message):base(message){}public FAException(string message,Exception innerException):base(message,innerException){}}
+class FAException:Exception{public FAException(string message):base(message){}public FAException(string message,Exception innerException):base(message,innerException)
+{}}
 #endregion FAException
 #if FALIB
 public
@@ -1333,20 +1332,20 @@ writer.Write(i);writer.Write(" [");if(null!=options.DebugString){if(null!=toStat
 writer.Write("color=green,");else if(epstates.Contains(ffa)&&(!toStates.Contains(ffa)))writer.Write("color=darkgreen,");}else{writer.Write("color=darkgreen,");
 }}writer.Write("label=<");writer.Write("<TABLE BORDER=\"0\"><TR><TD>");writer.Write(spfx);writer.Write("<SUB>");writer.Write(i);writer.Write("</SUB></TD></TR>");
 if(null!=options.DebugSourceNfa){var from=ffa.FromStates;if(null!=from){var brk=(int)Math.Floor(Math.Sqrt(from.Length));if(from.Length<=3)brk=3;for(int
- j=0;j<from.Length;++j){if(j==0){writer.Write("<TR><TD>");if(j==0){writer.Write("{ ");}delim="";}else if(j%brk==0){delim="";writer.Write("</TD></TR><TR><TD>");
-}var fromFA=from[j];writer.Write(delim);if(fromFA is FA){writer.Write(delim);writer.Write("q<SUB>");writer.Write(options.DebugSourceNfa.FillClosure().IndexOf((FA)fromFA).ToString());
-writer.Write("</SUB>"); delim=@" ";}if(j==from.Length-1){writer.Write(" }");writer.Write("</TD></TR>");}}}}if(ffa.IsAccepting&&!options.HideAcceptSymbolIds
-&&!(hasBlockEnds&&options.BlockEnds?.Length>ffa.AcceptSymbol&&options.BlockEnds[ffa.AcceptSymbol]!=null)){writer.Write("<TR><TD>");string acc=null;if(options.AcceptSymbolNames
-!=null&&options.AcceptSymbolNames.Length>ffa.AcceptSymbol){acc=options.AcceptSymbolNames[ffa.AcceptSymbol];}if(acc==null){acc=Convert.ToString(ffa.AcceptSymbol);
-}writer.Write(acc.Replace("\"","&quot;"));writer.Write("</TD></TR>");}writer.Write("</TABLE>");writer.Write(">");bool isfinal=false;if(accepting.Contains(ffa)
-&&((!hasBlockEnds||options.BlockEnds?.Length<=ffa.AcceptSymbol||null==options.BlockEnds[ffa.AcceptSymbol])))writer.Write(",shape=doublecircle");else if
-(isfinal||neutrals.Contains(ffa)){if((null==fromStates||!fromStates.Contains(ffa))&&(null==toStates||!toStates.Contains(ffa))){writer.Write(",color=gray");
-}}writer.WriteLine("]");++i;}delim="";if(0<accepting.Count){foreach(var ntfa in accepting){if(!hasBlockEnds||options.BlockEnds?.Length<=ntfa.AcceptSymbol
-||null==options.BlockEnds?[ntfa.AcceptSymbol]){writer.Write(delim);writer.Write(pfx+spfx);writer.Write(closure.IndexOf(ntfa));delim=",";}}if(delim!="")
-{writer.WriteLine(" [shape=doublecircle]");}}delim="";if(0<neutrals.Count){foreach(var ntfa in neutrals){if((null==fromStates||!fromStates.Contains(ntfa))
-&&(null==toStates||!toStates.Contains(ntfa))){writer.Write(delim);writer.Write(pfx+spfx);writer.Write(closure.IndexOf(ntfa));delim=",";}}writer.WriteLine(" [color=gray]");
-delim="";}delim="";if(0<finals.Count){foreach(var ntfa in finals){writer.Write(delim);writer.Write(pfx+spfx);writer.Write(closure.IndexOf(ntfa));delim
-=",";}writer.WriteLine(" [shape=circle,color=gray]");}writer.WriteLine("}");}/// <summary>
+ j=0;j<from.Length;++j){if(j==0){writer.Write("<TR><TD>");writer.Write("{ ");delim="";}else if(j%brk==0){delim="";writer.Write("</TD></TR><TR><TD>");}
+var fromFA=from[j];writer.Write(delim);writer.Write("q<SUB>");writer.Write(options.DebugSourceNfa.FillClosure().IndexOf((FA)fromFA).ToString());writer.Write("</SUB>");
+ delim=" ";if(j==from.Length-1){writer.Write(" }");writer.Write("</TD></TR>");}}}}if(ffa.IsAccepting&&!options.HideAcceptSymbolIds&&!(hasBlockEnds&&options.BlockEnds?.Length
+>ffa.AcceptSymbol&&options.BlockEnds[ffa.AcceptSymbol]!=null)){writer.Write("<TR><TD>");string acc=null;if(options.AcceptSymbolNames!=null&&options.AcceptSymbolNames.Length
+>ffa.AcceptSymbol){acc=options.AcceptSymbolNames[ffa.AcceptSymbol];}if(acc==null){acc=Convert.ToString(ffa.AcceptSymbol);}writer.Write(acc.Replace("\"",
+"&quot;"));writer.Write("</TD></TR>");}writer.Write("</TABLE>");writer.Write(">");bool isfinal=false;if(accepting.Contains(ffa)&&((!hasBlockEnds||options.BlockEnds?.Length
+<=ffa.AcceptSymbol||null==options.BlockEnds[ffa.AcceptSymbol])))writer.Write(",shape=doublecircle");else if(isfinal||neutrals.Contains(ffa)){if((null==
+fromStates||!fromStates.Contains(ffa))&&(null==toStates||!toStates.Contains(ffa))){writer.Write(",color=gray");}}writer.WriteLine("]");++i;}delim="";if
+(0<accepting.Count){foreach(var ntfa in accepting){if(!hasBlockEnds||options.BlockEnds?.Length<=ntfa.AcceptSymbol||null==options.BlockEnds?[ntfa.AcceptSymbol])
+{writer.Write(delim);writer.Write(pfx+spfx);writer.Write(closure.IndexOf(ntfa));delim=",";}}if(delim!=""){writer.WriteLine(" [shape=doublecircle]");}}
+delim="";if(0<neutrals.Count){foreach(var ntfa in neutrals){if((null==fromStates||!fromStates.Contains(ntfa))&&(null==toStates||!toStates.Contains(ntfa))
+){writer.Write(delim);writer.Write(pfx+spfx);writer.Write(closure.IndexOf(ntfa));delim=",";}}writer.WriteLine(" [color=gray]");delim="";}delim="";if(0
+<finals.Count){foreach(var ntfa in finals){writer.Write(delim);writer.Write(pfx+spfx);writer.Write(closure.IndexOf(ntfa));delim=",";}writer.WriteLine(" [shape=circle,color=gray]");
+}writer.WriteLine("}");}/// <summary>
 /// Renders Graphviz output for this machine to the specified file
 /// </summary>
 /// <param name="filename">The output filename. The format to render is indicated by the file extension.</param>
@@ -1363,7 +1362,7 @@ args+=" -o\""+filename+"\"";var psi=new ProcessStartInfo("dot",args){CreateNoWin
 /// </summary>
 /// <param name="writer">The writer</param>
 /// <param name="options">The options</param>
-public void WriteDotTo(TextWriter writer,FADotGraphOptions options=null){if(options.DebugSourceNfa!=null&&options.DebugShowNfa){_WriteCompoundDotTo(FillClosure(),
+public void WriteDotTo(TextWriter writer,FADotGraphOptions options=null){if(options!=null&&options.DebugSourceNfa!=null&&options.DebugShowNfa){_WriteCompoundDotTo(FillClosure(),
 writer,options);}else{_WriteDotTo(FillClosure(),writer,options);}}/// <summary>
 /// Renders Graphviz output for this machine to a stream
 /// </summary>
@@ -1398,7 +1397,6 @@ result=result.Replace("\0","\\0");result=result.Replace("\v","\\v");result=resul
 /// <summary>
 /// Indicates an exception occurred parsing a regular expression
 /// </summary>
-[Serializable]
 #if FALIB
 public
 #endif
@@ -1409,11 +1407,6 @@ public string[]Expecting{get;}=null;/// <summary>
 /// Indicates the position where the error occurred
 /// </summary>
 public int Position{get;}/// <summary>
-/// For crossing serialization boundaries
-/// </summary>
-/// <param name="serializationEntries">The data</param>
-/// <param name="context">The context</param>
-public FAParseException(SerializationInfo serializationEntries,StreamingContext context):base(serializationEntries,context){}/// <summary>
 /// Constructs a new instance
 /// </summary>
 /// <param name="message">The error</param>
@@ -1516,14 +1509,14 @@ if(-1==expecting[1])sb.Append("end of input");else{sb.Append("\"");sb.Append(cha
  l=expecting.Length-1;int i=1;for(;i<l;++i){sb.Append(", ");if(-1==expecting[i])sb.Append("end of input");else{sb.Append("\"");sb.Append(char.ConvertFromUtf32(expecting[1]));
 sb.Append("\"");}}sb.Append(", or ");if(-1==expecting[i])sb.Append("end of input");else{sb.Append("\"");sb.Append(char.ConvertFromUtf32(expecting[i]));
 sb.Append("\"");}break;}if(-1==Codepoint){if(0==expecting.Length)return"Unexpected end of input";System.Diagnostics.Debug.Assert(sb!=null); return string.Concat("Unexpected end of input. Expecting ",
-sb.ToString());}if(0==expecting.Length)return string.Concat("Unexpected character \"",(char)Codepoint,"\" in input");System.Diagnostics.Debug.Assert(sb
-!=null); return string.Concat("Unexpected character \"",(char)Codepoint,"\" in input. Expecting ",sb.ToString());}public bool TrySkipWhiteSpace(){EnsureStarted();
-if(Input==null||Position>=Input.Length)return false;if(!char.IsWhiteSpace(Input,Position))return false;Advance();if(Position<Input.Length&&char.IsLowSurrogate(Input,
-Position))++Position;while(Position<Input.Length&&char.IsWhiteSpace(Input,Position)){Advance();}return true;}public bool TryReadDigits(){EnsureStarted();
-if(Input==null||Position>=Input.Length)return false;if(!char.IsDigit(Input,Position))return false;Capture();Advance();while(Position<Input.Length&&char.IsDigit(Input,
-Position)){Capture();Advance();}return true;}public bool TryReadUntil(int character,bool readCharacter=true){EnsureStarted();if(0>character)character=
--1;Capture();if(Codepoint==character){return true;}while(-1!=Advance()&&Codepoint!=character)Capture(); if(Codepoint==character){if(readCharacter){Capture();
-Advance();}return true;}return false;}}
+sb.ToString());}if(0==expecting.Length)return string.Concat("Unexpected character \"",char.ConvertFromUtf32(Codepoint),"\" in input");System.Diagnostics.Debug.Assert(sb
+!=null); return string.Concat("Unexpected character \"",char.ConvertFromUtf32(Codepoint),"\" in input. Expecting ",sb.ToString());}public bool TrySkipWhiteSpace()
+{EnsureStarted();if(Input==null||Position>=Input.Length)return false;if(!char.IsWhiteSpace(Input,Position))return false;Advance();if(Position<Input.Length
+&&char.IsLowSurrogate(Input,Position))++Position;while(Position<Input.Length&&char.IsWhiteSpace(Input,Position)){Advance();}return true;}public bool TryReadDigits()
+{EnsureStarted();if(Input==null||Position>=Input.Length)return false;if(!char.IsDigit(Input,Position))return false;Capture();Advance();while(Position<
+Input.Length&&char.IsDigit(Input,Position)){Capture();Advance();}return true;}public bool TryReadUntil(int character,bool readCharacter=true){EnsureStarted();
+if(0>character)character=-1;Capture();if(Codepoint==character){return true;}while(-1!=Advance()&&Codepoint!=character)Capture(); if(Codepoint==character)
+{if(readCharacter){Capture();Advance();}return true;}return false;}}
 #endregion // StringCursor
 }}namespace VisualFA{partial class FA{/// <summary>
 /// Creates a literal machine given the UTF-32 string
@@ -1617,18 +1610,18 @@ fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);f=f.ToLowerInvariant();
 Exp,"\" ",To);}}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){if(edges[i].To
 ==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i)
 {var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpression(FA fa){List<FA>closure=new List<FA>();List<_ExpEdge>fsmEdges=new
- List<_ExpEdge>();FA first,final=null;fa.SetIds();first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count==1){final=acc[0];}else if(acc.Count>1)
-{fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;++i){var a=acc[i];a.AddEpsilon(final,
-false);a.AcceptSymbol=-1;}}closure.Clear();first.FillClosure(closure);var sb=new StringBuilder(); var trnsgrp=new Dictionary<FA,IList<FARange>>(closure.Count);
-for(int q=0;q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp)){sb.Clear();
-if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();eedge.Exp
-=string.Empty;eedge.From=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}_AppendCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,trns.Value);
-sb.Append("]");}var edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,
-false);var q0=first;first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,false);final=tmp; var newEdge=
-new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=first;newEdge.To=q0;fsmEdges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From
-=qLast;newEdge.To=final;fsmEdges.Add(newEdge);closure.Insert(0,first);closure.Add(final);var inEdges=new List<_ExpEdge>(fsmEdges.Count);var outEdges=new
- List<_ExpEdge>(fsmEdges.Count);while(closure.Count>2){var node=closure[1];var loops=new List<string>(inEdges.Count);inEdges.Clear();_ToExpressionFillEdgesIn(fsmEdges,
-node,inEdges);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);}}sb.Clear();_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops),
+ List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count==1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();
+first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol
+=-1;}}closure.Clear();first.FillClosure(closure);var sb=new StringBuilder(); var trnsgrp=new Dictionary<FA,IList<FARange>>(closure.Count);for(int q=0;
+q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp)){sb.Clear();if(trns.Value.Count
+==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1&&range.Max==-1){var eedge=new _ExpEdge();eedge.Exp=string.Empty;eedge.From
+=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}_AppendCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,trns.Value);sb.Append("]");}var
+ edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,false);var q0=first;
+first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,false);final=tmp; var newEdge=new _ExpEdge();newEdge.Exp
+=string.Empty;newEdge.From=first;newEdge.To=q0;fsmEdges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=qLast;newEdge.To=final;
+fsmEdges.Add(newEdge);closure.Insert(0,first);closure.Add(final);var inEdges=new List<_ExpEdge>(fsmEdges.Count);var outEdges=new List<_ExpEdge>(fsmEdges.Count);
+while(closure.Count>2){var node=closure[1];var loops=new List<string>(inEdges.Count);inEdges.Clear();_ToExpressionFillEdgesIn(fsmEdges,node,inEdges);for
+(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);}}sb.Clear();_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops),
 loops.Count>1);var middle=sb.ToString();for(int i=0;i<inEdges.Count;++i){var inEdge=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();_ToExpressionFillEdgesOut(fsmEdges,
 node,outEdges);for(int j=0;j<outEdges.Count;++j){var outEdge=outEdges[j];if(outEdge.From==outEdge.To){continue;}var expEdge=new _ExpEdge();expEdge.From
 =inEdge.From;expEdge.To=outEdge.To;sb.Clear();sb.Append(inEdge.Exp);sb.Append(middle);sb.Append(outEdge.Exp);expEdge.Exp=sb.ToString();fsmEdges.Add(expEdge);

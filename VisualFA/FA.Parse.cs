@@ -11,7 +11,7 @@ namespace VisualFA
 	/// <summary>
 	/// Indicates an exception occurred parsing a regular expression
 	/// </summary>
-	[Serializable]
+	
 #if FALIB
 	public
 #endif
@@ -25,12 +25,6 @@ namespace VisualFA
 		/// Indicates the position where the error occurred
 		/// </summary>
 		public int Position { get; }
-		/// <summary>
-		/// For crossing serialization boundaries
-		/// </summary>
-		/// <param name="serializationEntries">The data</param>
-		/// <param name="context">The context</param>
-		public FAParseException(SerializationInfo serializationEntries, StreamingContext context) : base(serializationEntries, context) { }
 		/// <summary>
 		/// Constructs a new instance
 		/// </summary>
@@ -843,9 +837,9 @@ namespace VisualFA
 					return string.Concat("Unexpected end of input. Expecting ", sb.ToString());
 				}
 				if (0 == expecting.Length)
-					return string.Concat("Unexpected character \"", (char)Codepoint, "\" in input");
+					return string.Concat("Unexpected character \"", char.ConvertFromUtf32(Codepoint), "\" in input");
 				System.Diagnostics.Debug.Assert(sb != null); // shut up code analysis
-				return string.Concat("Unexpected character \"", (char)Codepoint, "\" in input. Expecting ", sb.ToString());
+				return string.Concat("Unexpected character \"", char.ConvertFromUtf32(Codepoint), "\" in input. Expecting ", sb.ToString());
 			}
 			public bool TrySkipWhiteSpace()
 			{
@@ -881,6 +875,7 @@ namespace VisualFA
 				EnsureStarted();
 				if (0 > character) character = -1;
 				Capture();
+				
 				if (Codepoint == character)
 				{
 					return true;

@@ -70,7 +70,6 @@ namespace VisualFA
 			List<FA> closure = new List<FA>();
 			List<_ExpEdge> fsmEdges = new List<_ExpEdge>();
 			FA first, final = null;
-			fa.SetIds();
 			first = fa;
 			var acc = first.FillFind(AcceptingFilter);
 			if (acc.Count == 1)
