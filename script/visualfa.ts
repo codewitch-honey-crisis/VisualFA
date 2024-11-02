@@ -116,7 +116,7 @@ export class FAMatch {
     public position: number;
     public line: number;
     public column: number;
-    constructor(symbolId:number=-1,value:string=null,position:number=0,line:number=1,column:number=1) {
+    constructor(symbolId: number = -1, value: string = null, position: number = 0, line: number = 1, column: number = 1) {
         this.symbolId = symbolId;
         this.value = value;
         this.position = position;
@@ -125,25 +125,23 @@ export class FAMatch {
     }
     public toString() {
         let sb: string = "";
-        sb+="[SymbolId: ";
-        sb+=this.symbolId;
-        sb+=", Value: ";
-        if (this.value !== null && this.value!==undefined)
-        {
-            sb+="\"";
-            sb+=this.value.replace("\r", "\\r").replace("\t", "\\t").replace("\n", "\\n").replace("\v", "\\v");
-            sb+="\", Position: ";
+        sb += "[SymbolId: ";
+        sb += this.symbolId;
+        sb += ", Value: ";
+        if (this.value !== null && this.value !== undefined) {
+            sb += "\"";
+            sb += this.value.replace("\r", "\\r").replace("\t", "\\t").replace("\n", "\\n").replace("\v", "\\v");
+            sb += "\", Position: ";
         }
-        else
-        {
-            sb+="null, Position: ";
+        else {
+            sb += "null, Position: ";
         }
-        sb+=this.position;
-        sb+=" (";
-        sb+=this.line;
-        sb+=", ";
-        sb+=this.column;
-        sb+=")]";
+        sb += this.position;
+        sb += " (";
+        sb += this.line;
+        sb += ", ";
+        sb += this.column;
+        sb += ")]";
         return sb;
     }
 };
@@ -152,12 +150,12 @@ export abstract class FARunner implements Iterable<FAMatch> {
     protected position: number = -1;
     protected line: number = 1;
     protected column: number = 1;
-    public abstract nextMatch() : FAMatch;
-    public abstract reset() : void;
+    public abstract nextMatch(): FAMatch;
+    public abstract reset(): void;
     public *[Symbol.iterator](): IterableIterator<FAMatch> {
         let match: FAMatch = new FAMatch();
-        match=this.nextMatch();
-        while (match.symbolId!==-2) {
+        match = this.nextMatch();
+        while (match.symbolId !== -2) {
             yield match;
             match = this.nextMatch();
         }
@@ -171,58 +169,55 @@ export abstract class FAStringRunner extends FARunner {
         this.line = 1;
         this.column = 1;
     }
-    public override reset() : void {
+    public override reset(): void {
         this.position = -1;
         this.line = 1;
         this.column = 1;
     }
-    protected advance(s: string, cp: number, len: number, first: boolean) : [number, number] {
-        if(!first) {
-            switch(String.fromCodePoint(cp)) {
-                case '\n':
+    protected advance(s: string, cp: number, len: number, first: boolean): [number, number] {
+        if (!first) {
+            switch (cp) {
+                case 10:
                     ++this.line;
                     this.column = 1;
                     break;
-                case '\r':
+                case 13:
                     this.column = 1;
                     break;
-                case '\t':
-                    this.column = ((this.column-1)/this.tabWidth)*(this.tabWidth+1);
+                case 9:
+                    this.column = ((this.column - 1) / this.tabWidth) * (this.tabWidth + 1);
                     break;
                 default:
-                    if(cp>31) {
+                    if (cp > 31) {
                         ++this.column;
                     }
                     break;
             }
             ++len;
-            if(cp>65535) {
+            if (cp > 65535) {
                 ++this.position;
                 ++len;
             }
             ++this.position;
         }
-        if(this.position<s.length) {
+        if (this.position < s.length) {
             cp = s.codePointAt(this.position);
         } else {
             cp = -1;
         }
-        
+
         return [cp, len];
     }
 };
-export class FAStringStateRunner extends FAStringRunner
-{
+export class FAStringStateRunner extends FAStringRunner {
     readonly _fa: FA;
     readonly _blockEnds: FA[];
     readonly _states: FA[];
     readonly _nexts: FA[];
     readonly _initial: FA[];
-    constructor(fa: FA, blockEnds: FA[] = null)
-    {
+    constructor(fa: FA, blockEnds: FA[] = null) {
         super();
-        if (null === fa || undefined===fa)
-        {
+        if (null === fa || undefined === fa) {
             throw "fa was not valid";
         }
         this._fa = fa;
@@ -231,178 +226,139 @@ export class FAStringStateRunner extends FAStringRunner
         this._nexts = new Array<FA>();
         this._initial = new Array<FA>();
     }
-    public override nextMatch() : FAMatch
-    {
+    public override nextMatch(): FAMatch {
         return this._nextImpl(this.input_string);
     }
     private _nextImpl(
         s: string
-        ): FAMatch
-    {
+    ): FAMatch {
         let dfaState: FA = null, dfaNext: FA = null, dfaInitial: FA = null;
-        if (this.position == -1)
-        {
+        if (this.position == -1) {
             // first read
             ++this.position;
         }
-        let len:number = 0;
+        let len: number = 0;
         let cursor_pos: number = this.position;
         let line: number = this.line;
         let column: number = this.column;
         let ch: number = -1;
-        let advr= this.advance(s, ch, len, true);ch = advr[0];len = advr[1];
-        if (this._fa.isDeterministic)
-        {
+        let advr = this.advance(s, ch, len, true); ch = advr[0]; len = advr[1];
+        if (this._fa.isDeterministic) {
             dfaState = this._fa;
             dfaInitial = this._fa;
         }
-        else
-        {
+        else {
             this._initial.length = 0;
-            if (this._fa.isCompact)
-            {
+            if (this._fa.isCompact) {
                 this._initial.push(this._fa);
             }
-            else
-            {
+            else {
                 this._fa.fillEpsilonClosure(this._initial);
             }
             this._states.length = 0;
             this._states.push(...this._initial);
         }
-        while (true)
-        {
-            if (dfaState != null)
-            {
+        while (true) {
+            if (dfaState != null) {
                 dfaNext = dfaState.move(ch);
             }
-            else
-            {
+            else {
                 dfaNext = null;
                 this._nexts.length = 0;
                 FA.fillMove(this._states, ch, this._nexts);
             }
-            if (dfaNext != null)
-            {
-                advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
-                if (dfaNext.isDeterministic)
-                {
+            if (dfaNext != null) {
+                advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
+                if (dfaNext.isDeterministic) {
                     dfaState = dfaNext;
                 }
-                else
-                {
+                else {
                     this._states.length = 0;
-                    if (dfaNext.isCompact)
-                    {
+                    if (dfaNext.isCompact) {
                         this._states.push(dfaNext);
                     }
-                    else
-                    {
+                    else {
                         dfaNext.fillEpsilonClosure(this._states);
                     }
                     dfaState = null;
                 }
                 dfaNext = null;
             }
-            else if (this._nexts.length > 0)
-            {
-                advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
-                if (this._nexts.length === 1)
-                {
+            else if (this._nexts.length > 0) {
+                advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
+                if (this._nexts.length === 1) {
                     var ffa = this._nexts[0];
                     // switch to deterministic mode if needed
-                    if (ffa.isDeterministic)
-                    {
+                    if (ffa.isDeterministic) {
                         dfaState = ffa;
                     }
-                    else
-                    {
+                    else {
                         dfaNext = null;
                         this._states.length = 0;
-                        if (!ffa.isCompact)
-                        {
+                        if (!ffa.isCompact) {
                             ffa.fillEpsilonClosure(this._states);
                         }
-                        else
-                        {
+                        else {
                             this._states.push(ffa);
                         }
                         dfaState = null;
                     }
                 }
-                else
-                {
+                else {
                     this._states.length = 0;
                     FA.fillEpsilonClosureStates(this._nexts, this._states);
                 }
                 this._nexts.length = 0;
             }
-            else
-            {
+            else {
                 let acc: number;
-                if (dfaState !== null)
-                {
+                if (dfaState !== null) {
                     acc = dfaState.acceptSymbol;
                 }
-                else
-                {
+                else {
                     acc = FA.getFirstAcceptSymbol(this._states);
                 }
-                if (acc > -1)
-                {
-                    if (this._blockEnds != null && this._blockEnds.length > acc && this._blockEnds[acc] !== null)
-                    {
+                if (acc > -1) {
+                    if (this._blockEnds != null && this._blockEnds.length > acc && this._blockEnds[acc] !== null) {
                         var be = this._blockEnds[acc];
-                        if (be.isDeterministic)
-                        {
+                        if (be.isDeterministic) {
                             dfaState = be;
                             dfaInitial = be;
                             this._states.length = 0;
                         }
-                        else
-                        {
+                        else {
                             dfaState = null;
                             dfaInitial = null;
                             this._initial.length = 0;
-                            if (be.isCompact)
-                            {
+                            if (be.isCompact) {
                                 this._initial.push(be);
                             }
-                            else
-                            {
+                            else {
                                 be.fillEpsilonClosure(this._initial);
                             }
-                            this._states.length=0;
+                            this._states.length = 0;
                             this._states.push(...this._initial);
                         }
-                        while (true)
-                        {
-                            if (dfaState !== null)
-                            {
+                        while (true) {
+                            if (dfaState !== null) {
                                 dfaNext = dfaState.move(ch);
                             }
-                            else
-                            {
+                            else {
                                 dfaNext = null;
                                 this._nexts.length = 0;
                                 FA.fillMove(this._states, ch, this._nexts);
                             }
-                            if (dfaNext !== null)
-                            {
-                                advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
-                                if (dfaNext.isDeterministic)
-                                {
+                            if (dfaNext !== null) {
+                                advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
+                                if (dfaNext.isDeterministic) {
                                     dfaState = dfaNext;
                                 }
-                                else
-                                {
+                                else {
                                     this._states.length = 0;
-                                    if (dfaNext.isCompact)
-                                    {
+                                    if (dfaNext.isCompact) {
                                         this._states.push(dfaNext);
                                     }
-                                    else
-                                    {
+                                    else {
                                         dfaNext.fillEpsilonClosure(this._states);
                                     }
                                     dfaState = null;
@@ -410,111 +366,89 @@ export class FAStringStateRunner extends FAStringRunner
                                 dfaNext = null;
 
                             }
-                            else if (this._nexts.length > 0)
-                            {
-                                advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
-                                if (this._nexts.length == 1)
-                                {
+                            else if (this._nexts.length > 0) {
+                                advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
+                                if (this._nexts.length == 1) {
                                     const ffa: FA = this._nexts[0];
                                     // switch to deterministic mode if needed
-                                    if (ffa.isDeterministic)
-                                    {
+                                    if (ffa.isDeterministic) {
                                         dfaState = ffa;
                                         this._states.length = 0;
                                     }
-                                    else
-                                    {
+                                    else {
                                         dfaNext = null;
                                         this._states.length = 0;
-                                        if (!ffa.isCompact)
-                                        {
+                                        if (!ffa.isCompact) {
                                             ffa.fillEpsilonClosure(this._states);
                                         }
-                                        else
-                                        {
+                                        else {
                                             this._states.push(ffa);
                                         }
                                         dfaState = null;
                                     }
                                 }
-                                else
-                                {
+                                else {
                                     this._states.length = 0;
                                     FA.fillEpsilonClosureStates(this._nexts, this._states);
                                 }
-                                this._nexts.length=0;
+                                this._nexts.length = 0;
                             }
-                            else
-                            {
-                                if (dfaState !== null)
-                                {
-                                    if (dfaState.isAccepting())
-                                    {
+                            else {
+                                if (dfaState !== null) {
+                                    if (dfaState.isAccepting()) {
                                         return new FAMatch(acc,
-                        s.substring(cursor_pos, cursor_pos+len)
+                                            s.substring(cursor_pos, cursor_pos + len)
                                             , cursor_pos, line, column);
                                     }
                                 }
-                                else
-                                {
-                                    if (-1 < FA.getFirstAcceptSymbol(this._states))
-                                    {
+                                else {
+                                    if (-1 < FA.getFirstAcceptSymbol(this._states)) {
                                         return new FAMatch(acc,
-                        s.substring(cursor_pos,cursor_pos+ len)
+                                            s.substring(cursor_pos, cursor_pos + len)
                                             , cursor_pos, line, column);
                                     }
                                 }
-                                advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
-                                if (dfaInitial !== null)
-                                {
+                                advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
+                                if (dfaInitial !== null) {
                                     this._states.length = 0;
                                     dfaState = dfaInitial;
                                 }
-                                else
-                                {
+                                else {
                                     dfaState = null;
                                     this._states.length = 0;
                                     this._states.push(...this._initial);
                                 }
-                                if (ch == -1)
-                                {
+                                if (ch == -1) {
                                     return new FAMatch(-1,
-                        s.substring(cursor_pos, cursor_pos+len)
+                                        s.substring(cursor_pos, cursor_pos + len)
                                         , cursor_pos, line, column);
                                 }
                             }
                         }
                     }
-                    else
-                    {
+                    else {
                         return new FAMatch(acc,
-                        s.substring(cursor_pos, cursor_pos+len)
+                            s.substring(cursor_pos, cursor_pos + len)
                             , cursor_pos, line, column);
                     }
                 }
-                else
-                {
-                    if (dfaInitial !== null)
-                    {
-                        while (ch != -1 && dfaInitial.move(ch) === null)
-                        {
-                            advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
+                else {
+                    if (dfaInitial !== null) {
+                        while (ch != -1 && dfaInitial.move(ch) === null) {
+                            advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
                         }
                     }
-                    else
-                    {
+                    else {
                         this._states.length = 0;
-                        while (ch != -1 && FA.fillMove(this._initial, ch, this._states).length === 0)
-                        {
-                            advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
+                        while (ch != -1 && FA.fillMove(this._initial, ch, this._states).length === 0) {
+                            advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
                         }
                     }
-                    if (len == 0)
-                    {
+                    if (len == 0) {
                         return new FAMatch(-2, null, 0, 0, 0);
                     }
                     return new FAMatch(-1,
-                        s.substring(cursor_pos, cursor_pos+len)
+                        s.substring(cursor_pos, cursor_pos + len)
                         , cursor_pos, line, column);
                 }
             }
@@ -522,9 +456,9 @@ export class FAStringStateRunner extends FAStringRunner
     }
 }
 export class FAStringDfaTableRunner extends FAStringRunner {
-    private readonly _dfa : number[];
+    private readonly _dfa: number[];
     private readonly _blockEnds: number[][];
-    constructor(dfa: number[],blockEnds:number[][] = null) {
+    constructor(dfa: number[], blockEnds: number[][] = null) {
         super();
         this._dfa = dfa;
         this._blockEnds = blockEnds;
@@ -532,7 +466,7 @@ export class FAStringDfaTableRunner extends FAStringRunner {
     public nextMatch(): FAMatch {
         return this._nextImpl(this.input_string);
     }
-    private _nextImpl(s: string) : FAMatch {
+    private _nextImpl(s: string): FAMatch {
         let tlen: number;
         let tto: number;
         let prlen: number;
@@ -542,8 +476,7 @@ export class FAStringDfaTableRunner extends FAStringRunner {
         let j: number;
         let state: number = 0;
         let acc: number;
-        if (this.position === -1)
-        {
+        if (this.position === -1) {
             // first read
             ++this.position;
         }
@@ -553,151 +486,132 @@ export class FAStringDfaTableRunner extends FAStringRunner {
         let column: number = this.column;
         let ch: number = -1;
         let cont: boolean = false;
-        let advr= this.advance(s, ch, len, true);ch = advr[0];len = advr[1];
-        while(true) { 
+        let advr = this.advance(s, ch, len, true); ch = advr[0]; len = advr[1];
+        while (true) {
             // accept symbol
             acc = this._dfa[state];
             ++state;
             // transitions count
             tlen = this._dfa[state];
             ++state;
-            for (let i: number = 0; i < tlen; ++i)
-            {
+            for (let i: number = 0; i < tlen; ++i) {
                 // destination state
                 tto = this._dfa[state];
                 ++state;
                 // number of ranges to check
                 prlen = this._dfa[state];
                 ++state;
-                for (let j:number = 0; j < prlen; ++j)
-                {
+                for (let j: number = 0; j < prlen; ++j) {
                     pmin = this._dfa[state];
                     ++state;
                     pmax = this._dfa[state];
                     ++state;
-                    if (ch < pmin)
-                    {
+                    if (ch < pmin) {
                         // early out
                         state += ((prlen - (j + 1)) * 2);
                         j = prlen;
                     }
-                    else if (ch <= pmax)
-                    {
-                        advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
+                    else if (ch <= pmax) {
+                        advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
                         state = tto;
                         cont = true;
-                        i=tlen;
+                        i = tlen;
                         break;
                     }
                 }
             }
-            if(cont===true) {
+            if (cont === true) {
                 cont = false;
                 continue;
-            } 
+            }
             break;
-        } 
-        if (acc !== -1)
-        {
+        }
+        if (acc !== -1) {
             const sym: number = acc;
             const be: number[] = (this._blockEnds !== null && this._blockEnds.length > acc) ? this._blockEnds[acc] : null;
-            if (be !== null)
-            {
+            if (be !== null) {
                 state = 0;
-                while(true) {
+                while (true) {
                     acc = be[state];
                     ++state;
                     tlen = be[state];
                     ++state;
-                    for (let i: number = 0; i < tlen; ++i)
-                    {
+                    for (let i: number = 0; i < tlen; ++i) {
                         tto = be[state];
                         ++state;
                         prlen = be[state];
                         ++state;
-                        for (let j: number = 0; j < prlen; ++j)
-                        {
+                        for (let j: number = 0; j < prlen; ++j) {
                             pmin = be[state];
                             ++state;
                             pmax = be[state];
                             ++state;
-                            if (ch < pmin)
-                            {
+                            if (ch < pmin) {
                                 state += ((prlen - (j + 1)) * 2);
                                 j = prlen;
                             }
-                            else if (ch <= pmax)
-                            {
-                                advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
+                            else if (ch <= pmax) {
+                                advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
                                 state = tto;
-                                i=tlen;
+                                i = tlen;
                                 break;
                             }
                         }
                     }
-                
-                    if (acc !== -1)
-                    {
+
+                    if (acc !== -1) {
                         return new FAMatch(sym,
-                            s.substring(cursor_pos,cursor_pos+len)
+                            s.substring(cursor_pos, cursor_pos + len)
                             , cursor_pos, line, column);
                     }
-                    if (ch === -1)
-                    {
+                    if (ch === -1) {
                         return new FAMatch(-1,
-                            s.substring(cursor_pos, cursor_pos+len)
+                            s.substring(cursor_pos, cursor_pos + len)
                             , cursor_pos, line, column);
                     }
-                    advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
+                    advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
                     state = 0;
                     // restart the state machine
                 }
             }
             return new FAMatch(acc,
-                        s.substring(cursor_pos, cursor_pos+len)
+                s.substring(cursor_pos, cursor_pos + len)
                 , cursor_pos, line, column);
         }
         // error. keep trying until we find a potential transition.
-        while (ch !== -1)
-        {
+        while (ch !== -1) {
             var moved = false;
             state = 1;
             tlen = this._dfa[state];
             ++state;
-            for (let i: number = 0; i < tlen; ++i)
-            {
+            for (let i: number = 0; i < tlen; ++i) {
                 ++state;
                 prlen = this._dfa[state];
                 ++state;
-                for (let j: number = 0; j < prlen; ++j)
-                {
+                for (let j: number = 0; j < prlen; ++j) {
                     pmin = this._dfa[state];
                     ++state;
                     pmax = this._dfa[state];
                     ++state;
-                    if (ch < pmin)
-                    {
+                    if (ch < pmin) {
                         state += ((prlen - (j + 1)) * 2);
                         j = prlen;
                     }
-                    else if (ch <= pmax)
-                    {
+                    else if (ch <= pmax) {
                         moved = true;
                     }
                 }
             }
-            if (moved)
-            {
+            if (moved) {
                 break;
             }
-            advr= this.advance(s, ch, len, false);ch = advr[0];len = advr[1];
+            advr = this.advance(s, ch, len, false); ch = advr[0]; len = advr[1];
         }
-        if (len === 0)
-        {
+        if (len === 0) {
             return new FAMatch(-2, null, 0, 0, 0);
         }
         return new FAMatch(-1,
-                        s.substring(cursor_pos, cursor_pos+len)
+            s.substring(cursor_pos, cursor_pos + len)
             , cursor_pos, line, column);
     }
 };
@@ -716,9 +630,9 @@ class _ParseContext {
         this.line = line;
         this.column = column;
     }
-    
+
     public advance(): number {
-        if (this.position>= this.input.length) {
+        if (this.position >= this.input.length) {
             this.codepoint = -1;
         } else {
             this.codepoint = this.input.codePointAt(this.position);
@@ -742,11 +656,11 @@ class _ParseContext {
         ++this.position;
         return this.codepoint;
     }
-    public capture() : void {
-        this.capture_buffer+=String.fromCodePoint(this.codepoint);
+    public capture(): void {
+        this.capture_buffer += String.fromCodePoint(this.codepoint);
     }
-    public ensureStarted() : void {
-        if(this.codepoint==-2) {
+    public ensureStarted(): void {
+        if (this.codepoint == -2) {
             this.advance();
         }
     }
@@ -849,55 +763,48 @@ class _ParseContext {
                 break;
         }
     }
-    public trySkipWhiteSpace(): boolean
-    {
+    public trySkipWhiteSpace(): boolean {
         this.ensureStarted();
-        if (this.codepoint==-1) {
+        if (this.codepoint == -1) {
             return false;
         }
-        if(!FACharacterClasses.space.includes(this.codepoint)) {
+        if (!FACharacterClasses.space.includes(this.codepoint)) {
             return false;
         }
         this.advance();
-        while (this.codepoint!=-1 && FACharacterClasses.space.includes(this.codepoint)) {
+        while (this.codepoint != -1 && FACharacterClasses.space.includes(this.codepoint)) {
             this.advance();
         }
         return true;
     }
-    public tryReadDigits(): boolean
-    {
+    public tryReadDigits(): boolean {
         this.ensureStarted();
-        if (this.codepoint==-1) {
+        if (this.codepoint == -1) {
             return false;
         }
-        if(!FACharacterClasses.digit.includes(this.codepoint)) {
+        if (!FACharacterClasses.digit.includes(this.codepoint)) {
             return false;
         }
         this.capture();
         this.advance();
-        while (this.codepoint!=-1 && FACharacterClasses.digit.includes(this.codepoint))
-        {
+        while (this.codepoint != -1 && FACharacterClasses.digit.includes(this.codepoint)) {
             this.capture();
             this.advance();
         }
         return true;
     }
-    public tryReadUntil(character: number, readCharacter: boolean = true) : boolean
-    {
+    public tryReadUntil(character: number, readCharacter: boolean = true): boolean {
         this.ensureStarted();
         if (0 > character) character = -1;
         this.capture();
-        if (this.codepoint === character)
-        {
+        if (this.codepoint === character) {
             return true;
         }
         while (-1 != this.advance() && this.codepoint != character)
             this.capture();
         //
-        if (this.codepoint == character)
-        {
-            if (readCharacter)
-            {
+        if (this.codepoint == character) {
+            if (readCharacter) {
                 this.capture();
                 this.advance();
             }
@@ -907,9 +814,9 @@ class _ParseContext {
     }
 };
 class _ExpEdge {
-    public exp : string;
-    public from : FA;
-    public to : FA;
+    public exp: string;
+    public from: FA;
+    public to: FA;
 };
 export class FADotGraphOptions {
     public dpi: number = 300;
@@ -1527,7 +1434,7 @@ export class FA {
                         block[s._minimizationTag] = k;
                         for (let c: number = 0; c < sigma.length; ++c) {
                             const sn: _FListNode = active2[s._minimizationTag][c];
-                            if (sn !== null && sn!==undefined && sn.stateList === active[j][c]) {
+                            if (sn !== null && sn !== undefined && sn.stateList === active[j][c]) {
                                 sn.remove();
                                 active2[s._minimizationTag][c] = active[k][c].add(s);
                             }
@@ -1622,109 +1529,89 @@ export class FA {
         return result[0];
     }
 
-    private static _toExpressionFillEdgesIn(edges: _ExpEdge[], node: FA) : _ExpEdge[]
-    {
-        const result:_ExpEdge[] = new Array<_ExpEdge>();
-        for (let i: number = 0; i < edges.length; ++i)
-        {
+    private static _toExpressionFillEdgesIn(edges: _ExpEdge[], node: FA): _ExpEdge[] {
+        const result: _ExpEdge[] = new Array<_ExpEdge>();
+        for (let i: number = 0; i < edges.length; ++i) {
             const edge: _ExpEdge = edges[i];
-            if (edge.to === node)
-            {
+            if (edge.to === node) {
                 result.push(edge);
             }
         }
         return result;
     }
-    private static _toExpressionFillEdgesOut(edges: _ExpEdge[], node: FA) : _ExpEdge[]
-    {
-        const result:_ExpEdge[] = new Array<_ExpEdge>();
-        for (let i: number = 0; i < edges.length; ++i)
-        {
+    private static _toExpressionFillEdgesOut(edges: _ExpEdge[], node: FA): _ExpEdge[] {
+        const result: _ExpEdge[] = new Array<_ExpEdge>();
+        for (let i: number = 0; i < edges.length; ++i) {
             const edge: _ExpEdge = edges[i];
-            if (edge.from === node)
-            {
+            if (edge.from === node) {
                 result.push(edge);
             }
         }
         return result;
     }
-    private static _toExpressionOrJoin(strings: string[]) : string
-    {
+    private static _toExpressionOrJoin(strings: string[]): string {
         if (strings.length == 0) return ""
         if (strings.length == 1) return strings[0];
-        return "("+ strings.join("|")+ ")";
+        return "(" + strings.join("|") + ")";
     }
 
-    private static _toExpressionKleeneStar(sb : string,s: string,noWrap: boolean) : string
-    {
-        if (s===undefined || s===null || s.length==0) return "";
-        if (noWrap || s.length == 1)
-        {
-            sb+=s;
-            sb+="*";
+    private static _toExpressionKleeneStar(sb: string, s: string, noWrap: boolean): string {
+        if (s === undefined || s === null || s.length == 0) return "";
+        if (noWrap || s.length == 1) {
+            sb += s;
+            sb += "*";
             return;
         }
-        sb+="(";
-        sb+=s;
-        sb+=")*";
+        sb += "(";
+        sb += s;
+        sb += ")*";
     }
 
 
-    private static _toExpressionFillEdgesOrphanState(edges: _ExpEdge[], node: FA,) :_ExpEdge[]
-    {
+    private static _toExpressionFillEdgesOrphanState(edges: _ExpEdge[], node: FA,): _ExpEdge[] {
         const result: _ExpEdge[] = new Array<_ExpEdge>();
-        for (let i: number = 0; i < edges.length; ++i)
-        {
+        for (let i: number = 0; i < edges.length; ++i) {
             var edge = edges[i];
-            if (edge.from === node || edge.to === node)
-            {
+            if (edge.from === node || edge.to === node) {
                 continue;
             }
             result.push(edge);
         }
         return result;
     }
-    private static _toExpression(fa: FA) : string
-    {
+    private static _toExpression(fa: FA): string {
         const closure: FA[] = new Array<FA>();
         let fsmEdges: _ExpEdge[] = new Array<_ExpEdge>();
         let first: FA, final: FA = null;
         first = fa;
-        let acc:FA[] = first.fillClosure().filter((elem)=>elem.isAccepting());
-        if (acc.length == 1)
-        {
+        let acc: FA[] = first.fillClosure().filter((elem) => elem.isAccepting());
+        if (acc.length == 1) {
             final = acc[0];
         }
-        else if (acc.length > 1)
-        {
+        else if (acc.length > 1) {
             fa = fa.clone();
             first = fa;
-            acc = fa.fillClosure().filter((elem)=>elem.isAccepting());
+            acc = fa.fillClosure().filter((elem) => elem.isAccepting());
             final = new FA(acc[0].acceptSymbol);
-            for (let i: number = 0; i < acc.length; ++i)
-            {
-                let a:FA = acc[i];
+            for (let i: number = 0; i < acc.length; ++i) {
+                let a: FA = acc[i];
                 a.addEpsilon(final, false);
                 a.acceptSymbol = -1;
             }
         }
-        closure.length=0;
+        closure.length = 0;
         first.fillClosure(closure);
         let sb: string = "";
         // build the machine from the FA
         var trnsgrp = new Map<FA, FARange[]>();
-        for (let q: number = 0; q < closure.length; ++q)
-        {
+        for (let q: number = 0; q < closure.length; ++q) {
             var cfa = closure[q];
             trnsgrp.clear();
-            for(const trns of cfa.fillInputTransitionRangesGroupedByState(true,trnsgrp))
-            {
-                sb="";
-                if (trns[1].length == 1 && trns[1][0].min == trns[1][0].max)
-                {
+            for (const trns of cfa.fillInputTransitionRangesGroupedByState(true, trnsgrp)) {
+                sb = "";
+                if (trns[1].length == 1 && trns[1][0].min == trns[1][0].max) {
                     const range: FARange = trns[1][0];
-                    if (range.max==-1||range.min==-1)
-                    {
+                    if (range.max == -1 || range.min == -1) {
                         var eedge = new _ExpEdge();
                         eedge.exp = "";
                         eedge.from = cfa;
@@ -1732,13 +1619,12 @@ export class FA {
                         fsmEdges.push(eedge);
                         continue;
                     }
-                    sb+=FA._appendCharTo(String.fromCodePoint(range.min));
+                    sb += FA._appendCharTo(String.fromCodePoint(range.min));
                 }
-                else
-                {
-                    sb+="[";
-                    sb+=FA._appendRangeTo(trns[1]);
-                    sb+="]";
+                else {
+                    sb += "[";
+                    sb += FA._appendRangeTo(trns[1]);
+                    sb += "]";
                 }
                 var edge = new _ExpEdge();
                 edge.exp = sb;
@@ -1767,51 +1653,44 @@ export class FA {
         newEdge.from = qLast;
         newEdge.to = final;
         fsmEdges.push(newEdge);
-        closure.splice(0,0,first);
+        closure.splice(0, 0, first);
         closure.push(final);
         let inEdges: _ExpEdge[] = new Array<_ExpEdge>();
-        inEdges.fill(null,0,fsmEdges.length-1);
+        inEdges.fill(null, 0, fsmEdges.length - 1);
         let outEdges: _ExpEdge[] = new Array<_ExpEdge>();
-        outEdges.fill(null,0,fsmEdges.length-1);
-        while (closure.length > 2)
-        {
+        outEdges.fill(null, 0, fsmEdges.length - 1);
+        while (closure.length > 2) {
             var node = closure[1];
             var loops = new Array<string>();
-            inEdges.length=0;
-            inEdges=FA._toExpressionFillEdgesIn(fsmEdges, node);
-            for (let i: number = 0; i < inEdges.length; ++i)
-            {
+            inEdges.length = 0;
+            inEdges = FA._toExpressionFillEdgesIn(fsmEdges, node);
+            for (let i: number = 0; i < inEdges.length; ++i) {
                 var edge = inEdges[i];
-                if (edge.from === edge.to)
-                {
+                if (edge.from === edge.to) {
                     loops.push(edge.exp);
                 }
             }
-            sb=FA._toExpressionKleeneStar(sb,FA._toExpressionOrJoin(loops), loops.length > 1);
+            sb = FA._toExpressionKleeneStar(sb, FA._toExpressionOrJoin(loops), loops.length > 1);
             const middle: string = sb;
-            for (let i: number = 0; i < inEdges.length; ++i)
-            {
+            for (let i: number = 0; i < inEdges.length; ++i) {
                 var inEdge = inEdges[i];
-                if (inEdge.from == inEdge.to)
-                {
+                if (inEdge.from == inEdge.to) {
                     continue;
                 }
                 outEdges.length = 0;
-                outEdges=FA._toExpressionFillEdgesOut(fsmEdges, node);
-                for (let j: number = 0; j < outEdges.length; ++j)
-                {
+                outEdges = FA._toExpressionFillEdgesOut(fsmEdges, node);
+                for (let j: number = 0; j < outEdges.length; ++j) {
                     var outEdge = outEdges[j];
-                    if (outEdge.from === outEdge.to)
-                    {
+                    if (outEdge.from === outEdge.to) {
                         continue;
                     }
                     var expEdge = new _ExpEdge();
                     expEdge.from = inEdge.from;
                     expEdge.to = outEdge.to;
-                    sb="";
-                    sb+=inEdge.exp;
-                    sb+=middle;
-                    sb+=outEdge.exp;
+                    sb = "";
+                    sb += inEdge.exp;
+                    sb += middle;
+                    sb += outEdge.exp;
                     expEdge.exp = sb;
                     fsmEdges.push(expEdge);
                 }
@@ -1819,27 +1698,24 @@ export class FA {
             inEdges = FA._toExpressionFillEdgesOrphanState(fsmEdges, node);
             fsmEdges.length = 0;
             fsmEdges.push(...inEdges);
-            closure.splice(closure.indexOf(node),1);
+            closure.splice(closure.indexOf(node), 1);
         }
-        sb="";
-        if(fsmEdges.length==1)
-        {
+        sb = "";
+        if (fsmEdges.length == 1) {
             return fsmEdges[0].exp;
         }
-        if (fsmEdges.length > 1)
-        {
-            sb+="(";
-            sb+=fsmEdges[0].exp;
-            for (let i: number = 1; i < fsmEdges.length; ++i)
-            {
-                sb+="|";
-                sb+=fsmEdges[i].exp;
+        if (fsmEdges.length > 1) {
+            sb += "(";
+            sb += fsmEdges[0].exp;
+            for (let i: number = 1; i < fsmEdges.length; ++i) {
+                sb += "|";
+                sb += fsmEdges[i].exp;
             }
-            sb+=")";
+            sb += ")";
         }
         return sb;
     }
-    
+
     public toString(format: string, options: FADotGraphOptions = null): string {
 
         if (format.toLowerCase() === "d") {
@@ -1849,7 +1725,7 @@ export class FA {
             else {
                 return this._buildDot(this.fillClosure(), options, -1);
             }
-        } else if(format.toLowerCase()=="e") {
+        } else if (format.toLowerCase() == "e") {
             return FA._toExpression(this);
         } else {
             if (this.id < 0) {
@@ -1876,7 +1752,7 @@ export class FA {
             current.acceptSymbol = -1;
             const newFa: FA = new FA();
             newFa.acceptSymbol = accept;
-            current.addTransition(new FARange(cp, cp), newFa,compact);
+            current.addTransition(new FARange(cp, cp), newFa, compact);
             current = newFa;
         }
         return result;
@@ -1886,7 +1762,7 @@ export class FA {
         const final: FA = new FA();
         final.acceptSymbol = accept;
         for (const range of [...ranges].sort((x, y) => x.max - y.max)) {
-            result.addTransition(range, final,compact);
+            result.addTransition(range, final, compact);
         }
         return result;
     }
@@ -2013,13 +1889,13 @@ export class FA {
         }
         // throw new Error("Should never get here");
     }
-    public run(value: string, blockEnds: FA[] = null) : FAStringRunner {
-        const result: FAStringRunner = new FAStringStateRunner(this,blockEnds);
+    public run(value: string, blockEnds: FA[] = null): FAStringRunner {
+        const result: FAStringRunner = new FAStringStateRunner(this, blockEnds);
         result.set(value);
         return result;
     }
-    public static runDfa(value: string, dfa: number[], blockEnds: number[][]=null) : FAStringRunner {
-        const result: FAStringRunner = new FAStringDfaTableRunner(dfa,blockEnds);
+    public static runDfa(value: string, dfa: number[], blockEnds: number[][] = null): FAStringRunner {
+        const result: FAStringRunner = new FAStringDfaTableRunner(dfa, blockEnds);
         result.set(value);
         return result;
     }
@@ -2068,7 +1944,7 @@ export class FA {
         for (let i: number = 0; i < closure.length; ++i) {
             const cfa: FA = closure[i];
             stateIndices.push(result.length);
-            result.push(cfa.isAccepting()?cfa.acceptSymbol:-1);
+            result.push(cfa.isAccepting() ? cfa.acceptSymbol : -1);
             const itrgp: Map<FA, FARange[]> = cfa.fillInputTransitionRangesGroupedByState();
             result.push(itrgp.size);
             for (const itr of itrgp.entries()) {
@@ -2124,24 +2000,20 @@ export class FA {
         }
         return states.get(0)!;
     }
-    public move(codepoint: number) : FA {
-        if (!this.isDeterministic)
-            {
-                throw "The state machine must be deterministic";
+    public move(codepoint: number): FA {
+        if (!this.isDeterministic) {
+            throw "The state machine must be deterministic";
+        }
+        for (let i: number = 0; i < this.transitions.length; ++i) {
+            const fat: FATransition = this.transitions[i];
+            if (codepoint < fat.min) {
+                return null;
             }
-            for (let i: number = 0; i < this.transitions.length; ++i)
-            {
-                const fat: FATransition = this.transitions[i];
-                if (codepoint < fat.min)
-                {
-                    return null;
-                }
-                if (codepoint <= fat.max)
-                {
-                    return fat.to;
-                }
+            if (codepoint <= fat.max) {
+                return fat.to;
             }
-            return null;
+        }
+        return null;
     }
     public static fillMove(states: Iterable<FA>, codepoint: number, result: FA[] = []): FA[] {
         for (const ffa of states) {
@@ -2718,15 +2590,12 @@ export class FA {
         result += "}\n";
         return result;
     }
-    static _normalizeSortedRangeList(pairs: FARange[]) : void
-    {
-        for (let i: number = 1; i < pairs.length; ++i)
-        {
-            if (pairs[i - 1].max + 1 >= pairs[i].min)
-            {
+    static _normalizeSortedRangeList(pairs: FARange[]): void {
+        for (let i: number = 1; i < pairs.length; ++i) {
+            if (pairs[i - 1].max + 1 >= pairs[i].min) {
                 const nr: FARange = new FARange(pairs[i - 1].min, pairs[i].max);
                 pairs[i - 1] = nr;
-                pairs.splice(i,1);
+                pairs.splice(i, 1);
                 --i; // compensated for by ++i in for loop
             }
         }
@@ -2749,11 +2618,9 @@ export class FA {
             return true;
         return false;
     }
-    static _parseModifier(expr: FA, pc: _ParseContext, accept: number, compact: boolean): FA
-    {
+    static _parseModifier(expr: FA, pc: _ParseContext, accept: number, compact: boolean): FA {
         var position = pc.position;
-        switch (pc.codepoint)
-        {
+        switch (pc.codepoint) {
             case '*'.codePointAt(0):
                 expr = FA.repeat(expr, 0, 0, accept, compact);
                 pc.advance();
@@ -2772,23 +2639,19 @@ export class FA {
                 pc.expecting('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '}');
                 var min = -1;
                 var max = -1;
-                if (','.codePointAt(0) != pc.codepoint && '}'.codePointAt(0) != pc.codepoint)
-                {
+                if (','.codePointAt(0) != pc.codepoint && '}'.codePointAt(0) != pc.codepoint) {
                     var l = pc.capture_buffer.length;
-                    if (!pc.tryReadDigits())
-                    {
+                    if (!pc.tryReadDigits()) {
                         pc.expecting('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
                     }
                     min = Number.parseFloat(pc.capture_buffer.substring(l));
                     pc.trySkipWhiteSpace();
                 }
-                if (','.codePointAt(0) == pc.codepoint)
-                {
+                if (','.codePointAt(0) == pc.codepoint) {
                     pc.advance();
                     pc.trySkipWhiteSpace();
                     pc.expecting('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '}');
-                    if ('}'.charCodeAt(0) != pc.codepoint)
-                    {
+                    if ('}'.charCodeAt(0) != pc.codepoint) {
                         var l = pc.capture_buffer.length;
                         pc.tryReadDigits();
                         max = Number.parseFloat(pc.capture_buffer.substring(l));
@@ -2803,11 +2666,9 @@ export class FA {
         }
         return expr;
     }
-    static _parseEscapePart(pc : _ParseContext) : number
-    {
+    static _parseEscapePart(pc: _ParseContext): number {
         if (-1 == pc.codepoint) return -1;
-        switch (String.fromCodePoint(pc.codepoint))
-        {
+        switch (String.fromCodePoint(pc.codepoint)) {
             case 'f':
                 pc.advance();
                 return '\f'.codePointAt(0);
@@ -2863,12 +2724,10 @@ export class FA {
                 return i;
         }
     }
-    static _parseRangeEscapePart(pc: _ParseContext) : number
-    {
+    static _parseRangeEscapePart(pc: _ParseContext): number {
         if (-1 == pc.codepoint)
             return -1;
-        switch (String.fromCodePoint(pc.codepoint))
-        {
+        switch (String.fromCodePoint(pc.codepoint)) {
             case '0':
                 pc.advance();
                 return '\0'.codePointAt(0);
@@ -2927,8 +2786,7 @@ export class FA {
                 return i;
         }
     }
-    static _parseSet(pc: _ParseContext) : [boolean, FARange[]] 
-    {
+    static _parseSet(pc: _ParseContext): [boolean, FARange[]] {
         const result: FARange[] = new Array<FARange>();
         pc.ensureStarted();
         pc.expecting('[');
@@ -2938,18 +2796,15 @@ export class FA {
         let firstChar: number = 0;
         let readFirstChar: boolean = false;
         let wantRange: boolean = false;
-    
+
         var isNot = false;
-        if ('^' == String.fromCodePoint(pc.codepoint))
-        {
+        if ('^' == String.fromCodePoint(pc.codepoint)) {
             isNot = true;
             pc.advance();
             pc.expecting();
         }
-        while (-1 != pc.codepoint && (firstRead || ']' != String.fromCodePoint(pc.codepoint)))
-        {
-            if (!wantRange)
-            {
+        while (-1 != pc.codepoint && (firstRead || ']' != String.fromCodePoint(pc.codepoint))) {
+            if (!wantRange) {
                 // can be a single char,
                 // a range
                 // or a named character class
@@ -2958,19 +2813,17 @@ export class FA {
                     const epos: number = pc.position;
                     pc.advance();
                     pc.expecting();
-                    if (':' != String.fromCodePoint(pc.codepoint))
-                    {
+                    if (':' != String.fromCodePoint(pc.codepoint)) {
                         firstChar = '['.codePointAt(0);
                         readFirstChar = true;
                     }
-                    else
-                    {
+                    else {
                         firstRead = false;
                         pc.advance();
                         pc.expecting();
                         var ll = pc.capture_buffer.length;
                         if (!pc.tryReadUntil(':'.codePointAt(0), false))
-                            throw "Expecting character class at "+pc.position;
+                            throw "Expecting character class at " + pc.position;
                         pc.expecting(':');
                         pc.advance();
                         pc.expecting(']');
@@ -2978,7 +2831,7 @@ export class FA {
                         var cls = pc.capture_buffer.substring(ll);
                         let ranges: number[] = null;
                         if (!FACharacterClasses.known().has(cls))
-                            throw "Unknown character class \"" + cls + "\" specified at "+ epos;
+                            throw "Unknown character class \"" + cls + "\" specified at " + epos;
                         ranges = FACharacterClasses.known().get(cls);
                         if (ranges != null) {
                             result.push(...FARange.toUnpacked(ranges));
@@ -2989,48 +2842,39 @@ export class FA {
                         continue;
                     }
                 }
-                if (!readFirstChar)
-                {
-                    if ('\\' == String.fromCodePoint(pc.codepoint))
-                    {
+                if (!readFirstChar) {
+                    if ('\\' == String.fromCodePoint(pc.codepoint)) {
                         pc.advance();
                         firstChar = FA._parseRangeEscapePart(pc);
                     }
-                    else
-                    {
+                    else {
                         firstChar = pc.codepoint;
                         pc.advance();
                         pc.expecting();
                     }
                     readFirstChar = true;
                 }
-                else
-                {
-                    if ('-' == String.fromCodePoint(pc.codepoint))
-                    {
+                else {
+                    if ('-' == String.fromCodePoint(pc.codepoint)) {
                         pc.advance();
                         pc.expecting();
                         wantRange = true;
                     }
-                    else
-                    {
+                    else {
                         result.push(new FARange(firstChar, firstChar));
                         readFirstChar = false;
                     }
                 }
                 firstRead = false;
             }
-            else
-            {
-                if ('\\' != String.fromCodePoint(pc.codepoint))
-                {
+            else {
+                if ('\\' != String.fromCodePoint(pc.codepoint)) {
                     const ch: number = pc.codepoint;
                     pc.advance();
                     pc.expecting();
                     result.push(new FARange(firstChar, ch));
                 }
-                else
-                {
+                else {
                     var min = firstChar;
                     pc.advance();
                     result.push(new FARange(min, FA._parseRangeEscapePart(pc)));
@@ -3038,13 +2882,11 @@ export class FA {
                 wantRange = false;
                 readFirstChar = false;
             }
-    
+
         }
-        if (readFirstChar)
-        {
+        if (readFirstChar) {
             result.push(new FARange(firstChar, firstChar));
-            if (wantRange)
-            {
+            if (wantRange) {
                 result.push(new FARange('-'.codePointAt(0), '-'.codePointAt(0)));
             }
         }
@@ -3057,24 +2899,20 @@ export class FA {
         let next: FA = null;
         let ich: number;
         pc.ensureStarted();
-        while (pc.codepoint!==-1)
-        {
-            switch (pc.codepoint)
-            {
+        while (pc.codepoint !== -1) {
+            switch (pc.codepoint) {
                 case -1:
-                    if (result == null)
-                    {
+                    if (result == null) {
                         // empty string
                         result = new FA(accept);
                     }
                     return result;
                 case '.'.codePointAt(0):
-                    const dot: FA = FA.set([ new FARange(0, 0x10ffff) ], accept, compact);
+                    const dot: FA = FA.set([new FARange(0, 0x10ffff)], accept, compact);
                     if (null == result)
                         result = dot;
-                    else
-                    {
-                        result = FA.concat([result, dot ], accept, compact);
+                    else {
+                        result = FA.concat([result, dot], accept, compact);
                     }
                     pc.advance();
                     result = FA._parseModifier(result, pc, accept, compact);
@@ -3084,22 +2922,20 @@ export class FA {
                     pc.advance();
                     pc.expecting();
                     var isNot = false;
-                    switch (pc.codepoint)
-                    {
+                    switch (pc.codepoint) {
                         case 'P'.codePointAt(0):
                             isNot = true;
-                            // fallthrough
+                        // fallthrough
                         case 'p'.codePointAt(0):
                             pc.advance();
                             pc.expecting('{');
                             let uc: string = "";
                             while (-1 != pc.advance() && '}' != String.fromCodePoint(pc.codepoint))
-                                uc+=(String.fromCodePoint(pc.codepoint));
+                                uc += (String.fromCodePoint(pc.codepoint));
                             pc.expecting('}');
                             pc.advance();
                             let uci: number = 0;
-                            switch (uc)
-                            {
+                            switch (uc) {
                                 case "Pe":
                                     uci = 21;
                                     break;
@@ -3191,8 +3027,7 @@ export class FA {
                                     uci = 0;
                                     break;
                             }
-                            if (isNot)
-                            {
+                            if (isNot) {
                                 next = FA.set(FARange.toUnpacked(FACharacterClasses.unicodeCategories[uci]), accept, compact);
                             }
                             else
@@ -3223,20 +3058,17 @@ export class FA {
                             pc.advance();
                             break;
                         default:
-                            if (-1 != (ich = FA._parseEscapePart(pc)))
-                            {
-                                next = FA.literal([ ich ], accept, compact);
+                            if (-1 != (ich = FA._parseEscapePart(pc))) {
+                                next = FA.literal([ich], accept, compact);
 
                             }
-                            else
-                            {
+                            else {
                                 pc.expecting(); // throw an error
                             }
                             break;
                     }
                     next = FA._parseModifier(next, pc, accept, compact);
-                    if (null != result)
-                    {
+                    if (null != result) {
                         result = FA.concat([result, next], accept, compact);
                     }
                     else
@@ -3246,8 +3078,7 @@ export class FA {
                     return result;
                 case '('.codePointAt(0):
                     pc.advance();
-                    if (String.fromCodePoint(pc.codepoint) == '?')
-                    {
+                    if (String.fromCodePoint(pc.codepoint) == '?') {
                         pc.advance();
                         pc.expecting(':');
                         pc.advance();
@@ -3259,78 +3090,68 @@ export class FA {
                     next = FA._parseModifier(next, pc, accept, compact);
                     if (null == result)
                         result = next;
-                    else
-                    {
-                        result = FA.concat([ result, next ], accept, compact);
+                    else {
+                        result = FA.concat([result, next], accept, compact);
                     }
                     break;
                 case '|'.codePointAt(0):
-                    if (-1 != pc.advance())
-                    {
+                    if (-1 != pc.advance()) {
                         next = FA._parse(pc, accept, compact);
-                        result = FA.or([ result, next ], accept, compact);
+                        result = FA.or([result, next], accept, compact);
                     }
-                    else
-                    {
+                    else {
                         result = FA.optional(result, accept, compact);
                     }
                     break;
                 case '['.codePointAt(0):
                     const seti = FA._parseSet(pc);
                     let set: FARange[] = seti[1];
-                    set.sort((x, y) => { const c: number = x.min-y.min; if (0 != c) return c; return x.max-y.max; });
+                    set.sort((x, y) => { const c: number = x.min - y.min; if (0 != c) return c; return x.max - y.max; });
                     FA._normalizeSortedRangeList(set);
-                    if (seti[0]===true) {
+                    if (seti[0] === true) {
                         set = [...FARange.toNotRanges(set)];
                     }
                     next = FA.set(set, accept);
                     next = FA._parseModifier(next, pc, accept, compact);
                     if (null == result)
                         result = next;
-                    else
-                    {
-                        result = FA.concat([ result, next ], accept, compact);
+                    else {
+                        result = FA.concat([result, next], accept, compact);
                     }
                     break;
                 default:
                     ich = pc.codepoint;
-                    next = FA.literal([ ich ], accept, compact);
+                    next = FA.literal([ich], accept, compact);
                     pc.advance();
                     next = FA._parseModifier(next, pc, accept, compact);
                     if (null == result)
                         result = next;
-                    else
-                    {
-                        result = FA.concat([ result, next ], accept, compact);
+                    else {
+                        result = FA.concat([result, next], accept, compact);
                     }
                     break;
             }
         }
         return result;
     }
-    public static parse(expression: string, accept: number = 0, compact: boolean = true) : FA {
+    public static parse(expression: string, accept: number = 0, compact: boolean = true): FA {
         const pc = new _ParseContext(expression);
-        return FA._parse(pc,accept,compact);
+        return FA._parse(pc, accept, compact);
     }
-    public static toLexer(tokens: FA[], makeDfa: boolean = true, compact: boolean = true, progress: FAProgress = null) : FA {
-        if (makeDfa)
-        {
-            for (let i: number = 0; i < tokens.length; i++)
-            {
+    public static toLexer(tokens: FA[], makeDfa: boolean = true, compact: boolean = true, progress: FAProgress = null): FA {
+        if (makeDfa) {
+            for (let i: number = 0; i < tokens.length; i++) {
                 tokens[i] = tokens[i].toMinimizedDfa(progress);
             }
         }
         var result = new FA();
-        for (let i: number = 0; i < tokens.length; i++)
-        {
+        for (let i: number = 0; i < tokens.length; i++) {
             result.addEpsilon(tokens[i], compact);
         }
-        if (makeDfa && !result.isDeterministic)
-        {
+        if (makeDfa && !result.isDeterministic) {
             return result.toDfa(progress);
         }
-        else
-        {
+        else {
             return result;
         }
     }

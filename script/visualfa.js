@@ -179,15 +179,15 @@ class FAStringRunner extends FARunner {
     }
     advance(s, cp, len, first) {
         if (!first) {
-            switch (String.fromCodePoint(cp)) {
-                case '\n':
+            switch (cp) {
+                case 10:
                     ++this.line;
                     this.column = 1;
                     break;
-                case '\r':
+                case 13:
                     this.column = 1;
                     break;
-                case '\t':
+                case 9:
                     this.column = ((this.column - 1) / this.tabWidth) * (this.tabWidth + 1);
                     break;
                 default:
@@ -1958,8 +1958,10 @@ class FA {
             }
         }
         for (const values of result.values()) {
-            values.sort((x, y) => { var c = x.min - y.min; if (0 != c)
-                return c; return x.max - y.max; });
+            values.sort((x, y) => {
+                var c = x.min - y.min; if (0 != c)
+                    return c; return x.max - y.max;
+            });
         }
         return result;
     }
@@ -2132,7 +2134,7 @@ class FA {
         if (last === first)
             return result;
         if (last === first + 1) // spit out 1 and 2 length ranges as flat chars
-         {
+        {
             result += FA._appendRangeCharTo(String.fromCodePoint(last));
             return result;
         }
@@ -2849,7 +2851,7 @@ class FA {
                 // a range
                 // or a named character class
                 if ('[' == String.fromCodePoint(pc.codepoint)) // named char class
-                 {
+                {
                     const epos = pc.position;
                     pc.advance();
                     pc.expecting();
@@ -3143,8 +3145,10 @@ class FA {
                 case '['.codePointAt(0):
                     const seti = FA._parseSet(pc);
                     let set = seti[1];
-                    set.sort((x, y) => { const c = x.min - y.min; if (0 != c)
-                        return c; return x.max - y.max; });
+                    set.sort((x, y) => {
+                        const c = x.min - y.min; if (0 != c)
+                            return c; return x.max - y.max;
+                    });
                     FA._normalizeSortedRangeList(set);
                     if (seti[0] === true) {
                         set = [...FARange.toNotRanges(set)];
