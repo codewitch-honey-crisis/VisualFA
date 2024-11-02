@@ -3,8 +3,12 @@
     "version": "1.4.1",
     "main": "visualfa.js",
     "description": "A DFA regex and tokenizer engine for JS",
-    "author": {"name": "honey the codewitch"},
+    "author": {
+        "name": "honey the codewitch"
+    },
     "license": "MIT",
-    "repository": {"url": "https://github.com/codewitch-honey-crisis/VisualFA",
-                    "type": "github"}
+    "repository": {
+        "url": "git+https://github.com/codewitch-honey-crisis/VisualFA.git",
+        "type": "git"
+    }
 }
