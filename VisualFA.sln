@@ -70,6 +70,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validation", "Validation\Va
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{EE5E0E55-EED0-452C-99DD-69196D3C2EED}"
 	ProjectSection(SolutionItems) = preProject
+		script\index.html = script\index.html
 		script\package.json = script\package.json
 		script\visualfa.js = script\visualfa.js
 	EndProjectSection
