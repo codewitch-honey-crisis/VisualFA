@@ -72,7 +72,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{EE5E0E
 	ProjectSection(SolutionItems) = preProject
 		script\package.json = script\package.json
 		script\visualfa.js = script\visualfa.js
-		script\visualfa.ts = script\visualfa.ts
 	EndProjectSection
 EndProject
 Global
