@@ -1944,10 +1944,8 @@ class FA {
             }
         }
         for (const values of result.values()) {
-            values.sort((x, y) => {
-                var c = x.min - y.min; if (0 != c)
-                    return c; return x.max - y.max;
-            });
+            values.sort((x, y) => { var c = x.min - y.min; if (0 != c)
+                return c; return x.max - y.max; });
         }
         return result;
     }
@@ -2058,21 +2056,26 @@ class FA {
         let result = this.clone();
         let closure = result.fillClosure();
         let done = false;
-        while (!done) {
+        while (!done)
+        {
             done = true;
-            for (let i = 0; i < closure.length; ++i) {
+            for (let i = 0; i < closure.length; ++i)
+            {
                 const fa = closure[i];
-                for (let j = 0; j < fa.transitions.length; ++j) {
+                for (let j = 0; j < fa.transitions.length; ++j)
+                {
                     const fat = fa.transitions[j];
-                    if (fat.min == -1 && fat.max == -1) {
-                        fa.transitions.splice(j, 1);
+                    if (fat.min == -1 && fat.max == -1)
+                    {
+                        fa.transitions.splice(j,1);
                         --j;
                         fa.addEpsilon(fat.to);
                         done = false;
                         break;
                     }
                 }
-                if (!done) {
+                if (!done)
+                {
                     closure = closure[0].fillClosure();
                     break;
                 }
@@ -2081,7 +2084,7 @@ class FA {
         }
         return result;
     }
-
+    
     static *toUtf32(str) {
         for (const character of str) {
             let cp = character.codePointAt(0);
@@ -2148,7 +2151,7 @@ class FA {
         if (last === first)
             return result;
         if (last === first + 1) // spit out 1 and 2 length ranges as flat chars
-        {
+         {
             result += FA._appendRangeCharTo(String.fromCodePoint(last));
             return result;
         }
@@ -2523,7 +2526,8 @@ class FA {
             result += i.toString(10);
             result += "</SUB></TD></TR>";
             if (options.debugSourceNfa !== null) {
-                const from = ffa.fromStates;
+                let from = ffa.fromStates;
+                if(from===null) from = [];
                 let brk = Math.floor(Math.sqrt(from.length));
                 if (from.length <= 3)
                     brk = 3;
@@ -2865,7 +2869,7 @@ class FA {
                 // a range
                 // or a named character class
                 if ('[' == String.fromCodePoint(pc.codepoint)) // named char class
-                {
+                 {
                     const epos = pc.position;
                     pc.advance();
                     pc.expecting();
@@ -3130,7 +3134,7 @@ class FA {
                 case ')'.codePointAt(0):
                     return result;
                 case '('.codePointAt(0):
-                    if (0 > pc.advance()) {
+                    if(0>pc.advance()) {
                         return result;
                     }
                     if (String.fromCodePoint(pc.codepoint) == '?') {
@@ -3161,10 +3165,8 @@ class FA {
                 case '['.codePointAt(0):
                     const seti = FA._parseSet(pc);
                     let set = seti[1];
-                    set.sort((x, y) => {
-                        const c = x.min - y.min; if (0 != c)
-                            return c; return x.max - y.max;
-                    });
+                    set.sort((x, y) => { const c = x.min - y.min; if (0 != c)
+                        return c; return x.max - y.max; });
                     FA._normalizeSortedRangeList(set);
                     if (seti[0] === true) {
                         set = [...FARange.toNotRanges(set)];

@@ -2534,7 +2534,8 @@ class FA {
             result += i.toString(10);
             result += "</SUB></TD></TR>";
             if (options.debugSourceNfa !== null) {
-                const from = ffa.fromStates;
+                let from = ffa.fromStates;
+                if(from===null) from = [];
                 let brk = Math.floor(Math.sqrt(from.length));
                 if (from.length <= 3)
                     brk = 3;
@@ -3238,12 +3239,16 @@ class FA {
         var dirty = false;
         var faDirty = false;
         var sourceFA = new FA();
-        
+        var xfrmFA = sourceFA;
         const render = function() {
-            try{
+            //try{
+                var opts = new FADotGraphOptions();
                 if(dirty===true) {
                     dirty = false;
                     const inputs = document.getElementById("frm").elements;
+                    opts.debugString=inputs[1].value;
+                    opts.debugShowNfa = false;
+                    opts.debugSourceNfa = null;
                     if(faDirty===true) {
                         faDirty = false;
                         sourceFA = FA.parse(inputs["rx"].value,0,false);
@@ -3254,24 +3259,29 @@ class FA {
                                 break;
                             case "dfa":
                                 xfrmFA = sourceFA.toDfa();
+                                
+                                opts.debugShowNfa = true;
+                                opts.debugSourceNfa = sourceFA;
+                            
                                 break;
                             case "mdfa":
                                 xfrmFA = sourceFA.toMinimizedDfa();
                                 break;
                         }
+                        
                     }
-                    var opts = new FADotGraphOptions();
+                    
                     opts.hideAcceptSymbolIds = true;
-                    opts.debugString=inputs[1].value;
+                    
                     var dot = xfrmFA.toString("d",opts);
                     graphviz.layout(dot).then(svg => {
                         document.getElementById("graph").innerHTML = svg
                     });              
                 }
-            }
+            /*}
             catch {
                 document.getElementById("graph").innerText = "Error";
-            }
+            }*/
             
         }
         const dirtyHandler = function(e) {
@@ -3281,17 +3291,17 @@ class FA {
     </script>
     <form id = "frm">
         <label for="rx">Regex</label>
-        <input name="rx" type="text" value="([A-Z_a-z][A-Z_a-z0-9]*)|\-?(0|[1-9][0-9]*)" oninput="faDirty=true;dirtyHandler();" /><br>
+        <input name="rx" type="text" value="([A-Z_a-z][A-Z_a-z0-9]*)|\-?(0|[1-9][0-9]*)" oninput="faDirty=true;dirtyHandler();" ><br>
         <label for="expr">Text</label>
         <input id="expr" name="exp" oninput="dirtyHandler();" type="text" /><br>
-        <input type="radio" id="nfa" checked name="xfrm" value="nfa" onchange="faDirty=true;dirtyHandler();"/>
+        <input type="radio" id="nfa" checked name="xfrm" value="nfa" onchange="faDirty=true;dirtyHandler();" >
         <label for="nfa">NFA</label>
-        <input type="radio" id="cnfa" name="xfrm" value="cnfa" onchange="faDirty=true;dirtyHandler();"/>
+        <input type="radio" id="cnfa" name="xfrm" value="cnfa" onchange="faDirty=true;dirtyHandler();" >
         <label for="nfa">comNFA</label>
-        <input type="radio" id="dfa" name="xfrm" value="dfa" onchange="faDirty=true;dirtyHandler();"/>
-        <label for="dfa">DFA</label>
-        <input type="radio" id="mdfa" name="xfrm" value="mdfa" onchange="faDirty=true;dirtyHandler();"/>
-        <label for="mdfa">minDFA</label>
+        <input type="radio" id="dfa" name="xfrm" value="dfa" onchange="faDirty=true;dirtyHandler();" >
+        <label for="dfa">NFA+DFA</label>
+        <input type="radio" id="mdfa" name="xfrm" value="mdfa" onchange="faDirty=true;dirtyHandler();" >
+        <label for="mdfa">minDFA</label><br>
     </form>
     <div id="graph">
         
