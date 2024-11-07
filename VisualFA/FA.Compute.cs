@@ -4,7 +4,7 @@ namespace VisualFA
 {
 	#region FAFindFilter
 	/// <summary>
-	/// The filter predicate delegate for <see cref="FA.FindFirst(FAFindFilter)" and <see cref="FA.FillFind(FAFindFilter, IList{FA})"/>/>
+	/// The filter predicate delegate for <see cref="FA.FindFirst(FAFindFilter)"/> and <see cref="FA.FillFind(FAFindFilter, IList{FA})"/>
 	/// </summary>
 	/// <param name="state">The state to check</param>
 	/// <returns>True if matched, otherwise false</returns>

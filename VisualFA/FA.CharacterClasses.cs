@@ -11,7 +11,13 @@
 namespace VisualFA {
 
 	partial class FA {
+        /// <summary>
+        /// Indicates the character classes
+        /// </summary>
         public partial class CharacterClasses {
+            /// <summary>
+            /// Indicates the codepoints for each Unicode category
+            /// </summary>
             public static int[][] UnicodeCategories = new int[][] {
                     new int[] {
                             65,
@@ -7173,6 +7179,9 @@ namespace VisualFA {
                             1048575,
                             1114110,
                             1114111}};
+            /// <summary>
+            /// An inversion of <see cref="UnicodeCategories"/>
+            /// </summary>
             public static int[][] NotUnicodeCategories = new int[][] {
                     new int[] {
                             0,
@@ -14446,6 +14455,9 @@ namespace VisualFA {
                             1048573,
                             1048576,
                             1114109}};
+            /// <summary>
+            /// The IsLetter charset
+            /// </summary>
             public static int[] IsLetter = new int[] {
                     65,
                     90,
@@ -15555,7 +15567,10 @@ namespace VisualFA {
                     183969,
                     194560,
                     195101};
-            public static int[] IsDigit = new int[] {
+			/// <summary>
+			/// The IsDigit charset
+			/// </summary>
+			public static int[] IsDigit = new int[] {
                     48,
                     57,
                     1632,
@@ -15658,7 +15673,10 @@ namespace VisualFA {
                     93017,
                     120782,
                     120831};
-            public static int[] IsLetterOrDigit = new int[] {
+			/// <summary>
+			/// The IsLetterOrDigit charset
+			/// </summary>
+			public static int[] IsLetterOrDigit = new int[] {
                     48,
                     57,
                     65,
@@ -16833,7 +16851,10 @@ namespace VisualFA {
                     183969,
                     194560,
                     195101};
-            public static int[] IsWhiteSpace = new int[] {
+			/// <summary>
+			/// The IsWhiteSpace charset
+			/// </summary>
+			public static int[] IsWhiteSpace = new int[] {
                     9,
                     13,
                     32,
@@ -16854,7 +16875,10 @@ namespace VisualFA {
                     8287,
                     12288,
                     12288};
-            public static int[] alnum = new int[] {
+			/// <summary>
+			/// The alnum charset
+			/// </summary>
+			public static int[] alnum = new int[] {
                     48,
                     57,
                     65,
@@ -18035,7 +18059,10 @@ namespace VisualFA {
                     183969,
                     194560,
                     195101};
-            public static int[] alpha = new int[] {
+			/// <summary>
+			/// The alpha charset
+			/// </summary>
+			public static int[] alpha = new int[] {
                     65,
                     90,
                     97,
@@ -19150,9 +19177,18 @@ namespace VisualFA {
                     183969,
                     194560,
                     195101};
-            public static int[] cntrl = CharacterClasses.UnicodeCategories[14];
-            public static int[] digit = CharacterClasses.UnicodeCategories[8];
-            public static int[] graph = new int[] {
+			/// <summary>
+			/// The cntrl charset
+			/// </summary>
+			public static int[] cntrl = CharacterClasses.UnicodeCategories[14];
+			/// <summary>
+			/// The digit charset
+			/// </summary>
+			public static int[] digit = CharacterClasses.UnicodeCategories[8];
+			/// <summary>
+			/// The graph charset
+			/// </summary>
+			public static int[] graph = new int[] {
                     33,
                     126,
                     161,
@@ -19171,10 +19207,16 @@ namespace VisualFA {
                     55295,
                     57344,
                     1114111};
+            /// <summary>
+            /// The ASCII charset
+            /// </summary>
             public static int[] ascii = new int[] {
                     0,
                     127};
-            public static int[] blank = new int[] {
+			/// <summary>
+			/// The blank charset
+			/// </summary>
+			public static int[] blank = new int[] {
                     9,
                     9,
                     32,
@@ -19191,9 +19233,18 @@ namespace VisualFA {
                     8287,
                     12288,
                     12288};
-            public static int[] lower = CharacterClasses.UnicodeCategories[1];
-            public static int[] print = CharacterClasses.NotUnicodeCategories[14];
-            public static int[] punct = new int[] {
+			/// <summary>
+			/// The lower charset
+			/// </summary>
+			public static int[] lower = CharacterClasses.UnicodeCategories[1];
+			/// <summary>
+			/// The print charset
+			/// </summary>
+			public static int[] print = CharacterClasses.NotUnicodeCategories[14];
+			/// <summary>
+			/// The punct charset
+			/// </summary>
+			public static int[] punct = new int[] {
                     41,
                     41,
                     93,
@@ -20024,9 +20075,20 @@ namespace VisualFA {
                     121479,
                     121483,
                     121483};
-            public static int[] space = CharacterClasses.IsWhiteSpace;
-            public static int[] upper = CharacterClasses.UnicodeCategories[0];
-            public static int[] word = new int[] {
+			/// <summary>
+			/// The space charset
+			/// </summary>
+
+			public static int[] space = CharacterClasses.IsWhiteSpace;
+			/// <summary>
+			/// The upper charset
+			/// </summary>
+
+			public static int[] upper = CharacterClasses.UnicodeCategories[0];
+			/// <summary>
+			/// The word charset
+			/// </summary>
+    		public static int[] word = new int[] {
                     65,
                     90,
                     97,
@@ -21395,6 +21457,9 @@ namespace VisualFA {
                     120782,
                     120831,
                     120831};
+            /// <summary>
+            /// The xdigit charset
+            /// </summary>
             public static int[] xdigit = new int[] {
                     48,
                     48,

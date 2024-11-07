@@ -11,8 +11,19 @@ namespace VisualFA
 #endif
 	struct FARange
 	{
+		/// <summary>
+		/// The minimum codepoint
+		/// </summary>
 		public int Min;
+		/// <summary>
+		/// The maximum codepoint
+		/// </summary>
 		public int Max;
+		/// <summary>
+		/// Constructs an instance
+		/// </summary>
+		/// <param name="min">The minimum codepoint</param>
+		/// <param name="max">The maximum codepoint</param>
 		public FARange(int min, int max)
 		{
 			Min = min;
@@ -111,6 +122,10 @@ namespace VisualFA
 
 			}
 		}
+		/// <summary>
+		/// Returns a string representation of the range
+		/// </summary>
+		/// <returns>A string representing the range</returns>
 		public override string ToString()
 		{
 			if (Min == Max)
@@ -119,10 +134,20 @@ namespace VisualFA
 			}
 			return string.Concat("[", char.ConvertFromUtf32(Min), "-", char.ConvertFromUtf32(Max), "]");
 		}
+		/// <summary>
+		/// Value equality
+		/// </summary>
+		/// <param name="rhs">The range to compare</param>
+		/// <returns>True if they are equal, otherwise false</returns>
 		public bool Equals(FARange rhs)
 		{
 			return rhs.Min == Min && rhs.Max == Max;
 		}
+		/// <summary>
+		/// Value equality
+		/// </summary>
+		/// <param name="rhs">The object to compare</param>
+		/// <returns>True if they are equal, otherwise false</returns>
 		public override bool Equals(object rhs)
 		{
 			if (ReferenceEquals(null, rhs)) return false;
@@ -132,6 +157,10 @@ namespace VisualFA
 			}
 			return base.Equals(rhs);
 		}
+		/// <summary>
+		/// Retrieves a hash code for the instance
+		/// </summary>
+		/// <returns>A hash code</returns>
 		public override int GetHashCode()
 		{
 			return Min.GetHashCode() ^ Max.GetHashCode();

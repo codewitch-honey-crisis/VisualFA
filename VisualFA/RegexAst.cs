@@ -5,6 +5,14 @@ using System.Text;
 
 namespace VisualFA
 {
+	/// <summary>
+	/// Indicates an action to take when a node is visited
+	/// </summary>
+	/// <param name="parent">The parent node</param>
+	/// <param name="expression">The current expression</param>
+	/// <param name="childIndex">The index of the expression within the parent</param>
+	/// <param name="level">The nexting level</param>
+	/// <returns></returns>
 #if FALIB
 	public
 #endif
@@ -41,7 +49,7 @@ namespace VisualFA
 		{
 			Position = position;
 		}
-		bool _Visit(RegexExpression parent, RegexVisitAction action, int childIndex, int level) {
+		private bool _Visit(RegexExpression parent, RegexVisitAction action, int childIndex, int level) {
 			if (action(parent, this, childIndex, level))
 			{
 				var unary = this as RegexUnaryExpression;
@@ -101,6 +109,10 @@ namespace VisualFA
 		/// <returns>A copy of the expression</returns>
 		protected abstract RegexExpression CloneImpl();
 		object ICloneable.Clone() => CloneImpl();
+		/// <summary>
+		/// Clones the expression
+		/// </summary>
+		/// <returns>A deep copy of the expression</returns>
 		public RegexExpression Clone()
 		{
 			return CloneImpl();
@@ -546,7 +558,7 @@ namespace VisualFA
 		/// <summary>
 		/// Appends a character escape to the specified <see cref="StringBuilder"/>
 		/// </summary>
-		/// <param name="ch">The character to escape</param>
+		/// <param name="character">The character to escape</param>
 		/// <param name="builder">The string builder to append to</param>
 		internal static void AppendEscapedChar(string character,StringBuilder builder)
 		{
@@ -614,7 +626,7 @@ namespace VisualFA
 		/// <summary>
 		/// Escapes the specified character
 		/// </summary>
-		/// <param name="ch">The character to escape</param>
+		/// <param name="character">The character to escape</param>
 		/// <returns>A string representing the escaped character</returns>
 		internal static string EscapeChar(string character)
 		{
@@ -739,7 +751,7 @@ namespace VisualFA
 		/// <summary>
 		/// Escapes a range character
 		/// </summary>
-		/// <param name="ch">The character to escape</param>
+		/// <param name="character">The character to escape</param>
 		/// <returns>A string containing the escaped character</returns>
 		internal static string EscapeRangeChar(string character)
 		{
@@ -1047,7 +1059,11 @@ namespace VisualFA
 			if (exps.Count == 1) return exps[0];
 			return new RegexOrExpression(exps);
 		}
-		
+		/// <summary>
+		/// Parses an expression from a state machine
+		/// </summary>
+		/// <param name="fa">The state machine to parse</param>
+		/// <returns>An expression that is equivalent to the state machine</returns>
 		public static RegexExpression FromFA(FA fa)
 		{
 			if(fa==null)
@@ -1591,6 +1607,11 @@ namespace VisualFA
 			return 0;
 		}
 		#endregion
+		/// <summary>
+		/// Attempts to reduce the expression
+		/// </summary>
+		/// <param name="reduced">The reduced expression</param>
+		/// <returns>True if reduced, otherwise false</returns>
 		public override bool TryReduce(out RegexExpression reduced)
 		{
 			reduced = this;
@@ -1619,6 +1640,7 @@ namespace VisualFA
 		/// Creates a state machine representing this expression
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
+		/// <param name="compact">True to create a compact NFA, false to create an expanded NFA</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
 		public override FA ToFA(int accept = 0, bool compact = true)
 			=> FA.Literal(Codepoints, accept, compact);
@@ -2136,12 +2158,17 @@ namespace VisualFA
 		/// Creates a state machine representing this expression
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
+		/// <param name="compact">True to create a compact NFA, false to create an expanded NFA</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
 		public override FA ToFA(int accept = 0, bool compact = true)
 		{
 			var ranges = GetRanges();
 			return FA.Set(ranges, accept,compact);
 		}
+		/// <summary>
+		/// Retrieve the codepoint ranges for the character set
+		/// </summary>
+		/// <returns></returns>
 		public IList<FARange> GetRanges()
 		{
 			var result = new List<FARange>();
@@ -2170,6 +2197,11 @@ namespace VisualFA
 			}
 			return result;
 		}
+		/// <summary>
+		/// Attempts to reduce the expression
+		/// </summary>
+		/// <param name="reduced">The reduced expression</param>
+		/// <returns>True if reduced, otherwise false</returns>
 		public override bool TryReduce(out RegexExpression reduced)
 		{
 			if(SkipReduce)
@@ -2389,7 +2421,6 @@ namespace VisualFA
 		/// <summary>
 		/// Creates a new expression with the specified left and right hand sides
 		/// </summary>
-		/// <param name="left">The left expression</param>
 		/// <param name="expressions">The right expressions</param>
 		public RegexConcatExpression(IList<RegexExpression> expressions) 
 		{
@@ -2441,6 +2472,11 @@ namespace VisualFA
 			}
 			return r;
 		}
+		/// <summary>
+		/// Attempts to reduce the expression
+		/// </summary>
+		/// <param name="reduced">The reduced expression</param>
+		/// <returns>True if reduced, otherwise false</returns>
 		public override bool TryReduce(out RegexExpression reduced)
 		{
 			if(SkipReduce)
@@ -2538,6 +2574,7 @@ namespace VisualFA
 		/// Creates a state machine representing this expression
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
+		/// <param name="compact">True to create a compact NFA, false to create an expanded NFA</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
 		public override FA ToFA(int accept = 0, bool compact = true)
 		{
@@ -2851,6 +2888,11 @@ namespace VisualFA
 		/// Creates a default instance of the expression
 		/// </summary>
 		public RegexOrExpression() { }
+		/// <summary>
+		/// Attempts to reduce the expression
+		/// </summary>
+		/// <param name="reduced">The reduced expression</param>
+		/// <returns>True if reduced, otherwise false</returns>
 		public override bool TryReduce(out RegexExpression reduced)
 		{
 			if (SkipReduce)
@@ -3051,6 +3093,7 @@ namespace VisualFA
 		/// Creates a state machine representing this expression
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
+		/// <param name="compact">True to create a compact NFA, false to create an expanded NFA</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>
 		public override FA ToFA(int accept = 0, bool compact = true)
 		{
@@ -3229,6 +3272,7 @@ namespace VisualFA
 		/// Creates a state machine representing this expression
 		/// </summary>
 		/// <param name="accept">The accept symbol to use for this expression</param>
+		/// <param name="compact">True to create a compact NFA, otherwise create an expanded NFA</param>
 		/// <returns>A new <see cref="FA"/> finite state machine representing this expression</returns>		
 		public override FA ToFA(int accept = 0, bool compact = true)
 			=> null != Expression ? FA.Repeat(Expression.ToFA(accept,compact), MinOccurs, MaxOccurs, accept,compact) : null;
@@ -3301,6 +3345,11 @@ namespace VisualFA
 					break;
 			}
 		}
+		/// <summary>
+		/// Attempt to resude the expression
+		/// </summary>
+		/// <param name="reduced">The reduced expression</param>
+		/// <returns>True if a reduction happened, otherwise false</returns>
 		public override bool TryReduce(out RegexExpression reduced)
 		{
 			if (SkipReduce)

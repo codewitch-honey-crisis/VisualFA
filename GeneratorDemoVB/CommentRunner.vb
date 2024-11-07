@@ -185,7 +185,7 @@ Partial Friend MustInherit Class FARunner
                 Throw New ObjectDisposedException("Enumerator")
             End If
             Dim parent As FARunner
-            If (false = Me._parent.TryGetTarget(parent)) Then
+            If (False = Me._parent.TryGetTarget(parent)) Then
                 Throw New InvalidOperationException("The parent was destroyed")
             End If
             parent.Reset

@@ -10,21 +10,46 @@ using System.Text;
 namespace VisualFA
 {
 	#region FATransition
+	/// <summary>
+	/// Represents a transition in an FSM
+	/// </summary>
 #if FALIB
 	public 
 #endif
 	struct FATransition
 	{
+		/// <summary>
+		/// The minimum codepoint of the range
+		/// </summary>
 		public int Min;
+		/// <summary>
+		/// The maximum codepoint of the range
+		/// </summary>
 		public int Max;
+		/// <summary>
+		/// The destination state
+		/// </summary>
 		public FA To;
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
+		/// <param name="to">The destination state</param>
+		/// <param name="min">The minimum codepoint</param>
+		/// <param name="max">The maximum codepoint</param>
 		public FATransition(FA to, int min = -1, int max =-1)
 		{
 			Min = min;
 			Max = max;
 			To = to;
 		}
-		public bool IsEpsilon { get { return Min == -1 && Max == -1; } }
+		/// <summary>
+		/// Indicates whether or not this is an epsilon transition
+		/// </summary>
+		public bool IsEpsilon { get { return Min == -1 || Max == -1; } }
+		/// <summary>
+		/// Provides a string representation of the transition
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			if(IsEpsilon)
@@ -37,10 +62,19 @@ namespace VisualFA
 			}
 			return string.Concat("[", char.ConvertFromUtf32(Min),"-", char.ConvertFromUtf32(Max), "]-> ", To.ToString());
 		}
+		/// <summary>
+		/// Value equality
+		/// </summary>
+		/// <param name="rhs">The transition to compare</param>
+		/// <returns></returns>
 		public bool Equals(FATransition rhs)
 		{
 			return To == rhs.To && Min == rhs.Min && Max == rhs.Max;
 		}
+		/// <summary>
+		/// Returns a hashcode for the transition
+		/// </summary>
+		/// <returns>A hashcode</returns>
 		public override int GetHashCode()
 		{
 			if(To==null)
@@ -49,6 +83,11 @@ namespace VisualFA
 			}
 			return Min.GetHashCode() ^ Max.GetHashCode() ^ To.GetHashCode();
 		}
+		/// <summary>
+		/// Value equality
+		/// </summary>
+		/// <param name="obj">The object to compare</param>
+		/// <returns></returns>
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(obj, null)) return false;
@@ -60,22 +99,36 @@ namespace VisualFA
 	#endregion // FATransition
 	
 	#region FAException
+	/// <summary>
+	/// Represents an exception in the FA engine
+	/// </summary>
 #if FALIB
 	public
 #endif
 	class FAException : Exception
 	{
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
+		/// <param name="message">The message</param>
 		public FAException(string message) : base(message)
 		{
 
 		}
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
+		/// <param name="message">The message</param>
+		/// <param name="innerException">The inner exception</param>
 		public FAException(string message, Exception innerException) : base(message,innerException)
 		{
 
 		}
 	}
 	#endregion FAException
-	
+	/// <summary>
+	/// Represents a state in an FSM
+	/// </summary>
 #if FALIB
 	public 
 #endif
@@ -207,7 +260,7 @@ namespace VisualFA
 			if (to == null) 
 				throw new ArgumentNullException(nameof(to));
 			
-			if(range.Min==-1 && range.Max==-1)
+			if(range.Min==-1 || range.Max==-1)
 			{
 				AddEpsilon(to);
 				return;
@@ -251,6 +304,9 @@ namespace VisualFA
 			_transitions.Insert(insert+1,
 				new FATransition(to, range.Min, range.Max));	
 		}
+		/// <summary>
+		/// Removes all transitions
+		/// </summary>
 		public void ClearTransitions()
 		{
 			_transitions.Clear();
@@ -336,7 +392,7 @@ namespace VisualFA
 			return result;
 		}
 		/// <summary>
-		/// A convenience method for returning a new <see cref="Linearize(out FA, bool)"/>ed copy of this machine
+		/// A convenience method for returning a new linearized copy of this machine
 		/// </summary>
 		/// <param name="flattenAccepting">Move the accepting status of any found accepting states to the new final state</param>
 		/// <param name="compact">True to compact any created epsilons, otherwise false</param>

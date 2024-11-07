@@ -94,6 +94,7 @@ namespace VisualFA
 		/// <param name="closure">The closure of all states</param>
 		/// <param name="writer">The writer</param>
 		/// <param name="options">A <see cref="FADotGraphOptions"/> instance with any options, or null to use the defaults</param>
+		/// <param name="clusterIndex">The dot cluster index</param>
 		static void _WriteDotTo(IList<FA> closure, TextWriter writer, FADotGraphOptions options = null, int clusterIndex = -1)
 		{
 			if (null == options) options = new FADotGraphOptions();

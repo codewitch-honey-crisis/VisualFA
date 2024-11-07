@@ -29,6 +29,7 @@ SOFTWARE.
 */
 using System;
 using System.Text;
+using System.IO;
 using System.Collections.Generic;
 namespace VisualFA
 {
@@ -261,20 +262,64 @@ namespace VisualFA
 				result.Add(edge);
 			}
 		}
+		/// <summary>
+		/// Returns a string representation of the state machine
+		/// </summary>
+		/// <param name="format">The format specifier</param>
+		/// <param name="provider">The format provider</param>
+		/// <returns>A string representation of the state machine</returns>
 		public string ToString(string format, IFormatProvider provider)
 		{
 			return ToString(format);
 		}
+		/// <summary>
+		/// Returns a string representation of the state machine
+		/// </summary>
+		/// <param name="format">The format specifier</param>
+		/// <returns>A string representation of the state machine</returns>
 		public string ToString(string format)
 		{
 			if (string.IsNullOrEmpty(format))
 			{
 				return ToString();
 			}
+			if(format=="d")
+			{
+				StringWriter sw = new StringWriter();
+				WriteDotTo(sw);
+				return sw.ToString();
+			}
 			if (format == "e")
 			{
 				return _ToExpression(this);
 			} else if(format=="r")
+			{
+				return RegexExpression.FromFA(this).Reduce(1000).ToString();
+			}
+			throw new FormatException("Invalid format specifier");
+		}
+		/// <summary>
+		/// Returns a string representation of the state machine
+		/// </summary>
+		/// <param name="format">The format specifier</param>
+		/// <param name="options">The Dot graph options</param>
+		/// <returns>A string representation of the state machine</returns>
+		public string ToString(string format,FADotGraphOptions options)
+		{
+			if (format=="d" && options!=null)
+			{
+				StringWriter sw = new StringWriter();
+				WriteDotTo(sw, options);
+				return sw.ToString();
+			}
+			if(string.IsNullOrEmpty(format)) {
+				return ToString();
+			}
+			if (format == "e")
+			{
+				return _ToExpression(this);
+			}
+			else if (format == "r")
 			{
 				return RegexExpression.FromFA(this).Reduce(1000).ToString();
 			}
@@ -294,8 +339,6 @@ namespace VisualFA
 			{
 				return base.ToString();
 			}
-			//var mach = _RxMachine.FromFA(this, null);
-			//return mach.Convert();
 		}
 	}
 }

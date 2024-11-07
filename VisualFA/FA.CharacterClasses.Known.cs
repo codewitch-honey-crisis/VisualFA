@@ -25,6 +25,9 @@ namespace VisualFA
 				}
 				return result;
 			}
+			/// <summary>
+			/// A dictionary of all the defined character sets
+			/// </summary>
 			public static IDictionary<string, int[]> Known { get { return _Known.Value; } }
 		}
 	}

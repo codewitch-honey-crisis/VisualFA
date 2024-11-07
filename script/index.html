@@ -1098,7 +1098,6 @@ class FA {
         return result;
     }
     static _makeSet(closure, states) {
-        let result = "";
         let delim = "";
         let ns = [];
         for (const fa of states) {
@@ -1106,11 +1105,7 @@ class FA {
             ns.push(idx);
         }
         ns.sort((x, y) => x - y);
-        for (const i of ns) {
-            result += (delim + i.toString(10));
-            delim = " ";
-        }
-        return result;
+        return ns.join(" ");
     }
     static _determinize(target, progress = null) {
         if (progress === null) {
@@ -3284,3 +3279,4 @@ class FA {
         faDirty=true;dirtyHandler();
     </script>
   </body>
+</html>

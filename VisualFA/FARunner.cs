@@ -7,11 +7,17 @@ using System.Text;
 namespace VisualFA
 {
 	#region FARunner
+	/// <summary>
+	/// Represents a runner that matches text
+	/// </summary>
 #if FALIB
 	public
 #endif
 	abstract partial class FARunner : IEnumerable<FAMatch>
 	{
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
 		protected internal FARunner()
 		{
 			position = -1;
@@ -19,16 +25,26 @@ namespace VisualFA
 			column = 1;
 			tabWidth = 4;
 		}
+		/// <summary>
+		/// The match enumerator
+		/// </summary>
 		public sealed class Enumerator : IEnumerator<FAMatch>
 		{
 			int _state;
 			FAMatch _current;
 			WeakReference<FARunner> _parent;
+			/// <summary>
+			/// Constructs a new instance
+			/// </summary>
+			/// <param name="parent">The parent runner</param>
 			public Enumerator(FARunner parent)
 			{
 				_parent = new WeakReference<FARunner>(parent);
 				_state = -2;
 			}
+			/// <summary>
+			/// Retreives the current match
+			/// </summary>
 			public FAMatch Current {
 				get {
 					if (_state == -3)
@@ -42,9 +58,15 @@ namespace VisualFA
 					return _current;
 				}
 			}
-
+			
 			object System.Collections.IEnumerator.Current { get { return Current; } }
 			void IDisposable.Dispose() { _state = -3; }
+			/// <summary>
+			/// Move to the next match
+			/// </summary>
+			/// <returns>True if there were more matches, otherwise false</returns>
+			/// <exception cref="ObjectDisposedException">The enumerator was disposed</exception>
+			/// <exception cref="InvalidOperationException">The enumerator is not over a valid codepoint</exception>
 			public bool MoveNext()
 			{
 				if (_state == -3)
@@ -69,6 +91,11 @@ namespace VisualFA
 				}
 				return true;
 			}
+			/// <summary>
+			/// Resets the enumerator to the beginning
+			/// </summary>
+			/// <exception cref="ObjectDisposedException">The enumerator was disposed</exception>
+			/// <exception cref="InvalidOperationException">The parent has been destroyed</exception>
 			public void Reset()
 			{
 				if (_state == -3)
@@ -96,17 +123,44 @@ namespace VisualFA
 				tabWidth = value;
 			}
 		}
+		/// <summary>
+		/// The tab width
+		/// </summary>
 		protected int tabWidth;
+		/// <summary>
+		/// The current position
+		/// </summary>
 		protected int position;
+		/// <summary>
+		/// The line
+		/// </summary>
 		protected int line;
+		/// <summary>
+		/// The column
+		/// </summary>
 		protected int column;
+		/// <summary>
+		/// Throws an exception for an invalid Unicode stream
+		/// </summary>
+		/// <param name="pos">The position</param>
+		/// <exception cref="IOException">Throws this when called</exception>
 		protected static void ThrowUnicode(int pos)
 		{
 			throw new IOException("Unicode error in stream at position " + pos.ToString());
 		}
-
+		/// <summary>
+		/// Retrieve the next match
+		/// </summary>
+		/// <returns>A <see cref="FAMatch"/> instance containing the match information</returns>
 		public abstract FAMatch NextMatch();
+		/// <summary>
+		/// Resets the runner to the beginning of the stream
+		/// </summary>
 		public abstract void Reset();
+		/// <summary>
+		/// Retrieves the match enumerator
+		/// </summary>
+		/// <returns>An enumerator that retrieves matches</returns>
 		public Enumerator GetEnumerator()
 		{
 			return new Enumerator(this);
@@ -116,20 +170,31 @@ namespace VisualFA
 	}
 	#endregion // FARunner
 	#region FAStringRunner
+	/// <summary>
+	/// Represents a <see cref="FARunner"/> over a string
+	/// </summary>
 #if FALIB
 	public
 #endif
 	abstract partial class FAStringRunner : FARunner
 	{
+		/// <summary>
+		/// Indicates that string spans are being used
+		/// </summary>
 		public static readonly bool UsingSpans =
 #if FALIB_SPANS
 			true;
 #else
 			false;
 #endif
-
-
+		/// <summary>
+		/// The input string
+		/// </summary>
 		protected string input_string;
+		/// <summary>
+		/// Sets the input
+		/// </summary>
+		/// <param name="string">The input string</param>
 		public void Set(string @string)
 		{
 			this.input_string = @string;
@@ -137,14 +202,23 @@ namespace VisualFA
 			line = 1;
 			column = 1;
 		}
+		/// <summary>
+		/// Resets the cursor to the beginning
+		/// </summary>
 		public override void Reset()
 		{
 			position = -1;
 			line = 1;
 			column = 1;
 		}
+		/// <summary>
+		/// Advances the cursor by one codepoint
+		/// </summary>
+		/// <param name="s">THe string</param>
+		/// <param name="ch">THe codepoint</param>
+		/// <param name="len">THe capture length</param>
+		/// <param name="first">True if this is the first advance, otherwise false</param>
 #if !FALIB_SMALLER
-		// much bigger, but faster code
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		protected void Advance(
@@ -210,14 +284,30 @@ namespace VisualFA
 	}
 #endregion // FAStringRunner
 	#region FATextReaderRunner
+	/// <summary>
+	/// Rerpresents a <see cref="FARunner"/> over a <see cref="TextReader"/>
+	/// </summary>
 #if FALIB
 	public
 #endif
 	abstract partial class FATextReaderRunner : FARunner
 	{
+		/// <summary>
+		/// The reader
+		/// </summary>
 		protected TextReader input_reader;
+		/// <summary>
+		/// The capture buffer
+		/// </summary>
 		protected StringBuilder capture = new StringBuilder();
+		/// <summary>
+		/// The current codepoint
+		/// </summary>
 		protected int current;
+		/// <summary>
+		/// Sets the source <see cref="TextReader"/> for the runner
+		/// </summary>
+		/// <param name="reader">The reader instance</param>
 		public void Set(TextReader reader)
 		{
 			this.input_reader = reader;
@@ -226,10 +316,17 @@ namespace VisualFA
 			line = 1;
 			column = 1;
 		}
+		/// <summary>
+		/// Resets the runner (not supported for this type of runner)
+		/// </summary>
+		/// <exception cref="NotSupportedException">This operation is not supported</exception>
 		public override void Reset()
 		{
 			throw new NotSupportedException();
 		}
+		/// <summary>
+		/// Advances to the next character position
+		/// </summary>
 		protected void Advance()
 		{
 			switch (this.current)
@@ -277,6 +374,9 @@ namespace VisualFA
 	}
 	#endregion // FATextReaderRunner
 	#region FAStringDfaTableRunner
+	/// <summary>
+	/// Represents a <see cref="FARunner"/> over a DFA state table and a string
+	/// </summary>
 #if FALIB
 	public
 #endif
@@ -284,11 +384,20 @@ namespace VisualFA
 	{
 		private readonly int[] _dfa;
 		private readonly int[][] _blockEnds;
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
+		/// <param name="dfa">The DFA table</param>
+		/// <param name="blockEnds">The array of block end DFA tables</param>
 		public FAStringDfaTableRunner(int[] dfa, int[][] blockEnds = null)
 		{
 			_dfa = dfa;
 			_blockEnds = blockEnds;
 		}
+		/// <summary>
+		/// Retrieves the next match
+		/// </summary>
+		/// <returns>A <see cref="FAMatch"/> instance containing the match information</returns>
 		public override FAMatch NextMatch()
 		{
 			return _NextImpl(input_string);
@@ -470,6 +579,9 @@ namespace VisualFA
 	}
 #endregion // FAStringDfaTableRunner
 	#region FATextReaderDfaTableRunner
+	/// <summary>
+	/// Represents a <see cref="FARunner"/> over a DFA state table and a <see cref="TextReader"/>
+	/// </summary>
 #if FALIB
 	public
 #endif
@@ -477,11 +589,20 @@ namespace VisualFA
 	{
 		private readonly int[] _dfa;
 		private readonly int[][] _blockEnds;
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
+		/// <param name="dfa">The dfa array</param>
+		/// <param name="blockEnds">The block end arrays</param>
 		public FATextReaderDfaTableRunner(int[] dfa, int[][] blockEnds = null)
 		{
 			_dfa = dfa;
 			_blockEnds = blockEnds;
 		}
+		/// <summary>
+		/// Retrieve the next match
+		/// </summary>
+		/// <returns>A <see cref="FAMatch"/> instance with the match infornmation</returns>
 		public override FAMatch NextMatch()
 		{
 			int tlen;
@@ -626,6 +747,9 @@ namespace VisualFA
 	}
 	#endregion // FATextReaderDfaTableRunner
 	#region FAStringStateRunner
+	/// <summary>
+	/// Represents a <see cref="FARunner"/> over a state machine and a string
+	/// </summary>
 #if FALIB
 	public
 #endif
@@ -636,6 +760,12 @@ namespace VisualFA
 		readonly List<FA> _states;
 		readonly List<FA> _nexts;
 		readonly List<FA> _initial;
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
+		/// <param name="fa">The FSM</param>
+		/// <param name="blockEnds">The block end array</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public FAStringStateRunner(FA fa, FA[] blockEnds = null)
 		{
 			if (null == fa)
@@ -648,6 +778,10 @@ namespace VisualFA
 			_nexts = new List<FA>();
 			_initial = new List<FA>();
 		}
+		/// <summary>
+		/// Rerieves the next match
+		/// </summary>
+		/// <returns>A <see cref="FAMatch"/> instance containing the match information</returns>
 		public override FAMatch NextMatch()
 		{
 			return _NextImpl(input_string);
@@ -966,6 +1100,9 @@ namespace VisualFA
 	}
 #endregion // FAStringStateRunner
 	#region FATextReaderDfaTableRunner
+	/// <summary>
+	/// Represents a <see cref="FARunner"/> over a <see cref="TextReader"/> and a <see cref="FA"/> state machine
+	/// </summary>
 #if FALIB
 	public
 #endif
@@ -976,6 +1113,12 @@ namespace VisualFA
 		readonly List<FA> _states;
 		readonly List<FA> _nexts;
 		readonly List<FA> _initial;
+		/// <summary>
+		/// Constructs a new instance
+		/// </summary>
+		/// <param name="fa">The state machine</param>
+		/// <param name="blockEnds">An array of state machines representing the block ends</param>
+		/// <exception cref="ArgumentNullException"><paramref name="fa"/> was null</exception>
 		public FATextReaderStateRunner(FA fa, FA[] blockEnds = null)
 		{
 			if (null == fa)
@@ -988,6 +1131,10 @@ namespace VisualFA
 			_nexts = new List<FA>();
 			_initial = new List<FA>();
 		}
+		/// <summary>
+		/// Retrieved the next match in the text
+		/// </summary>
+		/// <returns></returns>
 		public override FAMatch NextMatch()
 		{
 			capture.Clear();

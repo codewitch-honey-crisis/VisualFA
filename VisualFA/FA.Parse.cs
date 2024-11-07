@@ -652,6 +652,13 @@ namespace VisualFA
 				}
 			}
 		}
+		/// <summary>
+		/// Parses a regular expression into a state machine
+		/// </summary>
+		/// <param name="text">The text to parse</param>
+		/// <param name="accept">The accept id</param>
+		/// <param name="compact">True to create a compact NFA, false to create an expanded NFA</param>
+		/// <returns></returns>
 		public static FA Parse(string text, int accept = 0, bool compact = true)
 		{
 			StringCursor pc = new StringCursor();

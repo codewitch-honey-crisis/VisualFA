@@ -344,7 +344,6 @@ namespace Scratch2
 				Console.WriteLine(match.ToString());
 			}
 
-			return;
 			var expandedNfa = FA.Parse(@"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?", 0, false);
 			//expandedNfa.RenderToFile(@"..\..\..\num_xnfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
 			// set the ids, essentially marking this specific state as the root of the machine
