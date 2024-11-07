@@ -127,25 +127,8 @@ class FAMatch {
         this.column = column;
     }
     toString() {
-        let sb = "";
-        sb += "[SymbolId: ";
-        sb += this.symbolId;
-        sb += ", Value: ";
-        if (this.value !== null && this.value !== undefined) {
-            sb += "\"";
-            sb += this.value.replace("\r", "\\r").replace("\t", "\\t").replace("\n", "\\n").replace("\v", "\\v");
-            sb += "\", Position: ";
-        }
-        else {
-            sb += "null, Position: ";
-        }
-        sb += this.position;
-        sb += " (";
-        sb += this.line;
-        sb += ", ";
-        sb += this.column;
-        sb += ")]";
-        return sb;
+        const vu = (this.value===null||this.value===undefined)?"null":"\""+this.value.replace("\r", "\\r").replace("\t", "\\t").replace("\n", "\\n").replace("\v", "\\v")+"\"";
+        return `[SymbplId: ${this.symbolId}, Value: ${vu}, Position: ${this.position}, Line: ${this.line}, Column: ${this.column}]`;
     }
 }
 ;
@@ -2213,7 +2196,7 @@ class FA {
                 const s = ch;
                 const isletter = s.toLowerCase() != s.toUpperCase();
                 const isdigit = !isletter && (s >= '0' && s <= '9');
-                const issym = !isletter && !isdigit && ",._-<>/\\=+~`!@#$%^&*(){}[]\"\';:?".indexOf(s) > -1;
+                const issym = !isletter && !isdigit && " \r\n\t\f\v,._-<>/\\=+~`!@#$%^&*(){}[]\"\';:?".indexOf(s) > -1;
                 if (!isletter && !isdigit && !issym) {
                     if (s.length == 1) {
                         result += "\\u";
@@ -2274,7 +2257,7 @@ class FA {
                 const s = ch;
                 const isletter = s.toLowerCase() != s.toUpperCase();
                 const isdigit = !isletter && (s >= '0' && s <= '9');
-                const issym = !isletter && !isdigit && ",._-<>/\\=+~`!@#$%^&*(){}[]\"\';:?".indexOf(s) > -1;
+                const issym = !isletter && !isdigit && " \r\n\t\v\f,._-<>/\\=+~`!@#$%^&*(){}[]\"\';:?".indexOf(s) > -1;
                 if (!isletter && !isdigit && !issym) {
                     if (s.length == 1) {
                         result += "\\u";
@@ -2467,22 +2450,14 @@ class FA {
                         // do epsilons
                         for (const fat of cbfa.transitions) {
                             if (fat.isEpsilon()) {
-                                result += ("pfx" + "blockEnd" + i.toString(10) + spfx + qi.toString(10));
-                                result += "->";
                                 const di = bclose.indexOf(fat.to);
-                                result += ("pfx" + "blockEnd" + i.toString(10) + spfx + di.toString(10));
-                                result += " [style=dashed,color=gray]\n";
+                                result+=`${pfx}blockEnd${i}${spfx}${qi}->${pfx}blockEnd${i}${spfx}${di} [style=dashed,color=gray]\n`;
                             }
                         }
                     }
                     for (let qi = 0; qi < bclose.length; ++qi) {
                         const cbfa = bclose[qi];
-                        result += (pfx + "blockEnd" + i.toString(10) + spfx + qi.toString(10) + " [label=<");
-                        result += "<TABLE BORDER=\"0\"><TR><TD>";
-                        result += ("(be)" + spfx);
-                        result += "<SUB>";
-                        result += qi.toString(10);
-                        result += "</SUB></TD></TR>";
+                        result+= `${pfx}blockEnd${i}${spfx}${qi} [label=<<TABLE BORDER="0"><TR><TD>(be)${spfx}<SUB>${qi}</SUB></TD></TR>`;
                         if (cbfa.isAccepting() && !options.hideAcceptSymbolIds) {
                             result += "<TD><TD>";
                             let acc = null;
@@ -2495,8 +2470,7 @@ class FA {
                             result += acc.replace("\"", "&quot;");
                             result += "</TD></TR>";
                         }
-                        result += "</TABLE>";
-                        result += ">";
+                        result += "</TABLE>>";
                         if (cbfa.isAccepting()) {
                             result += ",shape=doublecircle";
                         }
