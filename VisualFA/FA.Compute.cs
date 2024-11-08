@@ -59,7 +59,7 @@ namespace VisualFA
 			for (int i = 0; i < _transitions.Count; ++i)
 			{
 				var t = _transitions[i];
-				if (t.Min == -1 && t.Max == -1)
+				if (t.IsEpsilon)
 				{
 					if (t.To.IsCompact)
 					{
@@ -260,7 +260,7 @@ namespace VisualFA
 				sortedTrans.Sort(_TransitionComparison);
 				foreach (var t in sortedTrans)
 				{
-					if (t.Min == -1 && t.Max == -1)
+					if (t.IsEpsilon)
 					{
 						continue;
 					}
@@ -606,7 +606,7 @@ namespace VisualFA
 					for (int j = 0; j < fa._transitions.Count; ++j)
 					{
 						var fat = fa._transitions[j];
-						if (fat.Min == -1 && fat.Max == -1)
+						if (fat.IsEpsilon)
 						{
 							fa._transitions.RemoveAt(j);
 							--j;
@@ -660,7 +660,7 @@ namespace VisualFA
 				p.Add(0);
 				foreach (var t in ffa._transitions)
 				{
-					if (t.Min == -1 && t.Max == -1)
+					if (t.IsEpsilon)
 					{
 						continue;
 					}
@@ -758,7 +758,7 @@ namespace VisualFA
 							for (int k = 0; k < efa._transitions.Count; ++k)
 							{
 								var trns = efa._transitions[k];
-								if (trns.Min == -1 && trns.Max == -1)
+								if (trns.IsEpsilon)
 								{
 									continue;
 								}
@@ -863,7 +863,7 @@ namespace VisualFA
 			for (var i = 0; i < _transitions.Count; ++i)
 			{
 				var t = _transitions[i];
-				if (t.Min == -1 && t.Max == -1)
+				if (t.IsEpsilon)
 				{
 					continue;
 				}
@@ -892,7 +892,7 @@ namespace VisualFA
 
 			foreach (var trns in _transitions)
 			{
-				if (!includeEpsilons && (trns.Min == -1 && trns.Max == -1))
+				if (!includeEpsilons && trns.IsEpsilon)
 				{
 					continue;
 				}
@@ -935,7 +935,7 @@ namespace VisualFA
 			for (var i = 0; i < _transitions.Count; ++i)
 			{
 				var t = _transitions[i];
-				if (t.Min == -1 && t.Max == -1)
+				if (t.IsEpsilon)
 				{
 					result.Add(i);
 				}
@@ -965,7 +965,7 @@ namespace VisualFA
 				{
 					var fat = state._transitions[i];
 					// epsilon dsts should already be in states:
-					if (fat.Min == -1 && fat.Max == -1)
+					if (fat.IsEpsilon)
 					{
 						continue;
 					}

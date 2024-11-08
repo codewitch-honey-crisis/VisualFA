@@ -224,7 +224,7 @@ namespace VisualFA
 				// do epsilons
 				foreach (var fat in ffa._transitions)
 				{
-					if (fat.Min == -1 && fat.Max == -1)
+					if (fat.IsEpsilon)
 					{
 						var istrns = null != toStates && options.DebugString != null && toStates.Contains(ffa) && toStates.Contains(fat.To);
 						writer.Write(pfx + spfx);
@@ -292,7 +292,7 @@ namespace VisualFA
 							// do epsilons
 							foreach (var fat in cbfa._transitions)
 							{
-								if (fat.Min == -1 && fat.Max == -1)
+								if (fat.IsEpsilon)
 								{
 									writer.Write(pfx + "blockEnd" + i.ToString() + spfx + qi.ToString());
 									writer.Write("->");

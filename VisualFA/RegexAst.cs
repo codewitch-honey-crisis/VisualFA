@@ -1109,7 +1109,7 @@ namespace VisualFA
 					if (trns.Value.Count == 1 && trns.Value[0].Min == trns.Value[0].Max)
 					{
 						var range = trns.Value[0];
-						if (range.Min == -1 && range.Max == -1)
+						if (range.Min == -1 || range.Max == -1)
 						{
 							var eedge = new _ExpEdge();
 							eedge.Exp = null;
@@ -1133,7 +1133,7 @@ namespace VisualFA
 								rxcs.Entries.Add(new RegexCharsetRangeEntry(range.Min, range.Max));
 							} else
 							{
-								if (range.Min == -1 && range.Max == -1)
+								if (range.Min == -1 || range.Max == -1)
 								{
 									var eedge = new _ExpEdge();
 									eedge.Exp = null;

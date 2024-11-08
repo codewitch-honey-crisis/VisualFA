@@ -105,7 +105,7 @@ namespace VisualFA
 					if (trns.Value.Count == 1 && trns.Value[0].Min == trns.Value[0].Max)
 					{
 						var range = trns.Value[0];
-						if (range.Min == -1 && range.Max == -1)
+						if (range.Min == -1 || range.Max == -1)
 						{
 							var eedge = new _ExpEdge();
 							eedge.Exp = string.Empty;
