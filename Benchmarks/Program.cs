@@ -3,6 +3,8 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+
+
 const char _ProgressBlock = '■';
 const string _ProgressBack = "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b";
 const int _Iterations = 10000;
@@ -101,6 +103,7 @@ foreach (var ex in exprs)
 	delim = "|";
 }
 var expr = sb.ToString();
+
 var rx = new Regex(expr, RegexOptions.CultureInvariant);
 var rxc = new Regex(expr, RegexOptions.Compiled | RegexOptions.CultureInvariant);
 var stringRunner = new BenchFAStringRunner();
@@ -163,7 +166,32 @@ while(!Console.KeyAvailable)
 	}
 	_WriteProgressBar(100, true);
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
-	
+
+	mc = 0;
+	m = rxc.Match(search);
+	while (m.Success)
+	{
+		m = m.NextMatch();
+	}
+	sw.Reset();
+	Console.Write("Microsoft Regex generated Lexer (simulated): ");
+	_WriteProgressBar(0, false);
+	for (var i = 0; i < _Iterations; ++i)
+	{
+		if (Console.KeyAvailable) return;
+		sw.Start();
+		m = GenRegex.Lexer().Match(search);
+		while (m.Success)
+		{
+			++mc;
+			m = m.NextMatch();
+		}
+		sw.Stop();
+		_WriteProgressBar(i / _Divisor, true);
+	}
+	_WriteProgressBar(100, true);
+	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+
 	Console.Write("FAStringRunner (generated): ");
 	mc=_RunBench(stringRunner, search, sw);
 	if (mc == -1) return;
@@ -217,4 +245,10 @@ while(!Console.KeyAvailable)
 	mc = _RunBench(compiledTextRunner, search, sw);
 	if (mc == -1) return;
 	Console.WriteLine(" Found {0} matches in {1}ms", mc, sw.ElapsedMilliseconds);
+}
+
+partial class GenRegex
+{
+	[GeneratedRegex("([A-Za-z_][A-Za-z0-9_]*)|(0|\\-?[1-9][0-9]*(\\.[0-9]+([Ee]\\-?[1-9][0-9]*)?)?)|([ \\t\\r\\n]+)", RegexOptions.CultureInvariant)]
+	public static partial Regex Lexer();
 }

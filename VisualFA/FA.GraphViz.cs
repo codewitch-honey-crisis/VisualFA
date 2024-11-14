@@ -88,6 +88,7 @@ namespace VisualFA
 			}
 			writer.WriteLine("}");
 		}
+		
 		/// <summary>
 		/// Writes a Graphviz dot specification of the specified closure to the specified <see cref="TextWriter"/>
 		/// </summary>
@@ -192,7 +193,7 @@ namespace VisualFA
 					var sb = new StringBuilder();
 					//var notRanges = new List<FARange>(FARange.ToNotRanges(rngGrp.Value));
 					var notRanges = new List<FARange>(_InvertRanges(rngGrp.Value));
-					if (notRanges.Count > rngGrp.Value.Count)
+					if (notRanges.Count*1.5 > rngGrp.Value.Count)
 					{
 						_AppendRangeTo(sb, rngGrp.Value);
 					} else
