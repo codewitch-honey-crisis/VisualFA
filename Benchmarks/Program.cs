@@ -91,8 +91,13 @@ var textCNfaRunner = new FATextReaderStateRunner(lexerCNfa);
 var stringDfaRunner = new FAStringStateRunner(lexerDfa);
 var textDfaRunner = new FATextReaderStateRunner(lexerDfa);
 var search = "the quick brown fox jumped over the lazy dog 23.5 times ";
-
 var sb = new StringBuilder();
+for(int i = 0;i<100;++i)
+{
+	sb.Append(search);
+}
+search = sb.ToString();
+sb.Clear();
 var delim = "";
 foreach (var ex in exprs)
 {
