@@ -319,6 +319,45 @@ namespace Scratch2
 	}
 	internal class Program
 	{
+		static void PrintArray(int[] arr)
+		{
+			Console.Write("[");
+			Console.Write(arr[0]);
+			for (int i = 1; i < arr.Length; i++)
+			{
+				Console.Write($", {arr[i]}");
+			}
+            Console.WriteLine("]");
+        }
+		static void Main()
+		{
+			//var first = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_') }, 0, false);
+			//var next = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_'), new FARange('_', '_') }, 0, false);
+			//var ident = FA.Concat(new FA[] { first, FA.Repeat(next, 0, 0, 0, false) }, 0, false);
+			//PrintArray(ident.ToArray());
+			//var dfa = ident.ToDfa();
+			//PrintArray(dfa.ToArray());
+			//var mdfa = ident.ToMinimizedDfa();
+			//PrintArray(mdfa.ToArray());
+			var test = FA.Literal("h", 0, false);
+            test = FA.Repeat(test, 0, 0, 0, false);
+			int sum = 0;
+			foreach(var fa in test.FillClosure())
+			{
+				sum += fa.Transitions.Count;
+			}
+			Console.WriteLine($"Transitions: {sum}");
+			var cl = test.FillClosure();
+			PrintArray(test.ToArray());
+			PrintArray(test.ToDfa().ToArray());
+			test.ToDfa().RenderToFile(@"..\..\..\test.jpg");
+
+		}
+        static void Main3() {
+			var fa = FA.Parse("(\\/api\\/spiffs\\/(.*))|(\\/api\\/sdcard\\/(.*))");
+			fa.RenderToFile(@"..\..\..\debug.jpg", new FADotGraphOptions() { Vertical = true });
+
+		}
 		static void _PrintStates(IEnumerable<FA> states)
 		{
 			Console.Write("{ ");
@@ -331,55 +370,6 @@ namespace Scratch2
 			}
 			Console.WriteLine(" }");
 		}
-		static void Main()
-		{
-			var ident = FA.Parse("[_A-Za-z][_0-9A-Za-z]*").ToMinimizedDfa();
-			var num = FA.Parse("[0-9]+", 1).ToMinimizedDfa();
-			var fa = FA.ToLexer(new List<FA> { ident, num });
-			var table = fa.ToArray();
-			var runner = new FAStringStateRunner2(fa);
-			runner.Set("foo123 456 bar baz789");
-			foreach (var match in runner)
-			{
-				Console.WriteLine(match.ToString());
-			}
-
-			var expandedNfa = FA.Parse(@"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?", 0, false);
-			//expandedNfa.RenderToFile(@"..\..\..\num_xnfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
-			// set the ids, essentially marking this specific state as the root of the machine
-			expandedNfa.SetIds();
-			// print the total states
-			Console.WriteLine("Total states: {0}", expandedNfa.FillClosure().Count);
-			// run some filters
-			Console.Write("Accepting states: ");
-			_PrintStates(expandedNfa.FillFind(FA.AcceptingFilter));
-			Console.Write("Neutral states: ");
-			_PrintStates(expandedNfa.FillFind(FA.NeutralFilter));
-			Console.WriteLine("Compacting nfa");
-			var compactNfa = expandedNfa.ToCompact();
-			//compactNfa.RenderToFile(@"..\..\..\num_cnfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
-			compactNfa.SetIds();
-			Console.WriteLine("Total states: {0}", compactNfa.FillClosure().Count);
-			Console.Write("Accepting states: ");
-			_PrintStates(compactNfa.FillFind(FA.AcceptingFilter));
-			Console.WriteLine("Making minimized DFA");
-			var minDfa = compactNfa.ToMinimizedDfa();
-			//minDfa.RenderToFile(@"..\..\..\num_mdfa.jpg", new FADotGraphOptions() { HideAcceptSymbolIds = true });
-			minDfa.SetIds();
-			Console.WriteLine("Total states: {0}", minDfa.FillClosure().Count);
-			Console.Write("Accepting states: ");
-			_PrintStates(minDfa.FillFind(FA.AcceptingFilter));
-
-
-
-		}
-		static void Main2()
-		{
-			using (var reader = new StreamReader(@"..\..\..\data.json"))
-			{
-				dynamic? obj = Json.JsonObject.Parse(reader);
-				Console.WriteLine(obj!.seasons[1].episodes[0].overview);
-			}
-		}
+		
 	}
 }

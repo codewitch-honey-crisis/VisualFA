@@ -643,10 +643,23 @@ namespace VisualFA
 			result.Compact();
 			return result;
 		}
+		static void PrintIds(IEnumerable<FA> fas)
+		{
+			var delim = "[";
+			foreach (var fa in fas) {
+				Console.Write($"{delim}{fa.Id}");
+				delim = ", ";
+			}
+			if (delim != "[")
+			{
+				Console.WriteLine("]");
+			}
+		}
 		#endregion // Compact()
 		#region _Determinize()
 		private static FA _Determinize(FA fa, IProgress<int> progress)
 		{
+			fa.SetIds();
 			// initialize
 			int prog = 0;
 			progress?.Report(prog);
@@ -745,7 +758,8 @@ namespace VisualFA
 							if (_Seen == null) { _Seen = new HashSet<FA>(); }
 							_Seen.Clear();
 							c._EpsilonClosure(ecs, _Seen);
-						}
+
+                        }
 						else
 						{
 							ecs.Add(c);
@@ -808,7 +822,13 @@ namespace VisualFA
 						var fas = new List<FA>(set);
 						// TODO: we should really sort fas
 						newfa.FromStates = fas.ToArray();
-					}
+                        Console.WriteLine($"new state: states = {set.Count}");
+						PrintIds(set);
+                    } else
+					{
+                        Console.WriteLine($"existing state: states = {set.Count}");
+                        PrintIds(set);
+                    }
 
 					FA dst = dfaMap[set];
 					// find the first and last range to insert
@@ -1030,9 +1050,13 @@ namespace VisualFA
 			// hack - we allow this method so the set can be filled
 			public bool Add(T item)
 			{
-				if (null != item)
+				if (null!=item && _inner.Add(item))
+				{
 					_hashCode ^= item.GetHashCode();
-				return _inner.Add(item);
+					return true;
+				}
+				return false;
+				 
 			}
 			bool ISet<T>.Add(T item)
 			{

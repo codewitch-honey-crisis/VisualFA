@@ -990,27 +990,28 @@ public void Compact(){Compact(FillClosure());}/// <summary>
 /// Collapses epsilons in a copy of the current state machine.
 /// </summary>
 /// <returns>A copy of the current state machine with epsilons collapsed</returns>
-public FA ToCompact(){var result=Clone();result.Compact();return result;}
+public FA ToCompact(){var result=Clone();result.Compact();return result;}static void PrintIds(IEnumerable<FA>fas){var delim="[";foreach(var fa in fas)
+{Console.Write($"{delim}{fa.Id}");delim=", ";}if(delim!="["){Console.WriteLine("]");}}
 #endregion // Compact()
 #region _Determinize()
-private static FA _Determinize(FA fa,IProgress<int>progress){ int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();fa.FillClosure(closure);
- for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.IsEpsilon){continue;}p.Add(t.Min);if(t.Max
-<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(points,0);Array.Sort(points);++prog;progress?.Report(prog);var sets=new Dictionary<_KeySet<FA>,
-_KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();var epscl=new List<FA>();
-List<FA>ecs=new List<FA>();List<FA>efcs=null;if(_Seen==null){_Seen=new HashSet<FA>();}_Seen.Clear();fa._EpsilonClosure(epscl,_Seen);for(int i=0;i<epscl.Count;
-++i){var efa=epscl[i];initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var result=new FA();result.IsDeterministic=true;result.FromStates
-=epscl.ToArray();foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;break;}}++prog;progress?.Report(prog); dfaMap.Add(initial,
-result);while(working.Count>0){ var s=working.Dequeue(); FA dfa=dfaMap[s]; foreach(FA q in s){if(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;
-}} for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s){ ecs.Clear();if(!c.IsCompact){ if(_Seen==null){_Seen
-=new HashSet<FA>();}_Seen.Clear();c._EpsilonClosure(ecs,_Seen);}else{ecs.Add(c);}for(int j=0;j<ecs.Count;++j){var efa=ecs[j]; for(int k=0;k<efa._transitions.Count;
+private static FA _Determinize(FA fa,IProgress<int>progress){fa.SetIds(); int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();
+fa.FillClosure(closure); for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.IsEpsilon){continue;
+}p.Add(t.Min);if(t.Max<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(points,0);Array.Sort(points);++prog;progress?.Report(prog);var
+ sets=new Dictionary<_KeySet<FA>,_KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();
+var epscl=new List<FA>();List<FA>ecs=new List<FA>();List<FA>efcs=null;if(_Seen==null){_Seen=new HashSet<FA>();}_Seen.Clear();fa._EpsilonClosure(epscl,
+_Seen);for(int i=0;i<epscl.Count;++i){var efa=epscl[i];initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var result=new FA();result.IsDeterministic
+=true;result.FromStates=epscl.ToArray();foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;break;}}++prog;progress?.Report(prog);
+ dfaMap.Add(initial,result);while(working.Count>0){ var s=working.Dequeue(); FA dfa=dfaMap[s]; foreach(FA q in s){if(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;
+break;}} for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s){ ecs.Clear();if(!c.IsCompact){ if(_Seen==null)
+{_Seen=new HashSet<FA>();}_Seen.Clear();c._EpsilonClosure(ecs,_Seen);}else{ecs.Add(c);}for(int j=0;j<ecs.Count;++j){var efa=ecs[j]; for(int k=0;k<efa._transitions.Count;
 ++k){var trns=efa._transitions[k];if(trns.IsEpsilon){continue;} if(trns.Min<=pnt&&pnt<=trns.Max){ if(trns.To.IsCompact){set.Add(trns.To);}else{if(efcs
 ==null){efcs=new List<FA>();}efcs.Clear();if(_Seen==null){_Seen=new HashSet<FA>();}_Seen.Clear();trns.To._EpsilonClosure(efcs,_Seen);for(int m=0;m<efcs.Count;
 ++m){set.Add(efcs[m]);}}}}} _Seen.Clear();} if(!sets.ContainsKey(set)){sets.Add(set,set); working.Enqueue(set); var newfa=new FA();newfa.IsDeterministic
-=true;newfa.IsCompact=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set); newfa.FromStates=fas.ToArray();}FA dst=dfaMap[set]; int first=pnt;int last;
-if(i+1<points.Length){last=(points[i+1]-1);}else{last=0x10ffff;} dfa._transitions.Add(new FATransition(dst,first,last));++prog;progress?.Report(prog);
-}++prog;progress?.Report(prog);} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns)
-{var acc=trns.To.FindFirst(AcceptingFilter);if(acc==null){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;progress?.Report(prog);
-return result;}
+=true;newfa.IsCompact=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set); newfa.FromStates=fas.ToArray();Console.WriteLine($"new state: states = {set.Count}");
+PrintIds(set);}else{Console.WriteLine($"existing state: states = {set.Count}");PrintIds(set);}FA dst=dfaMap[set]; int first=pnt;int last;if(i+1<points.Length)
+{last=(points[i+1]-1);}else{last=0x10ffff;} dfa._transitions.Add(new FATransition(dst,first,last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);
+} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns){var acc=trns.To.FindFirst(AcceptingFilter);
+if(acc==null){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;progress?.Report(prog);return result;}
 #endregion // _Determinize()
 /// <summary>
 /// Retrieves a transition index given a specified UTF32 codepoint
@@ -1056,17 +1057,18 @@ public FA Move(int codepoint){if(!IsDeterministic){throw new InvalidOperationExc
 #region _KeySet
 private sealed class _KeySet<T>:ISet<T>,IEquatable<_KeySet<T>>{HashSet<T>_inner;int _hashCode;public _KeySet(IEqualityComparer<T>comparer){_inner=new HashSet<T>(comparer);
 _hashCode=0;}public _KeySet(){_inner=new HashSet<T>();_hashCode=0;}public int Count=>_inner.Count;public bool IsReadOnly=>true; public bool Add(T item)
-{if(null!=item)_hashCode^=item.GetHashCode();return _inner.Add(item);}bool ISet<T>.Add(T item){_ThrowReadOnly();return false;}public void Clear(){_ThrowReadOnly();
-}public bool Contains(T item){return _inner.Contains(item);}public void CopyTo(T[]array,int arrayIndex){_inner.CopyTo(array,arrayIndex);}void ISet<T>.ExceptWith(IEnumerable<T>
-other){_ThrowReadOnly();}public IEnumerator<T>GetEnumerator(){return _inner.GetEnumerator();}void ISet<T>.IntersectWith(IEnumerable<T>other){_ThrowReadOnly();
-}public bool IsProperSubsetOf(IEnumerable<T>other){return _inner.IsProperSubsetOf(other);}public bool IsProperSupersetOf(IEnumerable<T>other){return _inner.IsProperSupersetOf(other);
-}public bool IsSubsetOf(IEnumerable<T>other){return _inner.IsSubsetOf(other);}public bool IsSupersetOf(IEnumerable<T>other){return _inner.IsSupersetOf(other);
-}public bool Overlaps(IEnumerable<T>other){return _inner.Overlaps(other);}bool ICollection<T>.Remove(T item){_ThrowReadOnly();return false;}public bool
- SetEquals(IEnumerable<T>other){return _inner.SetEquals(other);}void ISet<T>.SymmetricExceptWith(IEnumerable<T>other){_ThrowReadOnly();}void ISet<T>.UnionWith(IEnumerable<T>
-other){_ThrowReadOnly();}void ICollection<T>.Add(T item){_ThrowReadOnly();}System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-{return _inner.GetEnumerator();}static void _ThrowReadOnly(){throw new NotSupportedException("The set is read only");}public bool Equals(_KeySet<T>rhs)
-{if(ReferenceEquals(this,rhs))return true;if(ReferenceEquals(rhs,null))return false;if(rhs._hashCode!=_hashCode)return false;var ic=_inner.Count;if(ic
-!=rhs._inner.Count)return false;return _inner.SetEquals(rhs._inner);}public override int GetHashCode(){return _hashCode;}}
+{if(null!=item&&_inner.Add(item)){_hashCode^=item.GetHashCode();return true;}return false;}bool ISet<T>.Add(T item){_ThrowReadOnly();return false;}public
+ void Clear(){_ThrowReadOnly();}public bool Contains(T item){return _inner.Contains(item);}public void CopyTo(T[]array,int arrayIndex){_inner.CopyTo(array,
+arrayIndex);}void ISet<T>.ExceptWith(IEnumerable<T>other){_ThrowReadOnly();}public IEnumerator<T>GetEnumerator(){return _inner.GetEnumerator();}void ISet<T>.IntersectWith(IEnumerable<T>
+other){_ThrowReadOnly();}public bool IsProperSubsetOf(IEnumerable<T>other){return _inner.IsProperSubsetOf(other);}public bool IsProperSupersetOf(IEnumerable<T>
+other){return _inner.IsProperSupersetOf(other);}public bool IsSubsetOf(IEnumerable<T>other){return _inner.IsSubsetOf(other);}public bool IsSupersetOf(IEnumerable<T>
+other){return _inner.IsSupersetOf(other);}public bool Overlaps(IEnumerable<T>other){return _inner.Overlaps(other);}bool ICollection<T>.Remove(T item){
+_ThrowReadOnly();return false;}public bool SetEquals(IEnumerable<T>other){return _inner.SetEquals(other);}void ISet<T>.SymmetricExceptWith(IEnumerable<T>
+other){_ThrowReadOnly();}void ISet<T>.UnionWith(IEnumerable<T>other){_ThrowReadOnly();}void ICollection<T>.Add(T item){_ThrowReadOnly();}System.Collections.IEnumerator
+ System.Collections.IEnumerable.GetEnumerator(){return _inner.GetEnumerator();}static void _ThrowReadOnly(){throw new NotSupportedException("The set is read only");
+}public bool Equals(_KeySet<T>rhs){if(ReferenceEquals(this,rhs))return true;if(ReferenceEquals(rhs,null))return false;if(rhs._hashCode!=_hashCode)return
+ false;var ic=_inner.Count;if(ic!=rhs._inner.Count)return false;return _inner.SetEquals(rhs._inner);}public override int GetHashCode(){return _hashCode;
+}}
 #endregion // _KeySet
 #region _FList
 private sealed class _FListNode{public _FListNode(FA q,_FList sl){State=q;StateList=sl;if(sl.Count++==0){sl.First=sl.Last=this;}else{System.Diagnostics.Debug.Assert(sl.Last

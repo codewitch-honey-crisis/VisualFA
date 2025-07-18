@@ -1339,7 +1339,7 @@ class FA {
         split2.fill(false, 0, split2.length - 1);
         let refine = new Array();
         const refine2 = new Array(states.length);
-        split2.fill(false, 0, refine2.length - 1);
+        refine2.fill(false, 0, refine2.length - 1);
         const splitBlock = new Array(states.length);
         splitBlock.fill(null, 0, splitBlock.length - 1);
         ++prog;
