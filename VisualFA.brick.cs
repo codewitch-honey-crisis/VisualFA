@@ -990,8 +990,7 @@ public void Compact(){Compact(FillClosure());}/// <summary>
 /// Collapses epsilons in a copy of the current state machine.
 /// </summary>
 /// <returns>A copy of the current state machine with epsilons collapsed</returns>
-public FA ToCompact(){var result=Clone();result.Compact();return result;}static void PrintIds(IEnumerable<FA>fas){var delim="[";foreach(var fa in fas)
-{Console.Write($"{delim}{fa.Id}");delim=", ";}if(delim!="["){Console.WriteLine("]");}}
+public FA ToCompact(){var result=Clone();result.Compact();return result;}
 #endregion // Compact()
 #region _Determinize()
 private static FA _Determinize(FA fa,IProgress<int>progress){fa.SetIds(); int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();
@@ -1007,11 +1006,11 @@ break;}} for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<
 ++k){var trns=efa._transitions[k];if(trns.IsEpsilon){continue;} if(trns.Min<=pnt&&pnt<=trns.Max){ if(trns.To.IsCompact){set.Add(trns.To);}else{if(efcs
 ==null){efcs=new List<FA>();}efcs.Clear();if(_Seen==null){_Seen=new HashSet<FA>();}_Seen.Clear();trns.To._EpsilonClosure(efcs,_Seen);for(int m=0;m<efcs.Count;
 ++m){set.Add(efcs[m]);}}}}} _Seen.Clear();} if(!sets.ContainsKey(set)){sets.Add(set,set); working.Enqueue(set); var newfa=new FA();newfa.IsDeterministic
-=true;newfa.IsCompact=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set); newfa.FromStates=fas.ToArray();Console.WriteLine($"new state: states = {set.Count}");
-PrintIds(set);}else{Console.WriteLine($"existing state: states = {set.Count}");PrintIds(set);}FA dst=dfaMap[set]; int first=pnt;int last;if(i+1<points.Length)
-{last=(points[i+1]-1);}else{last=0x10ffff;} dfa._transitions.Add(new FATransition(dst,first,last));++prog;progress?.Report(prog);}++prog;progress?.Report(prog);
-} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns){var acc=trns.To.FindFirst(AcceptingFilter);
-if(acc==null){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;progress?.Report(prog);return result;}
+=true;newfa.IsCompact=true;dfaMap.Add(set,newfa);var fas=new List<FA>(set); newfa.FromStates=fas.ToArray();}FA dst=dfaMap[set]; int first=pnt;int last;
+if(i+1<points.Length){last=(points[i+1]-1);}else{last=0x10ffff;} dfa._transitions.Add(new FATransition(dst,first,last));++prog;progress?.Report(prog);
+}++prog;progress?.Report(prog);} foreach(var ffa in result.FillClosure()){var itrns=new List<FATransition>(ffa._transitions);foreach(var trns in itrns)
+{var acc=trns.To.FindFirst(AcceptingFilter);if(acc==null){ffa._transitions.Remove(trns);}}++prog;progress?.Report(prog);}++prog;progress?.Report(prog);
+return result;}
 #endregion // _Determinize()
 /// <summary>
 /// Retrieves a transition index given a specified UTF32 codepoint

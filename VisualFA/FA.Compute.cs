@@ -643,18 +643,7 @@ namespace VisualFA
 			result.Compact();
 			return result;
 		}
-		static void PrintIds(IEnumerable<FA> fas)
-		{
-			var delim = "[";
-			foreach (var fa in fas) {
-				Console.Write($"{delim}{fa.Id}");
-				delim = ", ";
-			}
-			if (delim != "[")
-			{
-				Console.WriteLine("]");
-			}
-		}
+		
 		#endregion // Compact()
 		#region _Determinize()
 		private static FA _Determinize(FA fa, IProgress<int> progress)
@@ -822,12 +811,6 @@ namespace VisualFA
 						var fas = new List<FA>(set);
 						// TODO: we should really sort fas
 						newfa.FromStates = fas.ToArray();
-                        Console.WriteLine($"new state: states = {set.Count}");
-						PrintIds(set);
-                    } else
-					{
-                        Console.WriteLine($"existing state: states = {set.Count}");
-                        PrintIds(set);
                     }
 
 					FA dst = dfaMap[set];
