@@ -332,7 +332,7 @@ namespace Scratch2
 		static void Main()
 		{
 			var first = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_') }, 0, false);
-			var next = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_'), new FARange('_', '_') }, 0, false);
+			var next = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_'), new FARange('0', '9') }, 0, false);
 			var ident = FA.Concat(new FA[] { first, FA.Repeat(next, 0, 0, 0, false) }, 0, false);
 			PrintArray(ident.ToArray());
 			var dfa = ident.ToDfa();
