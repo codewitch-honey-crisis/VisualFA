@@ -1419,23 +1419,23 @@ _Seen);}if(null!=toStates){toStates=FillEpsilonClosure(toStates,null);}else{toSt
 &&FillEpsilonClosure(fromStates,null).Contains(ffa);var rngGrps=ffa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var istrns
 =isfrom&&null!=toStates&&options.DebugString!=null&&toStates.Contains(rngGrp.Key);var di=closure.IndexOf(rngGrp.Key);writer.Write(pfx+spfx);writer.Write(i);
 writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder(); var notRanges=new List<FARange>(_InvertRanges(rngGrp.Value));
-if(notRanges.Count*1.5>rngGrp.Value.Count){_AppendRangeTo(sb,rngGrp.Value);}else{sb.Append("^");_AppendRangeTo(sb,notRanges);}if(sb.Length!=1||" "==sb.ToString())
-{writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');}else writer.Write(_EscapeLabel(sb.ToString()));
-if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach(var fat in ffa._transitions){if(fat.IsEpsilon){var istrns=null!=toStates
-&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);writer.Write(pfx+spfx);writer.Write(i);writer.Write("->");writer.Write(pfx+spfx);
-writer.Write(closure.IndexOf(fat.To));if(!istrns){writer.WriteLine(" [style=dashed,color=gray]");}else{writer.WriteLine(" [style=dashed,color=green]");
-}}} if(hasBlockEnds&&ffa.IsAccepting&&options.BlockEnds?.Length>ffa.AcceptSymbol&&options.BlockEnds[ffa.AcceptSymbol]!=null){writer.Write(pfx+spfx+i.ToString()+"->");
-writer.Write(pfx+"blockEnd"+ffa.AcceptSymbol.ToString()+spfx+"0");writer.WriteLine(" [style=dashed,label=\".*?\"]");}++i;}string delim;if(hasBlockEnds)
-{for(i=0;i<options.BlockEnds?.Length;i++){var bfa=options.BlockEnds[i];if(bfa!=null){var bclose=bfa.FillClosure();delim="";for(var qi=0;qi<bclose.Count;
-++qi){var cbfa=bclose[qi];var rngGrps=cbfa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var di=bclose.IndexOf(rngGrp.Key);
-writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());writer.Write("->");writer.Write(pfx+"blockEnd"+i.ToString()+spfx+di.ToString());writer.Write(" [label=\"");
-var sb=new StringBuilder();_AppendRangeTo(sb,rngGrp.Value);if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");
-}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');}else{writer.Write(_EscapeLabel(sb.ToString()));}writer.WriteLine("\"]");} foreach(var fat
- in cbfa._transitions){if(fat.IsEpsilon){writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());writer.Write("->");var di=bclose.IndexOf(fat.To);
-writer.Write(pfx+"blockEnd"+i.ToString()+spfx+di.ToString());writer.WriteLine(" [style=dashed,color=gray]");}}}for(var qi=0;qi<bclose.Count;++qi){var cbfa
-=bclose[qi];writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString()+" [label=<");writer.Write("<TABLE BORDER=\"0\"><TR><TD>");writer.Write("(be)"+spfx);
-writer.Write("<SUB>");writer.Write(qi);writer.Write("</SUB></TD></TR>");if(cbfa.IsAccepting&&!options.HideAcceptSymbolIds){writer.Write("<TR><TD>");string
- acc=null;if(options.AcceptSymbolNames!=null&&options.AcceptSymbolNames.Length>i){acc=options.AcceptSymbolNames[i];}if(acc==null){acc=Convert.ToString(i);
+if(notRanges.Count*1.5>rngGrp.Value.Count){_AppendRangeTo(sb,rngGrp.Value);}else{if(notRanges.Count==0){sb.Append(".");}else{sb.Append("^");_AppendRangeTo(sb,
+notRanges);}}if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));
+writer.Write(']');}else writer.Write(_EscapeLabel(sb.ToString()));if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach
+(var fat in ffa._transitions){if(fat.IsEpsilon){var istrns=null!=toStates&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);
+writer.Write(pfx+spfx);writer.Write(i);writer.Write("->");writer.Write(pfx+spfx);writer.Write(closure.IndexOf(fat.To));if(!istrns){writer.WriteLine(" [style=dashed,color=gray]");
+}else{writer.WriteLine(" [style=dashed,color=green]");}}} if(hasBlockEnds&&ffa.IsAccepting&&options.BlockEnds?.Length>ffa.AcceptSymbol&&options.BlockEnds[ffa.AcceptSymbol]
+!=null){writer.Write(pfx+spfx+i.ToString()+"->");writer.Write(pfx+"blockEnd"+ffa.AcceptSymbol.ToString()+spfx+"0");writer.WriteLine(" [style=dashed,label=\".*?\"]");
+}++i;}string delim;if(hasBlockEnds){for(i=0;i<options.BlockEnds?.Length;i++){var bfa=options.BlockEnds[i];if(bfa!=null){var bclose=bfa.FillClosure();delim
+="";for(var qi=0;qi<bclose.Count;++qi){var cbfa=bclose[qi];var rngGrps=cbfa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var
+ di=bclose.IndexOf(rngGrp.Key);writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());writer.Write("->");writer.Write(pfx+"blockEnd"+i.ToString()
++spfx+di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder();_AppendRangeTo(sb,rngGrp.Value);if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');
+if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));writer.Write(']');}else{writer.Write(_EscapeLabel(sb.ToString()));
+}writer.WriteLine("\"]");} foreach(var fat in cbfa._transitions){if(fat.IsEpsilon){writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString());writer.Write("->");
+var di=bclose.IndexOf(fat.To);writer.Write(pfx+"blockEnd"+i.ToString()+spfx+di.ToString());writer.WriteLine(" [style=dashed,color=gray]");}}}for(var qi
+=0;qi<bclose.Count;++qi){var cbfa=bclose[qi];writer.Write(pfx+"blockEnd"+i.ToString()+spfx+qi.ToString()+" [label=<");writer.Write("<TABLE BORDER=\"0\"><TR><TD>");
+writer.Write("(be)"+spfx);writer.Write("<SUB>");writer.Write(qi);writer.Write("</SUB></TD></TR>");if(cbfa.IsAccepting&&!options.HideAcceptSymbolIds){writer.Write("<TR><TD>");
+string acc=null;if(options.AcceptSymbolNames!=null&&options.AcceptSymbolNames.Length>i){acc=options.AcceptSymbolNames[i];}if(acc==null){acc=Convert.ToString(i);
 }writer.Write(acc.Replace("\"","&quot;"));writer.Write("</TD></TR>");}writer.Write("</TABLE>");writer.Write(">");if(cbfa.IsAccepting)writer.Write(",shape=doublecircle");
 else if(cbfa.IsFinal||cbfa.IsNeutral){writer.Write(",color=gray");}writer.WriteLine("]");}}}}delim="";i=0;foreach(var ffa in closure){writer.Write(pfx+spfx);
 writer.Write(i);writer.Write(" [");if(null!=options.DebugString){if(null!=toStates){IList<FA>epstates=FA.FillEpsilonClosure(toStates,null);if(epstates.Contains(ffa))

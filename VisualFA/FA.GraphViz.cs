@@ -198,8 +198,15 @@ namespace VisualFA
 						_AppendRangeTo(sb, rngGrp.Value);
 					} else
 					{
-						sb.Append("^");
-						_AppendRangeTo(sb, notRanges);
+						if (notRanges.Count == 0)
+						{
+							sb.Append(".");
+						}
+						else
+						{
+                            sb.Append("^");
+                            _AppendRangeTo(sb, notRanges);
+						}
 					}
 					if (sb.Length != 1 || " " == sb.ToString())
 					{
