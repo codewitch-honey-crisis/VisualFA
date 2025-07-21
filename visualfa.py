@@ -15,6 +15,7 @@ class _ParseContext:
         self.position = position
         self.line = line
         self.column = column
+    
     def advance(self):
         if self.position >= len(self.input):
             self.codepoint = -1
@@ -261,7 +262,7 @@ class FACharacterClasses:
     ascii = [0, 127]
     blank = [9, 9, 32, 32, 160, 160, 5760, 5760, 8192, 8202, 8239, 8239, 8287, 8287, 12288, 12288]
     lower = unicodeCategories[1]
-    print = notUnicodeCategories[14]
+    print_ = notUnicodeCategories[14]
     punct = [41, 41, 93, 93, 125, 125, 3899, 3899, 3901, 3901, 5788, 5788, 8262, 8262, 8318, 8318, 8334, 8334, 8969, 8969, 8971, 8971, 9002, 9002, 10089, 10089, 10091, 10091, 10093, 10093, 10095, 10095, 10097, 10097, 10099, 10099, 10101, 10101, 10182, 10182, 10215, 10215, 10217, 10217, 10219, 10219, 10221, 10221, 10223, 10223, 10628, 10628, 10630, 10630, 10632, 10632, 10634, 10634, 10636, 10636, 10638, 10638, 10640, 10640, 10642, 10642, 10644, 10644, 10646, 10646, 10648, 10648, 10713, 10713, 10715, 10715, 10749, 10749, 11811, 11811, 11813, 11813, 11815, 11815, 11817, 11817, 12297, 12297, 12299, 12299, 12301, 12301, 12303, 12303, 12305, 12305, 12309, 12309, 12311, 12311, 12313, 12313, 12315, 12315, 12318, 12319, 64830, 64830, 65048, 65048, 65078, 65078, 65080, 65080, 65082, 65082, 65084, 65084, 65086, 65086, 65088, 65088, 65090, 65090, 65092, 65092, 65096, 65096, 65114, 65114, 65116, 65116, 65118, 65118, 65289, 65289, 65341, 65341, 65373, 65373, 65376, 65376, 65379, 65379, 95, 95, 8255, 8256, 8276, 8276, 65075, 65076, 65101, 65101, 65103, 65103, 65343, 65343, 45, 45, 173, 173, 1418, 1418, 1470, 1470, 5120, 5120, 6150, 6150, 8208, 8208, 8213, 8213, 11799, 11799, 11802, 11802, 11834, 11835, 11840, 11840, 12316, 12316, 12336, 12336, 12448, 12448, 65073, 65074, 65112, 65112, 65123, 65123, 65293, 65293, 187, 187, 8217, 8217, 8221, 8221, 8250, 8250, 11779, 11779, 11781, 11781, 11786, 11786, 11789, 11789, 11805, 11805, 11809, 11809, 171, 171, 8216, 8216, 8219, 8220, 8223, 8223, 8249, 8249, 11778, 11778, 11780, 11780, 11785, 11785, 11788, 11788, 11804, 11804, 11808, 11808, 40, 40, 91, 91, 123, 123, 3898, 3898, 3900, 3900, 5787, 5787, 8218, 8218, 8222, 8222, 8261, 8261, 8317, 8317, 8333, 8333, 8968, 8968, 8970, 8970, 9001, 9001, 10088, 10088, 10090, 10090, 10092, 10092, 10094, 10094, 10096, 10096, 10098, 10098, 10100, 10100, 10181, 10181, 10214, 10214, 10216, 10216, 10218, 10218, 10220, 10220, 10222, 10222, 10627, 10627, 10629, 10629, 10631, 10631, 10633, 10633, 10635, 10635, 10637, 10637, 10639, 10639, 10641, 10641, 10643, 10643, 10645, 10645, 10647, 10647, 10712, 10712, 10714, 10714, 10748, 10748, 11810, 11810, 11812, 11812, 11814, 11814, 11816, 11816, 11842, 11842, 12296, 12296, 12298, 12298, 12300, 12300, 12302, 12302, 12304, 12304, 12308, 12308, 12310, 12310, 12312, 12312, 12314, 12314, 12317, 12317, 64831, 64831, 65047, 65047, 65077, 65077, 65079, 65079, 65081, 65081, 65083, 65083, 65085, 65085, 65087, 65087, 65089, 65089, 65091, 65091, 65095, 65095, 65113, 65113, 65115, 65115, 65117, 65117, 65288, 65288, 65339, 65339, 65371, 65371, 65375, 65375, 65378, 65378, 33, 33, 35, 35, 37, 37, 39, 39, 42, 42, 44, 44, 46, 47, 58, 59, 63, 64, 92, 92, 161, 161, 183, 183, 191, 191, 894, 894, 903, 903, 1370, 1370, 1375, 1375, 1417, 1417, 1472, 1472, 1475, 1475, 1478, 1478, 1523, 1524, 1545, 1546, 1548, 1549, 1563, 1563, 1566, 1567, 1642, 1642, 1645, 1645, 1748, 1748, 1792, 1792, 1805, 1805, 2039, 2039, 2041, 2041, 2096, 2096, 2110, 2110, 2142, 2142, 2404, 2405, 2416, 2416, 2800, 2800, 3572, 3572, 3663, 3663, 3674, 3675, 3844, 3844, 3858, 3858, 3860, 3860, 3973, 3973, 4048, 4048, 4052, 4052, 4057, 4058, 4170, 4170, 4175, 4175, 4347, 4347, 4960, 4960, 4968, 4968, 5741, 5742, 5867, 5867, 5869, 5869, 5941, 5942, 6100, 6100, 6102, 6102, 6104, 6104, 6106, 6106, 6144, 6144, 6149, 6149, 6151, 6151, 6154, 6154, 6468, 6469, 6686, 6687, 6816, 6816, 6822, 6822, 6824, 6824, 6829, 6829, 7002, 7002, 7008, 7008, 7164, 7164, 7167, 7167, 7227, 7227, 7231, 7231, 7294, 7295, 7360, 7360, 7367, 7367, 7379, 7379, 8214, 8215, 8224, 8224, 8231, 8231, 8240, 8240, 8248, 8248, 8251, 8251, 8254, 8254, 8257, 8257, 8259, 8259, 8263, 8263, 8273, 8273, 8275, 8275, 8277, 8277, 8286, 8286, 11513, 11513, 11516, 11516, 11518, 11519, 11632, 11632, 11776, 11777, 11782, 11782, 11784, 11784, 11787, 11787, 11790, 11790, 11798, 11798, 11800, 11801, 11803, 11803, 11806, 11807, 11818, 11818, 11822, 11822, 11824, 11824, 11833, 11833, 11836, 11836, 11839, 11839, 11841, 11841, 12289, 12289, 12291, 12291, 12349, 12349, 12539, 12539, 42238, 42239, 42509, 42509, 42511, 42511, 42611, 42611, 42622, 42622, 42738, 42738, 42743, 42743, 43124, 43124, 43127, 43127, 43214, 43215, 43256, 43256, 43258, 43258, 43260, 43260, 43310, 43311, 43359, 43359, 43457, 43457, 43469, 43469, 43486, 43487, 43612, 43612, 43615, 43615, 43742, 43743, 43760, 43761, 44011, 44011, 65040, 65040, 65046, 65046, 65049, 65049, 65072, 65072, 65093, 65094, 65097, 65097, 65100, 65100, 65104, 65104, 65106, 65106, 65108, 65108, 65111, 65111, 65119, 65119, 65121, 65121, 65128, 65128, 65130, 65131, 65281, 65281, 65283, 65283, 65285, 65285, 65287, 65287, 65290, 65290, 65292, 65292, 65294, 65295, 65306, 65307, 65311, 65312, 65340, 65340, 65377, 65377, 65380, 65381, 65792, 65792, 65794, 65794, 66463, 66463, 66512, 66512, 66927, 66927, 67671, 67671, 67871, 67871, 67903, 67903, 68176, 68176, 68184, 68184, 68223, 68223, 68336, 68336, 68342, 68342, 68409, 68409, 68415, 68415, 68505, 68505, 68508, 68508, 69703, 69703, 69709, 69709, 69819, 69820, 69822, 69822, 69825, 69825, 69952, 69952, 69955, 69955, 70004, 70005, 70085, 70085, 70089, 70089, 70093, 70093, 70107, 70107, 70109, 70109, 70111, 70111, 70200, 70200, 70205, 70205, 70313, 70313, 70854, 70854, 71105, 71105, 71127, 71127, 71233, 71233, 71235, 71235, 71484, 71484, 71486, 71486, 74864, 74864, 74868, 74868, 92782, 92783, 92917, 92917, 92983, 92983, 92987, 92987, 92996, 92996, 113823, 113823, 121479, 121479, 121483, 121483]
     space = isWhiteSpace
     upper = unicodeCategories[0]
@@ -285,7 +286,7 @@ class FACharacterClasses:
             result["ascii"] = FACharacterClasses.ascii
             result["blank"] = FACharacterClasses.blank
             result["lower"] = FACharacterClasses.lower
-            result["print"] = FACharacterClasses.print
+            result["print"] = FACharacterClasses.print_
             result["punct"] = FACharacterClasses.punct
             result["space"] = FACharacterClasses.space
             result["upper"] = FACharacterClasses.upper
@@ -293,7 +294,13 @@ class FACharacterClasses:
             result["xdigit"] = FACharacterClasses.xdigit
             FACharacterClasses.__known = result
         return FACharacterClasses.__known
-    
+
+class _ExpEdge:
+    def __init__(self):
+        self.exp = None
+        self.fromState = None
+        self.toState = None
+
 class _FListNode:
     def __init__(self, q, sl):
         self.nextNode = None
@@ -397,7 +404,12 @@ class FA:
         self.__isDeterministic = True
         self.__isCompact = True
         self.id = -1
-
+    
+    def __str__(self):
+        if self.id == -1: 
+            pass
+        return f"q{self.id}"
+    
     def isCompact(self):
         return self.__isCompact
     
@@ -480,41 +492,41 @@ class FA:
                 return state.acceptSymbol
         return -1
     
-    def fillClosure(self, list = None):
-        if list is None:
-            list = []
-        if self in list:
-            return list
-        list.append(self)
+    def fillClosure(self, result = None):
+        if result is None:
+            result = []
+        if self in result:
+            return result
+        result.append(self)
         i = 0
         while i < len(self.transitions):
             trn = self.transitions[i]
-            trn.to.fillClosure(list)
+            trn.to.fillClosure(result)
             i += 1
-        return list
+        return result
     
-    def fillEpsilonClosure(self, list = None):
-        if list is None:
-            list = []
-        if self in list:
-            return list
-        list.append(self)
+    def fillEpsilonClosure(self, result = None):
+        if result is None:
+            result = []
+        if self in result:
+            return result
+        result.append(self)
         if self.__isCompact == True:
-            return list
+            return result
         
         i = 0
         while i < len(self.transitions):
             trn = self.transitions[i]
             if trn.isEpsilon() == True:
                 if trn.to.__isCompact == True:
-                    if not (trn.to in list):
-                        list.append(trn.to)
+                    if not (trn.to in result):
+                        result.append(trn.to)
                 else:
-                    trn.to.fillEpsilonClosure(list)
+                    trn.to.fillEpsilonClosure(result)
             else:
                 break
             i += 1
-        return list
+        return result
     
     def clone(self):
         closure = self.fillClosure()
@@ -1289,6 +1301,8 @@ class FA:
     
     @staticmethod
     def _parseModifier(expr, pc, accept, compact):
+        if(pc.codepoint == -1):
+            return expr
         position = pc.position
         match chr(pc.codepoint):
             case "*":
@@ -1588,14 +1602,15 @@ class FA:
                 #    return result
                 case ".":
                     dot = FA.charset([FARange(0, 0x10ffff)], accept, compact)
+
+                    pc.advance()
+
+                    dot = FA._parseModifier(dot, pc, accept, compact)
                     if result is None:
                         result = dot
                     else:
                         result = FA.concat([result, dot], accept, compact)
-    
-                    pc.advance()
-                    result = FA._parseModifier(result, pc, accept, compact)
-
+                    
                 case "\\":
                     pc.advance()
                     pc.expecting([])
@@ -1712,8 +1727,7 @@ class FA:
                 case ")":
                     return result
                 case "(":
-                    if -1 != pc.advance():
-                        return result
+                    pc.advance()
                     if pc.codepoint == ord("?"):
                         pc.advance()
                         pc.expecting([':'])
@@ -1722,7 +1736,12 @@ class FA:
                     pc.expecting([])
                     nextExpr = FA._parse(pc, accept, compact)
                     pc.expecting([')'])
-                    pc.advance()
+                    if -1 == pc.advance():
+                        if result is None:
+                            return nextExpr
+                        else:
+                            return FA.concat([result, nextExpr], accept, compact)
+                        
                     nextExpr = FA._parseModifier(nextExpr, pc, accept, compact)
                     if result is None:
                         result = nextExpr
@@ -1764,16 +1783,300 @@ class FA:
         if result is None:
             result = FA(accept)
         return result
+    @staticmethod
+    def acceptingFilter(state):
+        return state.acceptSymbol != -1
+    @staticmethod
+    def finalFilter(state):
+        return state.isFinal()
+    @staticmethod
+    def neutralFilter(state):
+        return state.isNeutral()
+    @staticmethod
+    def trapFilter(state):
+        return state.isTrap()
+
+    def fillFind(self, predicate, result = None):
+        if result is None:
+            result = []
+        if self in result:
+            return result
+        if predicate(self) == True:
+            result.append(self)
+        for trn in self.transitions:
+            trn.to.fillFind(predicate, result)
+        return result
     
-# compact = False
-# firstPart = FA.charset([FARange(ord("A"),ord("Z")),FARange(ord("a"),ord("z")),FARange(ord("_"),ord("_"))],0,compact)
-# nextPart = FA.charset([FARange(ord("A"),ord("Z")),FARange(ord("a"),ord("z")),FARange(ord("_"),ord("_")),FARange(ord("0"),ord("9"))],0,compact)
-# ident = FA.concat([firstPart,FA.repeat(nextPart,0,0,0,compact)],0,compact)
-# print(ident.toArray())
-# print(ident.toDfa().toArray())
-# print(ident.toMinimizedDfa().toArray())
-# print("PARSING ---------------")
-# ident = FA.parse("[A-Za-z_][A-Za-z_0-9]*",0,compact)
-# print(ident.toArray())
-# print(ident.toDfa().toArray())
-# print(ident.toMinimizedDfa().toArray())
+    def findFirst(self, predicate):
+        if predicate(self) == True:
+            return self
+        for trn in self.transitions:
+            result = trn.to.findFirst(predicate)
+            if not (result is None):
+                return result
+        return None
+    @staticmethod
+    def __appendCodepointTo(codepoint, result):
+        ch = chr(codepoint)
+        match ch:
+            case '.'|'['|']'|'^'|'-'|'+'|'?'|'('|')'|'\\':
+                result += '\\'
+                result += ch
+                return;
+            case '\t':
+                result += "\\t"
+            case '\n':
+                result += "\\n"
+            case '\r':
+                result += "\\r"
+            case '\0':
+                result +="\\0"
+            case '\f':
+                result += "\\f"
+            case '\v':
+                result += "\\v"
+            case '\b':
+                result += "\\b"
+            case _:
+                if codepoint<32 or codepoint>127:
+                    if len(ch) == 1:
+                        result += "\\u"
+                        result += format(codepoint,'04x')
+                    else:
+                        result += "\\U"
+                        result += format(codepoint,'08x')
+                else:
+                    result += ch
+        return result
+    
+    @staticmethod
+    def __appendRangeCodepointTo(codepoint, result):
+        ch = chr(codepoint)
+        match ch:
+            case '.'|'['|']'|'^'|'-'|'('|')'|'{'|'}'|'\\':
+                result += '\\'
+                result += ch
+            case '\t':
+                result += "\\t"
+            case '\n':
+                result += "\\n"
+            case '\r':
+                result += "\\r"
+            case '\0':
+                result +="\\0"
+            case '\f':
+                result += "\\f"
+            case '\v':
+                result += "\\v"
+            case '\b':
+                result += "\\b"
+            case _:
+                if codepoint<32 or codepoint>127:
+                    if len(ch) == 1:
+                        result += "\\u"
+                        result += format(codepoint,'04x')
+                    else:
+                        result += "\\U"
+                        result += format(codepoint,'08x')
+                else:
+                    result += ch
+        return result
+
+    @staticmethod
+    def __appendRangeTo(ranges, index, result):
+        first = ranges[index].min
+        last = ranges[index].max
+        if first == 0 and last == 1114111:
+            return result + '.'
+        result = FA.__appendRangeCodepointTo(first, result)
+        if last == first:
+            return result
+        
+        if last == first + 1: # spit out 1 and 2 length ranges as flat chars
+            result = FA.__appendRangeCodepointTo(last, result)
+            return result
+        elif last == first + 2:
+            result = FA.__appendRangeCodepointTo(first+1, result)
+            result = FA.__appendRangeCodepointTo(last, result)
+            return result
+        result +='-'
+        result = FA.__appendRangeCodepointTo(last, result)
+        return result
+
+    @staticmethod
+    def __appendRangesTo(ranges, result):
+        i = 0
+        while i < len(ranges):
+            result = FA.__appendRangeTo(ranges,i,result)
+            i+= 1
+        return result
+        
+    @staticmethod
+    def __toExprFillEdgesIn(edges, fa, result):
+        for edge in edges:
+            if edge.toState is fa:
+                result.append(edge)
+    @staticmethod
+    def __toExprFillEdgesOut(edges, fa, result):
+        for edge in edges:
+            if edge.fromState is fa:
+                result.append(edge)
+    @staticmethod
+    def __toExpressionFillEdgesOrphanState(edges, fa, result):
+        for edge in edges:
+            if ((edge.fromState is fa) or (edge.toState is fa)):
+                continue
+            result.append(edge)
+    @staticmethod
+    def __toExpressionOrJoin(strings):
+        if len(strings) == 0:
+            return ""
+        if len(strings) == 1:
+            return strings[0]    
+        return f"({"|".join(strings)})"
+    
+    @staticmethod
+    def __toExpressionKleeneStar(s, noWrap,result):
+        if s is None or len(s) == 0:
+            return result
+        if noWrap == True or len(s) == 1:
+            result += f"{s}*"
+            return result
+        result += f"({s})*"
+        return result
+    
+    @staticmethod
+    def __toExpression(fa):
+        closure = []
+        fsmEdges = []
+        first = fa
+        final = None
+        # linearize the state machine
+        acc = []
+        for f in first.fillClosure():
+            if f.acceptSymbol != -1:
+                acc.append(f)
+        if len(acc) == 1:
+            final = acc[0]
+        elif len(acc) > 1:
+            fa = fa.clone()
+            first = fa
+            acc.clear()
+            for f in fa.fillClosure():
+                if f.acceptSymbol != -1:
+                    acc.append(f)
+
+            final = FA(acc[0].acceptSymbol)
+            for a in acc:
+                a.addEpsilon(final, False)
+                a.acceptSymbol = -1
+        first.fillClosure(closure)
+        sb = [] # string builder
+        # build the machine from the FA
+        trnsgrp = dict()
+        for cfa in closure:
+            trnsgrp.clear()
+            for trns in cfa.fillInputTransitionRangesGroupedByState(True,trnsgrp).items():
+                sb = ""
+                if len(trns[1]) == 1 and trns[1][0].min == trns[1][0].max:
+                    rng = trns[1][0]
+                    if rng.min == -1 or rng.max == -1:
+                        eedge = _ExpEdge()
+                        eedge.exp = ""
+                        eedge.fromState = cfa
+                        eedge.toState = trns[0]
+                        fsmEdges.append(eedge)
+                        continue
+                    sb = FA.__appendCodepointTo(rng.min, sb)
+                else:
+                    sb += "["
+                    sb = FA.__appendRangesTo(trns[1], sb)
+                    sb += "]"
+                
+                edge = _ExpEdge()
+                edge.exp = sb
+                edge.fromState = cfa
+                edge.toState = trns[0]
+                fsmEdges.append(edge)
+        tmp = FA()
+        tmp.addEpsilon(first, False)
+        q0 = first
+        first = tmp
+        tmp = FA(final.acceptSymbol)
+        qLast = final
+        final.acceptSymbol = -1
+        final.addEpsilon(tmp, False)
+        final = tmp
+        # add first and final
+        newEdge = _ExpEdge()
+        newEdge.exp = ""
+        newEdge.fromState = first
+        newEdge.toState = q0
+        fsmEdges.append(newEdge)
+        newEdge = _ExpEdge()
+        newEdge.exp = ""
+        newEdge.fromState = qLast
+        newEdge.toState = final
+        fsmEdges.append(newEdge)
+        closure[0].setIds()
+        closure.insert(0, first)
+        closure.append(final)
+        inEdges = []
+        outEdges = []
+        while len(closure) > 2:
+            node = closure[1]
+            loops = []
+            inEdges.clear()
+            FA.__toExprFillEdgesIn(fsmEdges, node, inEdges)
+            for edge in inEdges:
+                if edge.fromState is edge.toState:
+                    loops.append(edge.exp)
+            sb = ""
+            sb = FA.__toExpressionKleeneStar(FA.__toExpressionOrJoin( loops),len(loops) > 1, sb)
+            middle = sb
+            for inEdge in inEdges:
+                if inEdge.fromState is inEdge.toState:
+                    continue
+                outEdges.clear()
+                FA.__toExprFillEdgesOut(fsmEdges, node, outEdges)
+                for outEdge in outEdges:
+                    if outEdge.fromState is outEdge.toState:
+                        continue
+                    expEdge = _ExpEdge()
+                    expEdge.fromState = inEdge.fromState
+                    expEdge.toState = outEdge.toState
+                    sb = ""
+                    sb += inEdge.exp
+                    sb += middle
+                    sb += outEdge.exp
+                    expEdge.exp = sb
+                    fsmEdges.append(expEdge)   
+            # reuse inedges since we're not using it
+            inEdges.clear()
+            FA.__toExpressionFillEdgesOrphanState(fsmEdges, node,inEdges)
+            fsmEdges.clear()
+            for edge in inEdges:
+                fsmEdges.append(edge)
+            closure.remove(node)
+        sb = ""
+        if len(fsmEdges) == 1:
+            return fsmEdges[0].exp
+        
+        if len(fsmEdges) > 1:
+            sb+="("
+            sb+=fsmEdges[0].exp
+            i = 1
+            while i < len(fsmEdges):
+                sb += "|"
+                edge = fsmEdges[i]
+                sb += edge.exp
+                i += 1
+            sb += ")"
+        
+        return sb
+    def toString(self, format = ""):
+        if (format is None) or len(format) == 0:
+            return str(self)
+        if format == "e":
+            return FA.__toExpression(self)
+        raise Exception("Invalid format specifier")

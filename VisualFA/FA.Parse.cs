@@ -406,14 +406,15 @@ namespace VisualFA
 						return result;
 					case '.':
 						var dot = FA.Set(new FARange[] { new FARange(0, 0x10ffff) }, accept, compact);
-						if (null == result)
+                        pc.Advance();
+                        dot = _ParseModifier(dot, pc, accept, compact);
+                        if (null == result)
 							result = dot;
 						else
 						{
 							result = FA.Concat(new FA[] { result, dot }, accept, compact);
 						}
-						pc.Advance();
-						result = _ParseModifier(result, pc, accept, compact);
+						
 						break;
 					case '\\':
 

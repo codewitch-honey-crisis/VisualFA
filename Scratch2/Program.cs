@@ -331,14 +331,19 @@ namespace Scratch2
         }
 		static void Main()
 		{
-			var first = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_') }, 0, false);
-			var next = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_'), new FARange('0', '9') }, 0, false);
-			var ident = FA.Concat(new FA[] { first, FA.Repeat(next, 0, 0, 0, false) }, 0, false);
-			PrintArray(ident.ToArray());
-			var dfa = ident.ToDfa();
-			PrintArray(dfa.ToArray());
-			var mdfa = ident.ToMinimizedDfa();
-			PrintArray(mdfa.ToArray());
+			var exp = "(\\/api\\/spiffs\\/(.*))|(\\/api\\/sdcard\\/(.*))";
+
+
+			var fsm = FA.Parse(exp);
+			Console.WriteLine(fsm.ToString("e"));
+   //         var first = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_') }, 0, false);
+			//var next = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_'), new FARange('0', '9') }, 0, false);
+			//var ident = FA.Concat(new FA[] { first, FA.Repeat(next, 0, 0, 0, false) }, 0, false);
+			//PrintArray(ident.ToArray());
+			//var dfa = ident.ToDfa();
+			//PrintArray(dfa.ToArray());
+			//var mdfa = ident.ToMinimizedDfa();
+			//PrintArray(mdfa.ToArray());
 			//var test = FA.Literal("h", 0, false);
    //         test = FA.Repeat(test, 0, 0, 0, false);
 			//int sum = 0;
@@ -350,7 +355,8 @@ namespace Scratch2
 			//var cl = test.FillClosure();
 			//PrintArray(test.ToArray());
 			//PrintArray(test.ToDfa().ToArray());
-			mdfa.RenderToFile(@"..\..\..\test.jpg");
+			
+			//FA.FromArray( fsm ).RenderToFile(@"..\..\..\test.jpg");
 
 		}
         static void Main3() {

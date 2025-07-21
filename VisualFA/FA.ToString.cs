@@ -66,7 +66,41 @@ namespace VisualFA
 				}
 			}
 		}
-		static string _ToExpression(FA fa)
+        static string _ToExpressionOrJoin(IList<string> strings)
+        {
+            if (strings.Count == 0) return string.Empty;
+            if (strings.Count == 1) return strings[0];
+            return string.Concat("(", string.Join("|", strings), ")");
+        }
+
+        static void _ToExpressionKleeneStar(StringBuilder sb, string s, bool noWrap)
+        {
+            if (string.IsNullOrEmpty(s)) return;
+            if (noWrap || s.Length == 1)
+            {
+                sb.Append(s);
+                sb.Append("*");
+                return;
+            }
+            sb.Append("(");
+            sb.Append(s);
+            sb.Append(")*");
+        }
+
+
+        static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge> edges, FA node, IList<_ExpEdge> result)
+        {
+            for (int i = 0; i < edges.Count; ++i)
+            {
+                var edge = edges[i];
+                if (edge.From == node || edge.To == node)
+                {
+                    continue;
+                }
+                result.Add(edge);
+            }
+        }
+        static string _ToExpression(FA fa)
 		{
 			List<FA> closure = new List<FA>();
 			List<_ExpEdge> fsmEdges = new List<_ExpEdge>();
@@ -149,6 +183,7 @@ namespace VisualFA
 			newEdge.From = qLast;
 			newEdge.To = final;
 			fsmEdges.Add(newEdge);
+			closure[0].SetIds();
 			closure.Insert(0, first);
 			closure.Add(final);
 			var inEdges = new List<_ExpEdge>(fsmEdges.Count);
@@ -227,41 +262,6 @@ namespace VisualFA
 
 		}
 		
-
-		static string _ToExpressionOrJoin(IList<string> strings)
-		{
-			if (strings.Count == 0) return string.Empty;
-			if (strings.Count == 1) return strings[0];
-			return string.Concat("(", string.Join("|",strings), ")");
-		}
-
-		static void _ToExpressionKleeneStar(StringBuilder sb,string s, bool noWrap)
-		{
-			if (string.IsNullOrEmpty(s)) return;
-			if (noWrap || s.Length == 1)
-			{
-				sb.Append(s);
-				sb.Append("*");
-				return;
-			}
-			sb.Append("(");
-			sb.Append(s);
-			sb.Append(")*");
-		}
-
-
-		static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge> edges, FA node, IList<_ExpEdge> result)
-		{
-			for (int i = 0; i < edges.Count; ++i)
-			{
-				var edge = edges[i];
-				if (edge.From == node || edge.To == node)
-				{
-					continue;
-				}
-				result.Add(edge);
-			}
-		}
 		/// <summary>
 		/// Returns a string representation of the state machine
 		/// </summary>
