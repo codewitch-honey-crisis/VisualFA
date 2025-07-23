@@ -200,7 +200,7 @@ namespace VisualFA
 					{
 						if (notRanges.Count == 0)
 						{
-							sb.Append(".");
+							sb.Append(".\\n");
 						}
 						else
 						{

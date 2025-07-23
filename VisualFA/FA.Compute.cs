@@ -648,7 +648,6 @@ namespace VisualFA
 		#region _Determinize()
 		private static FA _Determinize(FA fa, IProgress<int> progress)
 		{
-			fa.SetIds();
 			// initialize
 			int prog = 0;
 			progress?.Report(prog);

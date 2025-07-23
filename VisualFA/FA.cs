@@ -184,7 +184,7 @@ namespace VisualFA
 		/// <summary>
 		/// Indicates if the state is accepting
 		/// </summary>
-		public bool IsAccepting { get { return AcceptSymbol > -1; } }
+		public bool IsAccepting { get { return AcceptSymbol != -1; } }
 		/// <summary>
 		/// Indicates if the state has no transitions
 		/// </summary>

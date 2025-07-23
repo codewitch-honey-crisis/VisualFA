@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Metrics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -331,13 +332,22 @@ namespace Scratch2
         }
 		static void Main()
 		{
-			var exp = "(\\/api\\/spiffs\\/(.*))|(\\/api\\/sdcard\\/(.*))";
+			string exp1 = @"([^\*]|\*+[^\/])*\*\/";
+			string exp2 = @"/\*([^\*\-]|\*+[^\/]|\-+[^\/])*[\*\-]/";
+			string exp3 = @"/\*";
+			string exp4 = @"\*/";
+			var nfa = FA.Parse(exp3, 0, false);
+			nfa = FA.ConcatLazy(nfa, FA.Parse(exp4, 0, false));
+            var opts = new FADotGraphOptions();
+			opts.HideAcceptSymbolIds = true;
+			opts.Vertical = true;
+			var dfa = nfa.ToDfa();
+			var mdfa = dfa.ToMinimizedDfa();
+			nfa.RenderToFile(@"..\..\..\nfa.jpg", opts);
+            dfa.RenderToFile(@"..\..\..\dfa.jpg", opts);
+            mdfa.RenderToFile(@"..\..\..\mdfa.jpg", opts);
+			//mdfa.RenderToFile(@"..\..\..\mdfa.dot", opts);
 
-
-			var fsm = FA.Parse(exp).ToMinimizedDfa();
-			fsm.RenderToFile(@"..\..\..\test.jpg");
-            Console.WriteLine(fsm.ToString("e"));
-   //         var first = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_') }, 0, false);
 			//var next = FA.Set(new FARange[] { new FARange('A', 'Z'), new FARange('a', 'z'), new FARange('_', '_'), new FARange('0', '9') }, 0, false);
 			//var ident = FA.Concat(new FA[] { first, FA.Repeat(next, 0, 0, 0, false) }, 0, false);
 			//PrintArray(ident.ToArray());
@@ -346,7 +356,7 @@ namespace Scratch2
 			//var mdfa = ident.ToMinimizedDfa();
 			//PrintArray(mdfa.ToArray());
 			//var test = FA.Literal("h", 0, false);
-   //         test = FA.Repeat(test, 0, 0, 0, false);
+			//         test = FA.Repeat(test, 0, 0, 0, false);
 			//int sum = 0;
 			//foreach(var fa in test.FillClosure())
 			//{
@@ -356,10 +366,12 @@ namespace Scratch2
 			//var cl = test.FillClosure();
 			//PrintArray(test.ToArray());
 			//PrintArray(test.ToDfa().ToArray());
-			
-			//FA.FromArray( fsm ).RenderToFile(@"..\..\..\test.jpg");
 
-		}
+			//FA.FromArray( fsm ).RenderToFile(@"..\..\..\test.jpg");
+			Console.WriteLine(nfa.ToString("e"));
+			Console.WriteLine();
+			Console.WriteLine(dfa.ToString("e"));
+        }
         static void Main3() {
 			var fa = FA.Parse("(\\/api\\/spiffs\\/(.*))|(\\/api\\/sdcard\\/(.*))");
 			fa.RenderToFile(@"..\..\..\debug.jpg", new FADotGraphOptions() { Vertical = true });

@@ -354,5 +354,49 @@ namespace VisualFA
 			}
 			return result;
 		}
+		static FA _LinearizeEnd(FA fa, int accept)
+		{
+			var closure = fa.FillClosure();
+			int firstAcc = -1;
+			int count = 0;
+			for (var i = 0;i<closure.Count; ++i)
+			{
+				var cfa = closure[i];
+				if(cfa.IsAccepting)
+				{
+					++count;
+					if (firstAcc == -1)
+					{
+						firstAcc = i;
+					}
+					if( count > 1)
+					{
+						break;
+					}
+				}	
+			}
+			if( count < 2)
+			{
+				fa = fa.Clone();
+				if (firstAcc != -1)
+				{
+					fa.FillClosure()[firstAcc].AcceptSymbol = accept;
+				}
+				return fa;
+			}
+			fa = fa.Clone();
+			closure = fa.FillClosure();
+			var final = new FA(accept);
+            for (var i = 0; i < closure.Count; ++i)
+            {
+                var cfa = closure[i];
+                if (cfa.IsAccepting)
+                {
+					cfa.AcceptSymbol = -1;
+					cfa.AddEpsilon(final);
+                }
+            }
+			return fa;
+        }
 	}
 }

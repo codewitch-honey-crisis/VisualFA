@@ -405,7 +405,7 @@ namespace VisualFA
 						}
 						return result;
 					case '.':
-						var dot = FA.Set(new FARange[] { new FARange(0, 0x10ffff) }, accept, compact);
+						var dot = FA.Set(new FARange[] { new FARange(0, ((int)'\n')-1),new FARange('\n'+1,0x10ffff) }, accept, compact);
                         pc.Advance();
                         dot = _ParseModifier(dot, pc, accept, compact);
                         if (null == result)

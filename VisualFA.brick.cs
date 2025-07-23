@@ -993,16 +993,16 @@ public void Compact(){Compact(FillClosure());}/// <summary>
 public FA ToCompact(){var result=Clone();result.Compact();return result;}
 #endregion // Compact()
 #region _Determinize()
-private static FA _Determinize(FA fa,IProgress<int>progress){fa.SetIds(); int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();
-fa.FillClosure(closure); for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.IsEpsilon){continue;
-}p.Add(t.Min);if(t.Max<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(points,0);Array.Sort(points);++prog;progress?.Report(prog);var
- sets=new Dictionary<_KeySet<FA>,_KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();
-var epscl=new List<FA>();List<FA>ecs=new List<FA>();List<FA>efcs=null;if(_Seen==null){_Seen=new HashSet<FA>();}_Seen.Clear();fa._EpsilonClosure(epscl,
-_Seen);for(int i=0;i<epscl.Count;++i){var efa=epscl[i];initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var result=new FA();result.IsDeterministic
-=true;result.FromStates=epscl.ToArray();foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;break;}}++prog;progress?.Report(prog);
- dfaMap.Add(initial,result);while(working.Count>0){ var s=working.Dequeue(); FA dfa=dfaMap[s]; foreach(FA q in s){if(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;
-break;}} for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s){ ecs.Clear();if(!c.IsCompact){ if(_Seen==null)
-{_Seen=new HashSet<FA>();}_Seen.Clear();c._EpsilonClosure(ecs,_Seen);}else{ecs.Add(c);}for(int j=0;j<ecs.Count;++j){var efa=ecs[j]; for(int k=0;k<efa._transitions.Count;
+private static FA _Determinize(FA fa,IProgress<int>progress){ int prog=0;progress?.Report(prog);var p=new HashSet<int>();var closure=new List<FA>();fa.FillClosure(closure);
+ for(int ic=closure.Count,i=0;i<ic;++i){var ffa=closure[i];p.Add(0);foreach(var t in ffa._transitions){if(t.IsEpsilon){continue;}p.Add(t.Min);if(t.Max
+<0x10ffff){p.Add((t.Max+1));}}}var points=new int[p.Count];p.CopyTo(points,0);Array.Sort(points);++prog;progress?.Report(prog);var sets=new Dictionary<_KeySet<FA>,
+_KeySet<FA>>();var working=new Queue<_KeySet<FA>>();var dfaMap=new Dictionary<_KeySet<FA>,FA>();var initial=new _KeySet<FA>();var epscl=new List<FA>();
+List<FA>ecs=new List<FA>();List<FA>efcs=null;if(_Seen==null){_Seen=new HashSet<FA>();}_Seen.Clear();fa._EpsilonClosure(epscl,_Seen);for(int i=0;i<epscl.Count;
+++i){var efa=epscl[i];initial.Add(efa);}sets.Add(initial,initial);working.Enqueue(initial);var result=new FA();result.IsDeterministic=true;result.FromStates
+=epscl.ToArray();foreach(var afa in initial){if(afa.IsAccepting){result.AcceptSymbol=afa.AcceptSymbol;break;}}++prog;progress?.Report(prog); dfaMap.Add(initial,
+result);while(working.Count>0){ var s=working.Dequeue(); FA dfa=dfaMap[s]; foreach(FA q in s){if(q.IsAccepting){dfa.AcceptSymbol=q.AcceptSymbol;break;
+}} for(var i=0;i<points.Length;i++){var pnt=points[i];var set=new _KeySet<FA>();foreach(FA c in s){ ecs.Clear();if(!c.IsCompact){ if(_Seen==null){_Seen
+=new HashSet<FA>();}_Seen.Clear();c._EpsilonClosure(ecs,_Seen);}else{ecs.Add(c);}for(int j=0;j<ecs.Count;++j){var efa=ecs[j]; for(int k=0;k<efa._transitions.Count;
 ++k){var trns=efa._transitions[k];if(trns.IsEpsilon){continue;} if(trns.Min<=pnt&&pnt<=trns.Max){ if(trns.To.IsCompact){set.Add(trns.To);}else{if(efcs
 ==null){efcs=new List<FA>();}efcs.Clear();if(_Seen==null){_Seen=new HashSet<FA>();}_Seen.Clear();trns.To._EpsilonClosure(efcs,_Seen);for(int m=0;m<efcs.Count;
 ++m){set.Add(efcs[m]);}}}}} _Seen.Clear();} if(!sets.ContainsKey(set)){sets.Add(set,set); working.Enqueue(set); var newfa=new FA();newfa.IsDeterministic
@@ -1190,7 +1190,7 @@ public FA[]FromStates{get;private set;}=null;/// <summary>
 public IList<FATransition>Transitions{get{return _transitions.AsReadOnly();}}private List<FATransition>_transitions=new List<FATransition>();/// <summary>
 /// Indicates if the state is accepting
 /// </summary>
-public bool IsAccepting{get{return AcceptSymbol>-1;}}/// <summary>
+public bool IsAccepting{get{return AcceptSymbol!=-1;}}/// <summary>
 /// Indicates if the state has no transitions
 /// </summary>
 public bool IsFinal{get{return _transitions.Count==0;}}/// <summary>
@@ -1419,7 +1419,7 @@ _Seen);}if(null!=toStates){toStates=FillEpsilonClosure(toStates,null);}else{toSt
 &&FillEpsilonClosure(fromStates,null).Contains(ffa);var rngGrps=ffa.FillInputTransitionRangesGroupedByState();foreach(var rngGrp in rngGrps){var istrns
 =isfrom&&null!=toStates&&options.DebugString!=null&&toStates.Contains(rngGrp.Key);var di=closure.IndexOf(rngGrp.Key);writer.Write(pfx+spfx);writer.Write(i);
 writer.Write("->");writer.Write(pfx+spfx);writer.Write(di.ToString());writer.Write(" [label=\"");var sb=new StringBuilder(); var notRanges=new List<FARange>(_InvertRanges(rngGrp.Value));
-if(notRanges.Count*1.5>rngGrp.Value.Count){_AppendRangeTo(sb,rngGrp.Value);}else{if(notRanges.Count==0){sb.Append(".");}else{sb.Append("^");_AppendRangeTo(sb,
+if(notRanges.Count*1.5>rngGrp.Value.Count){_AppendRangeTo(sb,rngGrp.Value);}else{if(notRanges.Count==0){sb.Append(".\\n");}else{sb.Append("^");_AppendRangeTo(sb,
 notRanges);}}if(sb.Length!=1||" "==sb.ToString()){writer.Write('[');if(sb.Length>16){sb.Length=16;sb.Append("...");}writer.Write(_EscapeLabel(sb.ToString()));
 writer.Write(']');}else writer.Write(_EscapeLabel(sb.ToString()));if(!istrns){writer.WriteLine("\"]");}else{writer.Write("\",color=green]");}} foreach
 (var fat in ffa._transitions){if(fat.IsEpsilon){var istrns=null!=toStates&&options.DebugString!=null&&toStates.Contains(ffa)&&toStates.Contains(fat.To);
@@ -1573,17 +1573,18 @@ pc.Codepoint){pc.Advance();firstChar=_ParseRangeEscapePart(pc);}else{firstChar=p
  FARange(min,_ParseRangeEscapePart(pc)));}wantRange=false;readFirstChar=false;}}if(readFirstChar){result.Add(new FARange(firstChar,firstChar));if(wantRange)
 {result.Add(new FARange('-','-'));}}pc.Expecting(']');pc.Advance();return new KeyValuePair<bool,FARange[]>(isNot,result.ToArray());}static FA _Parse(StringCursor
  pc,int accept,bool compact){FA result=null;FA next=null;int ich;pc.EnsureStarted();while(true){switch(pc.Codepoint){case-1:if(result==null){ result=new
- FA(accept);}return result;case'.':var dot=FA.Set(new FARange[]{new FARange(0,0x10ffff)},accept,compact);pc.Advance();dot=_ParseModifier(dot,pc,accept,
-compact);if(null==result)result=dot;else{result=FA.Concat(new FA[]{result,dot},accept,compact);}break;case'\\':pc.Advance();pc.Expecting();var isNot=false;
-switch(pc.Codepoint){case'P':isNot=true;goto case'p';case'p':pc.Advance();pc.Expecting('{');var uc=new StringBuilder();while(-1!=pc.Advance()&&'}'!=pc.Codepoint)
-uc.Append(char.ConvertFromUtf32(pc.Codepoint));pc.Expecting('}');pc.Advance();int uci=0;switch(uc.ToString()){case"Pe":uci=21;break;case"Pc":uci=19;break;
-case"Cc":uci=14;break;case"Sc":uci=26;break;case"Pd":uci=19;break;case"Nd":uci=8;break;case"Me":uci=7;break;case"Pf":uci=23;break;case"Cf":uci=15;break;
-case"Pi":uci=22;break;case"Nl":uci=9;break;case"Zl":uci=12;break;case"Ll":uci=1;break;case"Sm":uci=25;break;case"Lm":uci=3;break;case"Sk":uci=27;break;
-case"Mn":uci=5;break;case"Ps":uci=20;break;case"Lo":uci=4;break;case"Cn":uci=29;break;case"No":uci=10;break;case"Po":uci=24;break;case"So":uci=28;break;
-case"Zp":uci=13;break;case"Co":uci=17;break;case"Zs":uci=11;break;case"Mc":uci=6;break;case"Cs":uci=16;break;case"Lt":uci=2;break;case"Lu":uci=0;break;
-}if(isNot){next=FA.Set(FARange.ToUnpacked(CharacterClasses.UnicodeCategories[uci]),accept,compact);}else next=FA.Set(FARange.ToUnpacked(CharacterClasses.NotUnicodeCategories[uci]),
-accept,compact);break;case'd':next=FA.Set(FARange.ToUnpacked(CharacterClasses.digit),accept,compact);pc.Advance();break;case'D':next=FA.Set(FARange.ToNotRanges(FARange.ToUnpacked(CharacterClasses.digit)),
-accept,compact);pc.Advance();break;case's':next=FA.Set(FARange.ToUnpacked(CharacterClasses.space),accept,compact);pc.Advance();break;case'S':next=FA.Set(FARange.ToNotRanges(FARange.ToUnpacked(CharacterClasses.space)),
+ FA(accept);}return result;case'.':var dot=FA.Set(new FARange[]{new FARange(0,((int)'\n')-1),new FARange('\n'+1,0x10ffff)},accept,compact);pc.Advance();
+dot=_ParseModifier(dot,pc,accept,compact);if(null==result)result=dot;else{result=FA.Concat(new FA[]{result,dot},accept,compact);}break;case'\\':pc.Advance();
+pc.Expecting();var isNot=false;switch(pc.Codepoint){case'P':isNot=true;goto case'p';case'p':pc.Advance();pc.Expecting('{');var uc=new StringBuilder();
+while(-1!=pc.Advance()&&'}'!=pc.Codepoint)uc.Append(char.ConvertFromUtf32(pc.Codepoint));pc.Expecting('}');pc.Advance();int uci=0;switch(uc.ToString())
+{case"Pe":uci=21;break;case"Pc":uci=19;break;case"Cc":uci=14;break;case"Sc":uci=26;break;case"Pd":uci=19;break;case"Nd":uci=8;break;case"Me":uci=7;break;
+case"Pf":uci=23;break;case"Cf":uci=15;break;case"Pi":uci=22;break;case"Nl":uci=9;break;case"Zl":uci=12;break;case"Ll":uci=1;break;case"Sm":uci=25;break;
+case"Lm":uci=3;break;case"Sk":uci=27;break;case"Mn":uci=5;break;case"Ps":uci=20;break;case"Lo":uci=4;break;case"Cn":uci=29;break;case"No":uci=10;break;
+case"Po":uci=24;break;case"So":uci=28;break;case"Zp":uci=13;break;case"Co":uci=17;break;case"Zs":uci=11;break;case"Mc":uci=6;break;case"Cs":uci=16;break;
+case"Lt":uci=2;break;case"Lu":uci=0;break;}if(isNot){next=FA.Set(FARange.ToUnpacked(CharacterClasses.UnicodeCategories[uci]),accept,compact);}else next
+=FA.Set(FARange.ToUnpacked(CharacterClasses.NotUnicodeCategories[uci]),accept,compact);break;case'd':next=FA.Set(FARange.ToUnpacked(CharacterClasses.digit),
+accept,compact);pc.Advance();break;case'D':next=FA.Set(FARange.ToNotRanges(FARange.ToUnpacked(CharacterClasses.digit)),accept,compact);pc.Advance();break;
+case's':next=FA.Set(FARange.ToUnpacked(CharacterClasses.space),accept,compact);pc.Advance();break;case'S':next=FA.Set(FARange.ToNotRanges(FARange.ToUnpacked(CharacterClasses.space)),
 accept,compact);pc.Advance();break;case'w':next=FA.Set(FARange.ToUnpacked(CharacterClasses.word),accept,compact);pc.Advance();break;case'W':next=FA.Set(FARange.ToNotRanges(FARange.ToUnpacked(CharacterClasses.word)),
 accept,compact);pc.Advance();break;default:if(-1!=(ich=_ParseEscapePart(pc))){next=FA.Literal(new int[]{ich},accept,compact);}else{pc.Expecting(); System.Diagnostics.Debug.Assert(false);
 }break;}next=_ParseModifier(next,pc,accept,compact);if(null!=result){result=FA.Concat(new FA[]{result,next},accept,compact);}else result=next;break;case
@@ -1721,27 +1722,38 @@ foreach(var trns in t){var f=char.ConvertFromUtf32(trns.Min);var l=char.ConvertF
  NotSupportedException(emsg);fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);f=f.ToUpperInvariant();l=l.ToUpperInvariant();fa.AddTransition(new
  FARange(char.ConvertToUtf32(f,0),char.ConvertToUtf32(l,0)),trns.To);}else if(char.IsUpper(f,0)){if(!char.IsUpper(l,0))throw new NotSupportedException(emsg);
 fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);f=f.ToLowerInvariant();l=l.ToLowerInvariant();fa.AddTransition(new FARange(char.ConvertToUtf32(f,
-0),char.ConvertToUtf32(l,0)),trns.To);}else{fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);}}}return result;}}}namespace VisualFA{partial class
- FA:IFormattable{private struct _ExpEdge{public string Exp;public FA From;public FA To;public override string ToString(){return string.Concat(From," \"",
-Exp,"\" ",To);}}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){if(edges[i].To
-==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i)
-{var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpressionOrJoin(IList<string>strings){if(strings.Count==0)return string.Empty;
-if(strings.Count==1)return strings[0];return string.Concat("(",string.Join("|",strings),")");}static void _ToExpressionKleeneStar(StringBuilder sb,string
- s,bool noWrap){if(string.IsNullOrEmpty(s))return;if(noWrap||s.Length==1){sb.Append(s);sb.Append("*");return;}sb.Append("(");sb.Append(s);sb.Append(")*");
-}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if
-(edge.From==node||edge.To==node){continue;}result.Add(edge);}}static string _ToExpression(FA fa){List<FA>closure=new List<FA>();List<_ExpEdge>fsmEdges
-=new List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count==1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();
-first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol
-=-1;}}closure.Clear();first.FillClosure(closure);var sb=new StringBuilder(); var trnsgrp=new Dictionary<FA,IList<FARange>>(closure.Count);for(int q=0;
-q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp)){sb.Clear();if(trns.Value.Count
-==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1||range.Max==-1){var eedge=new _ExpEdge();eedge.Exp=string.Empty;eedge.From
-=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}_AppendCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,trns.Value);sb.Append("]");}var
- edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,false);var q0=first;
-first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,false);final=tmp; var newEdge=new _ExpEdge();newEdge.Exp
-=string.Empty;newEdge.From=first;newEdge.To=q0;fsmEdges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=qLast;newEdge.To=final;
-fsmEdges.Add(newEdge);closure[0].SetIds();closure.Insert(0,first);closure.Add(final);var inEdges=new List<_ExpEdge>(fsmEdges.Count);var outEdges=new List<_ExpEdge>(fsmEdges.Count);
-while(closure.Count>2){var node=closure[1];var loops=new List<string>(inEdges.Count);inEdges.Clear();_ToExpressionFillEdgesIn(fsmEdges,node,inEdges);for
-(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);}}sb.Clear();_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops),
+0),char.ConvertToUtf32(l,0)),trns.To);}else{fa.AddTransition(new FARange(trns.Min,trns.Max),trns.To);}}}return result;}static FA _LinearizeEnd(FA fa,int
+ accept){var closure=fa.FillClosure();int firstAcc=-1;int count=0;for(var i=0;i<closure.Count;++i){var cfa=closure[i];if(cfa.IsAccepting){++count;if(firstAcc
+==-1){firstAcc=i;}if(count>1){break;}}}if(count<2){fa=fa.Clone();if(firstAcc!=-1){fa.FillClosure()[firstAcc].AcceptSymbol=accept;}return fa;}fa=fa.Clone();
+closure=fa.FillClosure();var final=new FA(accept);for(var i=0;i<closure.Count;++i){var cfa=closure[i];if(cfa.IsAccepting){cfa.AcceptSymbol=-1;cfa.AddEpsilon(final);
+}}return fa;}private static void _TransformToLazy(IList<FA>allStates,bool compact){ foreach(var current in allStates){ var selfLoops=new List<FATransition>();
+foreach(var trans in current.Transitions){if(trans.To==current){selfLoops.Add(trans);}} foreach(var loop in selfLoops){ var lazyState=new FA(); current.Transitions.Remove(loop);
+ current.AddTransition(new FARange(loop.Min,loop.Max),lazyState); lazyState.AddTransition(new FARange(loop.Min,loop.Max),current); foreach(var exitTrans
+ in current.Transitions){if(exitTrans.To!=lazyState){lazyState.AddTransition(new FARange(exitTrans.Min,exitTrans.Max),exitTrans.To);}} foreach(var trn
+ in current.Transitions){if(trn.IsEpsilon){lazyState.AddEpsilon(trn.To,compact);}}}}}public static FA ConcatLazy(FA lazy,FA next,int accept=0,bool compact
+=true){var lnext=_LinearizeEnd(next.ToMinimizedDfa(),accept);var lnextacc=lnext.FindFirst(AcceptingFilter);if(lnextacc==null){ return Concat(new FA[]{
+lazy,next},accept,compact);}var cuts=new List<FA>(); var trngs=lnext.FillInputTransitionRangesGroupedByState();var firstCut=new FA();foreach(var trn in
+ trngs){var inv=_InvertRanges(trn.Value);foreach(var rng in inv){firstCut.AddTransition(rng,next);}}cuts.Add(firstCut);return Concat(new FA[]{lazy,Or(cuts,
+accept,compact)},accept,compact);}}}namespace VisualFA{partial class FA:IFormattable{private struct _ExpEdge{public string Exp;public FA From;public FA
+ To;public override string ToString(){return string.Concat(From," \"",Exp,"\" ",To);}}static void _ToExpressionFillEdgesIn(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>
+result){for(int i=0;i<edges.Count;++i){if(edges[i].To==node){result.Add(edges[i]);}}}static void _ToExpressionFillEdgesOut(IList<_ExpEdge>edges,FA node,
+IList<_ExpEdge>result){for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node){result.Add(edge);}}}static string _ToExpressionOrJoin(IList<string>
+strings){if(strings.Count==0)return string.Empty;if(strings.Count==1)return strings[0];return string.Concat("(",string.Join("|",strings),")");}static void
+ _ToExpressionKleeneStar(StringBuilder sb,string s,bool noWrap){if(string.IsNullOrEmpty(s))return;if(noWrap||s.Length==1){sb.Append(s);sb.Append("*");
+return;}sb.Append("(");sb.Append(s);sb.Append(")*");}static void _ToExpressionFillEdgesOrphanState(IList<_ExpEdge>edges,FA node,IList<_ExpEdge>result)
+{for(int i=0;i<edges.Count;++i){var edge=edges[i];if(edge.From==node||edge.To==node){continue;}result.Add(edge);}}static string _ToExpression(FA fa){List<FA>
+closure=new List<FA>();List<_ExpEdge>fsmEdges=new List<_ExpEdge>();FA first,final=null;first=fa;var acc=first.FillFind(AcceptingFilter);if(acc.Count==
+1){final=acc[0];}else if(acc.Count>1){fa=fa.Clone();first=fa;acc=fa.FillFind(AcceptingFilter);final=new FA(acc[0].AcceptSymbol);for(int i=0;i<acc.Count;
+++i){var a=acc[i];a.AddEpsilon(final,false);a.AcceptSymbol=-1;}}closure.Clear();first.FillClosure(closure);var sb=new StringBuilder(); var trnsgrp=new
+ Dictionary<FA,IList<FARange>>(closure.Count);for(int q=0;q<closure.Count;++q){var cfa=closure[q];trnsgrp.Clear();foreach(var trns in cfa.FillInputTransitionRangesGroupedByState(true,trnsgrp))
+{sb.Clear();if(trns.Value.Count==1&&trns.Value[0].Min==trns.Value[0].Max){var range=trns.Value[0];if(range.Min==-1||range.Max==-1){var eedge=new _ExpEdge();
+eedge.Exp=string.Empty;eedge.From=cfa;eedge.To=trns.Key;fsmEdges.Add(eedge);continue;}_AppendCharTo(sb,range.Min);}else{sb.Append("[");_AppendRangeTo(sb,
+trns.Value);sb.Append("]");}var edge=new _ExpEdge();edge.Exp=sb.ToString();edge.From=cfa;edge.To=trns.Key;fsmEdges.Add(edge);}}var tmp=new FA();tmp.AddEpsilon(first,
+false);var q0=first;first=tmp;tmp=new FA(final.AcceptSymbol);var qLast=final;final.AcceptSymbol=-1;final.AddEpsilon(tmp,false);final=tmp; var newEdge=
+new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From=first;newEdge.To=q0;fsmEdges.Add(newEdge);newEdge=new _ExpEdge();newEdge.Exp=string.Empty;newEdge.From
+=qLast;newEdge.To=final;fsmEdges.Add(newEdge);closure[0].SetIds();closure.Insert(0,first);closure.Add(final);var inEdges=new List<_ExpEdge>(fsmEdges.Count);
+var outEdges=new List<_ExpEdge>(fsmEdges.Count);while(closure.Count>2){var node=closure[1];var loops=new List<string>(inEdges.Count);inEdges.Clear();_ToExpressionFillEdgesIn(fsmEdges,
+node,inEdges);for(int i=0;i<inEdges.Count;++i){var edge=inEdges[i];if(edge.From==edge.To){loops.Add(edge.Exp);}}sb.Clear();_ToExpressionKleeneStar(sb,_ToExpressionOrJoin(loops),
 loops.Count>1);var middle=sb.ToString();for(int i=0;i<inEdges.Count;++i){var inEdge=inEdges[i];if(inEdge.From==inEdge.To){continue;}outEdges.Clear();_ToExpressionFillEdgesOut(fsmEdges,
 node,outEdges);for(int j=0;j<outEdges.Count;++j){var outEdge=outEdges[j];if(outEdge.From==outEdge.To){continue;}var expEdge=new _ExpEdge();expEdge.From
 =inEdge.From;expEdge.To=outEdge.To;sb.Clear();sb.Append(inEdge.Exp);sb.Append(middle);sb.Append(outEdge.Exp);expEdge.Exp=sb.ToString();fsmEdges.Add(expEdge);
